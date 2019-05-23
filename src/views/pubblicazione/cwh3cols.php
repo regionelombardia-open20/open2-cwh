@@ -80,4 +80,6 @@ lispa\amos\cwh\widgets\Cwh3ColsWidget::widget([
     'regolaPubblicazione' => [
         'data' => \lispa\amos\cwh\models\CwhPubblicazioni::find()->asArray()->all()
     ],
+    'renderCols' => true,
+    'moduleCwh' => (isset($moduleCwh) ? $moduleCwh : null)
 ]);

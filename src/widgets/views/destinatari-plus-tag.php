@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Lombardia Informatica S.p.A.
  * OPEN 2.0
@@ -8,18 +7,18 @@
  * @package    lispa\amos\cwh
  * @category   CategoryName
  */
-
 //\lispa\amos\cwh\assets\CwhAsset::register($this);
 
 $scope = null;
 $module = \lispa\amos\cwh\AmosCwh::getInstance();
-if(!is_null($module))
-{
-    $scope = $module->getCwhScope();
+if (!is_null($module)) {
+  $scope = $module->getCwhScope();
 }
-$scopeFilter = (empty($scope))? false : true;
-if(!$scopeFilter) {
-    $this->registerJs(<<<JS
+
+$scopeFilter = (empty($scope)) ? false : true;
+
+if (!$scopeFilter) {
+  $this->registerJs(<<<JS
     var resetTag = function(tag) {
          tag.removeClass('focused');
          tag.find('.red').remove();
@@ -48,7 +47,7 @@ if(!$scopeFilter) {
          }       
     }
 JS
-);
+  );
 }
 
 //check if network scope is set, in this case change the input value of publication rule
@@ -102,62 +101,46 @@ $("form").on('submit', function(e) {
 
 JS
 );
-
 ?>
-
-
-
 <div class="cwh-section">
-
-    <?php
-
-    $moduleCwh  = \Yii::$app->getModule('cwh');
-    if (isset($moduleCwh) && in_array(get_class($model), $moduleCwh->modelsEnabled) && $moduleCwh->behaviors) {
-        echo lispa\amos\cwh\widgets\Cwh3ColsWidget::widget([
-            'form' => \yii\base\Widget::$stack[0],
-            'model' => $model,
-            //'layout' => '<div class=\"col-xs-12\">{regolaPubblicazione}</div><div class=\"col-xs-12\">{destinatari}</div>',
-            'regolaPubblicazione' => [
-                'data' => \lispa\amos\cwh\models\CwhPubblicazioni::find()->asArray()->all()
-            ],
-            'renderCols' => true
-        ]);
-    }
-
-    ?>
-
+<?php
+if (isset($moduleCwh) && in_array(get_class($model), $moduleCwh->modelsEnabled) && $moduleCwh->behaviors) {
+  echo lispa\amos\cwh\widgets\Cwh3ColsWidget::widget([
+    'form' => \yii\base\Widget::$stack[0],
+    'model' => $model,
+    'regolaPubblicazione' => [
+      'data' => \lispa\amos\cwh\models\CwhPubblicazioni::find()->asArray()->all()
+    ],
+    'renderCols' => true,
+    'moduleCwh' => $moduleCwh
+  ]);
+}
+?>
 </div>
 
 <div class="tag-section">
-
-    <?php
-
-    $moduleTag = \Yii::$app->getModule('tag');
-    if (isset($moduleTag) && in_array(get_class($model), $moduleTag->modelsEnabled) && $moduleTag->behaviors) {
-        echo \lispa\amos\tag\widgets\TagWidget::widget([
-            'model' => $model,
-            'attribute' => 'tagValues',
-            'form' => \yii\base\Widget::$stack[0]
-        ]);
-    }
-
-    ?>
-
+<?php
+  $moduleTag = \Yii::$app->getModule('tag');
+  if (isset($moduleTag) && in_array(get_class($model), $moduleTag->modelsEnabled) && $moduleTag->behaviors) {
+    echo \lispa\amos\tag\widgets\TagWidget::widget([
+      'model' => $model,
+      'attribute' => 'tagValues',
+      'form' => \yii\base\Widget::$stack[0],
+      'moduleCwh' => $moduleCwh
+    ]);
+  }
+?>
 </div>
 
 <div class="check-recipients-section">
-
-    <?php
-
-    $moduleCwh  = \Yii::$app->getModule('cwh');
-    if (isset($moduleCwh) && in_array(get_class($model), $moduleCwh->modelsEnabled) && $moduleCwh->behaviors) {
-        echo lispa\amos\cwh\widgets\Cwh3ColsWidget::widget([
-            'form' => \yii\base\Widget::$stack[0],
-            'model' => $model,
-            'renderCols' => false
-        ]);
-    }
-
-    ?>
-
+<?php
+  if (isset($moduleCwh) && in_array(get_class($model), $moduleCwh->modelsEnabled) && $moduleCwh->behaviors) {
+    echo lispa\amos\cwh\widgets\Cwh3ColsWidget::widget([
+      'form' => \yii\base\Widget::$stack[0],
+      'model' => $model,
+      'renderCols' => false,
+      'moduleCwh' => $moduleCwh
+    ]);
+  }
+?>
 </div>

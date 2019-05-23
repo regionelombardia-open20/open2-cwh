@@ -15,33 +15,41 @@ use yii\base\Widget;
 use yii\helpers\ArrayHelper;
 use lispa\amos\cwh\AmosCwh;
 
+class DestinatariPlusTagWidget extends Widget {
 
-class DestinatariPlusTagWidget extends Widget
-{
+  public
+    $model,
+    $moduleCwh,
+    $scope
+  ;
 
-    public $model;
+  /**
+   * 
+   * @return type
+   */
+  public function run() {
+    
+    return $this->render(
+      'destinatari-plus-tag',
+      [
+        'model' => $this->model,
+        'moduleCwh' => $this->moduleCwh
+      ]
+    );
+  }
 
-    /**
-     * @return \yii\db\ActiveRecord
-     */
-    public function getModel()
-    {
-        return $this->model;
-    }
+  /**
+   * @return \yii\db\ActiveRecord
+   */
+  public function getModel() {
+    return $this->model;
+  }
 
-    /**
-     * @param \yii\db\ActiveRecord $model
-     */
-    public function setModel($model)
-    {
-        $this->model = $model;
-    }
-
-    public function run()
-    {
-        return $this->render('destinatari-plus-tag', [
-            'model' => $this->model
-        ]);
-    }
+  /**
+   * @param \yii\db\ActiveRecord $model
+   */
+  public function setModel($model) {
+    $this->model = $model;
+  }
 
 }

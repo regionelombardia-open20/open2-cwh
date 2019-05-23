@@ -59,7 +59,7 @@ class BaseEntitiesHelper
                     ->name('*.php')
                     ->notPath('migration')
                     ->contains($moduleName)
-                    ->notContains('search')
+                    ->notContains('\search;')
                     ->in($module->getBasePath())
             );
 

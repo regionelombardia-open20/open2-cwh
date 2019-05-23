@@ -16,266 +16,259 @@ use yii\base\Widget;
 use yii\helpers\ArrayHelper;
 use lispa\amos\cwh\AmosCwh;
 
+class Cwh3ColsWidget extends Widget {
 
-class Cwh3ColsWidget extends Widget
-{
-    public $layout = "<div class=\"col-xs-12\">{validatori}</div><div class=\"col-xs-12\">{previewSign}</div><div class=\"col-xs-12\">{regolaPubblicazione}</div><div class=\"col-xs-12\">{destinatari}</div>";
-    protected $regolaPubblicazione = [];
-    protected $validatori = [];
-    protected $destinatari = [];
-    /**
-     * @var \yii\widgets\ActiveForm $form
-     */
-    protected $form = null;
-
-    /*
-     * SIM
-     */
-    public $renderCols = true;
-
-
-    //protected $layout = "<div class=\"col-xs-12\">{regolaPubblicazione}</div><div class=\"col-xs-12\">{destinatari}</div><div class=\"col-xs-12\">{validatori}</div>";
-    /**
-     * @var \yii\db\ActiveRecord $model
-     */
-    protected $model = null;
-
-    public function init()
-    {
-
-        /**
-         *
-         *
-         * public $validatoriEnabled = true;
-         * public $destinatariEnabled = true;
-         * public $pubblicazioneEnabled = true;
-         */
-
-        $regolaPubblicazione = "{regolaPubblicazione}";
-        $destinatari = "{destinatari}";
-        $validatori = "{validatori}";
-        $recipientsCheck = "{recipientsCheck}";
-        if (!\Yii::$app->getModule('cwh')->validatoriEnabled) {
-            $validatori = '';
-        }
-
-        if (!\Yii::$app->getModule('cwh')->destinatariEnabled) {
-            $destinatari = '';
-            $recipientsCheck = '';
-        }
-
-        if (!\Yii::$app->getModule('cwh')->regolaPubblicazioneEnabled) {
-            $regolaPubblicazione = '';
-            $recipientsCheck = '';
-        }
-
-        parent:: init();
+  public
+    $layout = "<div class=\"col-xs-12\">{validatori}</div><div class=\"col-xs-12\">{previewSign}</div><div class=\"col-xs-12\">{regolaPubblicazione}</div><div class=\"col-xs-12\">{destinatari}</div>",
+    $renderCols = true,
+    
+    $moduleCwh
+  ;
+  
+  protected 
+    $regolaPubblicazione = [],
+    $validatori = [],
+    $destinatari = [],
+    $form = null,         // \yii\widgets\ActiveForm $form
+    $model = null,         // @var \yii\db\ActiveRecord $model
+    $baseConfigRules = []
+  ;
+  
+  /**
+   *
+   * public $validatoriEnabled = true;
+   * public $destinatariEnabled = true;
+   * public $pubblicazioneEnabled = true;
+   */
+  public function init() {
+    $this->baseConfigRules = [
+      'form' => $this->form,
+      'model' => $this->model,
+      'moduleCwh' => $this->moduleCwh
+    ];
+    
+    // DA QUI A... SERVE A NULLA SEMBRA...
+    $regolaPubblicazione = "{regolaPubblicazione}";
+    $destinatari = "{destinatari}";
+    $validatori = "{validatori}";
+    $recipientsCheck = "{recipientsCheck}";
+    
+    if (!$this->moduleCwh->validatoriEnabled) {
+      $validatori = '';
     }
 
-    /**
-     * @return string
-     */
-    public function getLayout()
-    {
-        return $this->layout;
+    if (!$this->moduleCwh->destinatariEnabled) {
+      $destinatari = '';
+      $recipientsCheck = '';
     }
 
-    /**
-     * @param string $layout
-     */
-    public function setLayout($layout)
-    {
-        $this->layout = $layout;
+    if (!$this->moduleCwh->regolaPubblicazioneEnabled) {
+      $regolaPubblicazione = '';
+      $recipientsCheck = '';
     }
+    // A QUI... INTANTO LO LASCIAMO TBD capire a cosa e se serve
 
-    /**
-     * @param null $destinatari
-     */
-    public function setEditori($destinatari)
-    {
-        $this->destinatari = $destinatari;
+    parent:: init();
+  }
+
+  /**
+   * 
+   * @return type
+   */
+  public function run() {
+    $layoutToRender = '';
+
+    if ($this->renderCols) {
+      $layoutToRender = $this->render('layouts/3cols');
+    } else {
+      $layoutToRender = $this->render('layouts/check-recipients');
     }
+    
+    $content = preg_replace_callback("/{\\w+}/", function ($matches) {
+      $content = $this->renderSection($matches[0]);
 
-    public function run()
-    {
-        $layoutToRender = "";
+      return $content === false ? $matches[0] : $content;
+    }, $layoutToRender);
 
-        if($this->renderCols) {
-            $layoutToRender = $this->render('layouts/3cols');
-        } else {
-            $layoutToRender = $this->render('layouts/check-recipients');
-        }
-        $content = preg_replace_callback("/{\\w+}/", function ($matches) {
-            $content = $this->renderSection($matches[0]);
+    return $content;
+  }
 
-            return $content === false ? $matches[0] : $content;
-        }, $layoutToRender);
+  /**
+   * @return string
+   */
+  public function getLayout() {
+    return $this->layout;
+  }
 
-        return $content;
+  /**
+   * @param string $layout
+   */
+  public function setLayout($layout) {
+    $this->layout = $layout;
+  }
+
+  /**
+   * @param null $destinatari
+   */
+  public function setEditori($destinatari) {
+    $this->destinatari = $destinatari;
+  }
+
+  /**
+   * Renders a section of the specified name.
+   * If the named section is not supported, false will be returned.
+   * @param string $name the section name, e.g., `{summary}`, `{items}`.
+   * @return string|boolean the rendering result of the section, or false if the named section is not supported.
+   */
+  public function renderSection($name) {
+    switch ($name) {
+      case '{regolaPubblicazione}':
+        return $this->renderRegolaPubblicazione();
+      case '{destinatari}':
+        return $this->renderEditori();
+      case '{validatori}':
+        return $this->renderValidatori();
+      case '{recipientsCheck}':
+        return $this->renderRecipientsCheck();
+      case '{previewSign}':
+        return $this->renderPreviewSign();
+      default:
+        return false;
     }
+  }
 
-    /**
-     * Renders a section of the specified name.
-     * If the named section is not supported, false will be returned.
-     * @param string $name the section name, e.g., `{summary}`, `{items}`.
-     * @return string|boolean the rendering result of the section, or false if the named section is not supported.
-     */
-    public function renderSection($name)
-    {
-        switch ($name) {
-            case '{regolaPubblicazione}':
-                return $this->renderRegolaPubblicazione();
-            case '{destinatari}':
-                return $this->renderEditori();
-            case '{validatori}':
-                return $this->renderValidatori();
-            case '{recipientsCheck}':
-                return $this->renderRecipientsCheck();
-            case '{previewSign}':
-                return $this->renderPreviewSign();
-            default:
-                return false;
-        }
-    }
+  /**
+   * 
+   * @return type
+   */
+  protected function renderRegolaPubblicazione() {
+    return RegolaPubblicazioneNEW::widget(
+      ArrayHelper::merge(
+        $this->baseConfigRules, 
+        $this->getRegolaPubblicazione()
+      )
+    );
+  }
 
-    protected function renderRegolaPubblicazione()
-    {
+  /**
+   * @return null
+   */
+  public function getForm() {
+    return $this->form;
+  }
 
-        $configRegolaPubblicazione = [
-            'form' => $this->getForm(),
-            'model' => $this->getModel(),
-        ];
+  /**
+   * @param null $form
+   */
+  public function setForm($form) {
+    $this->form = $form;
+  }
 
-        $configRegolaPubblicazione = ArrayHelper::merge($configRegolaPubblicazione, $this->getRegolaPubblicazione());
+  /**
+   * @return \yii\db\ActiveRecord
+   */
+  public function getModel() {
+    return $this->model;
+  }
 
-        return RegolaPubblicazioneNEW::widget($configRegolaPubblicazione);
-    }
+  /**
+   * @param \yii\db\ActiveRecord $model
+   */
+  public function setModel($model) {
+    $this->model = $model;
+  }
 
-    /**
-     * @return null
-     */
-    public function getForm()
-    {
-        return $this->form;
-    }
+  /**
+   * @return null
+   */
+  public function getRegolaPubblicazione() {
+    return $this->regolaPubblicazione;
+  }
 
-    /**
-     * @param null $form
-     */
-    public function setForm($form)
-    {
-        $this->form = $form;
-    }
+  /**
+   * @param null $regolaPubblicazione
+   */
+  public function setRegolaPubblicazione($regolaPubblicazione) {
+    $this->regolaPubblicazione = $regolaPubblicazione;
+  }
 
-    /**
-     * @return \yii\db\ActiveRecord
-     */
-    public function getModel()
-    {
-        return $this->model;
-    }
+  /**
+   * 
+   * @return type
+   */
+  protected function renderEditori() {
+    return DestinatariNEW::widget(
+      ArrayHelper::merge(
+        $this->baseConfigRules, 
+        $this->getDestinatari()
+      )
+    );
+  }
 
-    /**
-     * @param \yii\db\ActiveRecord $model
-     */
-    public function setModel($model)
-    {
-        $this->model = $model;
-    }
+  /**
+   * @return null
+   */
+  public function getDestinatari() {
+    return $this->destinatari;
+  }
 
-    /**
-     * @return null
-     */
-    public function getRegolaPubblicazione()
-    {
-        return $this->regolaPubblicazione;
-    }
+  /**
+   * @param array $destinatari
+   */
+  public function setDestinatari($destinatari) {
+    $this->destinatari = $destinatari;
+  }
 
-    /**
-     * @param null $regolaPubblicazione
-     */
-    public function setRegolaPubblicazione($regolaPubblicazione)
-    {
-        $this->regolaPubblicazione = $regolaPubblicazione;
-    }
+  /**
+   * 
+   * @return type
+   */
+  protected function renderValidatori() {
+    return ValidatoriNEW::widget(
+      ArrayHelper::merge(
+        $this->baseConfigRules, 
+        $this->getValidatori()
+      )
+    );
+  }
 
-    protected function renderEditori()
-    {
-        $configEditori = [
-            'form' => $this->getForm(),
-            'model' => $this->getModel(),
-        ];
+  /**
+   * @return null
+   */
+  public function getValidatori() {
+    return $this->validatori;
+  }
 
-        $configEditori = ArrayHelper::merge($configEditori, $this->getDestinatari());
+  /**
+   * @param null $validatori
+   */
+  public function setValidatori($validatori) {
+    $this->validatori = $validatori;
+  }
 
-        return DestinatariNEW::widget($configEditori);
-    }
+  /**
+   * 
+   * @return type
+   */
+  protected function renderRecipientsCheck() {
+    return RecipientsCheckNEW::widget($this->baseConfigRules);
+  }
 
-    /**
-     * @return null
-     */
-    public function getDestinatari()
-    {
-        return $this->destinatari;
-    }
+  /**
+   * @return string
+   */
+  protected function renderPreviewSign() {
+    $profile = UserProfile::findOne(['user_id' => $this->model->created_by]);
+    
+    return $this->render(
+      'preview_sign',
+      [
+        'model' => $this->model,
+        'profile' => $profile
+      ]
+    );
+    
 
-    /**
-     * @param array $destinatari
-     */
-    public function setDestinatari($destinatari)
-    {
-        $this->destinatari = $destinatari;
-    }
-
-    protected function renderValidatori()
-    {
-        $configValidatori = [
-            'form' => $this->getForm(),
-            'model' => $this->getModel(),
-        ];
-
-        $configValidatori = ArrayHelper::merge($configValidatori, $this->getValidatori());
-
-        return ValidatoriNEW::widget($configValidatori);
-    }
-
-    /**
-     * @return null
-     */
-    public function getValidatori()
-    {
-        return $this->validatori;
-    }
-
-    /**
-     * @param null $validatori
-     */
-    public function setValidatori($validatori)
-    {
-        $this->validatori = $validatori;
-    }
-
-    protected function renderRecipientsCheck()
-    {
-        $configRecipientsCheck = [
-            'form' => $this->getForm(),
-            'model' => $this->getModel(),
-        ];
-        return RecipientsCheckNEW::widget($configRecipientsCheck);
-    }
-
-
-    /**
-     * @return string
-     */
-    protected function renderPreviewSign()
-    {
-        $model = $this->getModel();
-        $profile = UserProfile::findOne(['user_id' => $model->created_by]);
-        return $this->render('preview_sign', [
-            'model' => $this->getModel(),
-            'profile' => $profile
-        ]);
-    }
+  }
 
 }

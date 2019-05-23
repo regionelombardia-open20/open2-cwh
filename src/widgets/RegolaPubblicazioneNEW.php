@@ -15,123 +15,108 @@ use yii\helpers\ArrayHelper;
  * Class RegolaPubblicazione
  * @package lispa\amos\cwh\widgets
  */
-class RegolaPubblicazioneNEW extends Widget
-{
-    protected $data = [];
+class RegolaPubblicazioneNEW extends Widget {
 
-    protected $default = null;
-    /**
-     * @var \yii\widgets\ActiveForm $form
-     */
-    protected $form = null;
+  public
+    $moduleCwh;
+  
+  protected
+    $data = [],
+    $default = null,
+    $form = null,           // @var \yii\widgets\ActiveForm $form
+    $model = null,          // @var \yii\db\ActiveRecord $model
+    $nameField = null,      // @var string
+    
+    $scope,
+    $scopeFilter
+  ;
+  
+  
+  
+  /**
+   * @inheritdoc
+   */
+  public function init() {
+    parent::init();
 
-    /**
-     * @var \yii\db\ActiveRecord $model
-     */
-    protected $model = null;
+    // if we are working under a specific network scope (eg. community dashboard)
+    $this->scope = $this->moduleCwh->getCwhScope();
+    $this->scopeFilter = (empty($this->scope) ? false : true);
 
-    /**
-     * @var string
-     */
-    protected $nameField = null;
+    $regolePubblicazione = CwhUtil::getPublicationRulesQuery()
+      ->andWhere(['not', ['id' => 5]])
+      ->all();
 
-    /**
-     * @inheritdoc
-     */
-    public function init()
-    {
-        parent::init();
-
-        $cwhModule = AmosCwh::getInstance();
-        $scope = $cwhModule->getCwhScope();
-
-        //if we are working under a specific network scope (eg. community dashboard)
-        $scopeFilter = (empty($scope) ? false : true);
-
-        $regolePubblicazioneQuery = CwhUtil::getPublicationRulesQuery();
-        $regolePubblicazioneQuery->andWhere(['not', ['id' => 5]]);
-        $regolePubblicazione = $regolePubblicazioneQuery->all();
-        //if working in a network scope only rules based on the network membership are available
-        if ($scopeFilter) {
-            $this->setDefault($regolePubblicazione[0]);
-        }
-        $this->setData($regolePubblicazione);
-
-        if (!isset($this->nameField)) {
-            $refClass = new \ReflectionClass(get_class($this->getModel()));
-            $this->setNameField($refClass->getShortName());
-        }
+    // if working in a network scope only rules based on the network membership are available
+    if ($this->scopeFilter) {
+      $this->setDefault($regolePubblicazione[0]);
     }
 
-    /**
-     * @return \yii\db\ActiveRecord
-     */
-    public function getModel()
-    {
-        return $this->model;
+    $this->setData($regolePubblicazione);
+
+    if (!isset($this->nameField)) {
+      // $refClass = new \ReflectionClass(get_class($this->getModel()));
+      $refClass = new \ReflectionClass(get_class($this->model));
+      $this->setNameField($refClass->getShortName());
+    }
+  }
+
+  /**
+   * 
+   * @return type
+   */
+  public function run() {
+    // $model = $this->getModel();
+    if ($this->model instanceof ModelLabelsInterface) {
+      $labelSuffix = ' ' . $this->model->getGrammar()->getArticleSingular() . ' ' . $this->model->getGrammar()->getModelSingularLabel();
+    } else {
+      $labelSuffix = ' ' . AmosCwh::t('amoscwh', 'il contenuto');
     }
 
-    /**
-     * @param \yii\db\ActiveRecord $model
-     */
-    public function setModel($model)
-    {
-        $this->model = $model;
+    $pluginName = '';
+
+    // if we are working under a specific network scope (eg. community dashboard)
+    // $scopeFilter = (empty($scope) ? false : true);
+
+    $data = ArrayHelper::map($this->getData(), 'id', 'nome');
+
+    $ruleOneEnabled = array_key_exists(CwhRegolePubblicazione::ALL_USERS, $data);
+    $ruleTwoEnabled = array_key_exists(CwhRegolePubblicazione::ALL_USERS_WITH_TAGS, $data);
+    $ruleThreeEnabled = array_key_exists(CwhRegolePubblicazione::ALL_USERS_IN_DOMAINS, $data);
+    $ruleFourEnabled = array_key_exists(CwhRegolePubblicazione::ALL_USERS_IN_DOMAINS_WITH_TAGS, $data);
+
+    if ($ruleThreeEnabled) {
+      $data[CwhRegolePubblicazione::ALL_USERS_IN_DOMAINS] = AmosCwh::t('amoscwh', 'Tutti gli utenti');
     }
 
-    public function run()
-    {
-        $model = $this->getModel();
-        if ($model instanceof ModelLabelsInterface) {
-            $labelSuffix = ' ' . $model->getGrammar()->getArticleSingular() . ' ' . $model->getGrammar()->getModelSingularLabel();
-        } else {
-            $labelSuffix = ' ' . AmosCwh::t('amoscwh', 'il contenuto');
+    if ($ruleFourEnabled) {
+      $data[CwhRegolePubblicazione::ALL_USERS_IN_DOMAINS_WITH_TAGS] = AmosCwh::t('amoscwh', 'Solo gli utenti per aree di interesse');
+    }
+
+    $publicationRules = [];
+
+    if (!$this->scopeFilter && empty($this->model->destinatari)) {
+      $enabledRules = array_keys($data);
+      foreach ($enabledRules as $enabledRule) {
+        if ($enabledRule <= CwhRegolePubblicazione::ALL_USERS_WITH_TAGS) {
+          $publicationRules[$enabledRule] = $data[$enabledRule];
         }
+      }
+      $regolaPubblicazioneDefault = $ruleOneEnabled ? 1 : 2;
+    } else {
+      $publicationRules = array_unique($data);
+      $regolaPubblicazioneDefault = $ruleThreeEnabled ? 1 : 2;
+    }
 
-        $pluginName = "";
+    $rules = [
+      1 => AmosCwh::t('amoscwh', 'Tutti gli utenti'),
+    ];
+    if ($ruleTwoEnabled || $ruleFourEnabled) {
+      $rules[2] = AmosCwh::t('amoscwh', 'Solo gli utenti per aree di interesse');
+    }
 
-        $cwhModule = AmosCwh::getInstance();
-        $scope = $cwhModule->getCwhScope();
-
-        //if we are working under a specific network scope (eg. community dashboard)
-        $scopeFilter = (empty($scope) ? false : true);
-
-        $data = ArrayHelper::map($this->getData(), 'id', 'nome');
-
-        $ruleOneEnabled =  array_key_exists(CwhRegolePubblicazione::ALL_USERS, $data);
-        $ruleTwoEnabled = array_key_exists(CwhRegolePubblicazione::ALL_USERS_WITH_TAGS, $data);
-        $ruleThreeEnabled = array_key_exists(CwhRegolePubblicazione::ALL_USERS_IN_DOMAINS, $data);
-        $ruleFourEnabled = array_key_exists(CwhRegolePubblicazione::ALL_USERS_IN_DOMAINS_WITH_TAGS, $data);
-        if($ruleThreeEnabled){
-            $data[CwhRegolePubblicazione::ALL_USERS_IN_DOMAINS] = AmosCwh::t('amoscwh', 'Tutti gli utenti');
-        }
-        if($ruleFourEnabled){
-            $data[CwhRegolePubblicazione::ALL_USERS_IN_DOMAINS_WITH_TAGS] = AmosCwh::t('amoscwh', 'Solo gli utenti per aree di interesse');
-        }
-        $publicationRules = [];
-
-        if(!$scopeFilter && empty($model->destinatari)){
-            $enabledRules = array_keys($data);
-            foreach ($enabledRules as $enabledRule){
-                if($enabledRule <= CwhRegolePubblicazione::ALL_USERS_WITH_TAGS){
-                    $publicationRules[$enabledRule] = $data[$enabledRule];
-                }
-            }
-            $regolaPubblicazioneDefault = $ruleOneEnabled ? 1 : 2;
-        }else {
-            $publicationRules = array_unique($data);
-            $regolaPubblicazioneDefault = $ruleThreeEnabled ? 1 : 2;
-        }
-
-        $rules = [
-            1 => AmosCwh::t('amoscwh', 'Tutti gli utenti'),
-        ];
-        if($ruleTwoEnabled || $ruleFourEnabled){
-            $rules[2] = AmosCwh::t('amoscwh', 'Solo gli utenti per aree di interesse');
-        }
-        if (count($this->getData()) > 1) {
-
-            $js = <<<JS
+    if (count($this->getData()) > 1) {
+      $js = <<<JS
                 
                 (function($) {
                     var origAppend = $.fn.append;
@@ -160,12 +145,12 @@ class RegolaPubblicazioneNEW extends Widget
 
 JS;
 
-            if(!$ruleOneEnabled) {
-                $this->view->registerJs($js);
-            }
+      if (!$ruleOneEnabled) {
+        $this->view->registerJs($js);
+      }
 
-            if(!empty($model->destinatari) && !$scopeFilter) {
-                $this->view->registerJs(<<<JS
+      if (!empty($this->model->destinatari) && !$this->scopeFilter) {
+        $this->view->registerJs(<<<JS
                  var optVal1 = $("#cwh-regola_pubblicazione").children("option[value=1]");
                     
                     if($(".field-cwh-destinatari").find(".select2-selection__choice").length <= 0){
@@ -174,127 +159,143 @@ JS;
                         }
                     }
 JS
-);
-            }
+        );
+      }
 
-            if(!$scopeFilter && !$ruleOneEnabled && !in_array($model->regola_pubblicazione, [CwhRegolePubblicazione::ALL_USERS_IN_DOMAINS, CwhRegolePubblicazione::ALL_USERS_IN_DOMAINS_WITH_TAGS])){
-                $this->view->registerJs(<<<JS
+      if (!$this->scopeFilter 
+        && !$ruleOneEnabled 
+        && !in_array(
+          $this->model->regola_pubblicazione,
+          [
+            CwhRegolePubblicazione::ALL_USERS_IN_DOMAINS,
+            CwhRegolePubblicazione::ALL_USERS_IN_DOMAINS_WITH_TAGS
+          ]
+          )
+        ) {
+          $this->view->registerJs(<<<JS
                     var optV1 = $("#cwh-regola_pubblicazione").children("option[value=1]");
                     if($(".field-cwh-destinatari").find(".select2-selection__choice").length <= 0){
                         $(optV1).remove();
                     }
 JS
-);
-            }
+        );
+      }
 
-            if($model->regola_pubblicazione == 3){
-                $model->regola_pubblicazione = 1;
-            }
-            if($model->regola_pubblicazione == 4){
-                $model->regola_pubblicazione = 2;
-            }
+      if ($this->model->regola_pubblicazione == 3) {
+        $this->model->regola_pubblicazione = 1;
+      }
+      
+      if ($this->model->regola_pubblicazione == 4) {
+        $this->model->regola_pubblicazione = 2;
+      }
 
-            $widget = '
+      $widget = '
                 <div class="form-group">
                     <div class="row">
-                        <div class="col-xs-12">'.Html::label(AmosCwh::t('amoscwh', 'Chi può visualizzare ') . $labelSuffix,null,['class' => 'control-label']) . '</div>
+                        <div class="col-xs-12">' . Html::label(AmosCwh::t('amoscwh', 'Chi può visualizzare ') . $labelSuffix, null, ['class' => 'control-label']) . '</div>
                         <div class="col-xs-12">' .
-                            Select2::widget([
-                                'name' => 'regola',
-                                'value' => $model->regola_pubblicazione ? $model->regola_pubblicazione : $regolaPubblicazioneDefault,
-                                'data' => $rules,
-                                'options' => [
-                                    'placeholder' => AmosCwh::t('amoscwh','#3col_recipients_placeholder'),
-                                    'name' => $this->getNameField() . '[regola_pubblicazione]',
-                                    'id' => 'cwh-regola_pubblicazione',
-                                    'value' => $this->getDefault(),
-                                ]
-                            ]
-
-                        ) . '
+        Select2::widget([
+          'name' => 'regola',
+          'value' => $this->model->regola_pubblicazione ? $this->model->regola_pubblicazione : $regolaPubblicazioneDefault,
+          'data' => $rules,
+          'options' => [
+            'placeholder' => AmosCwh::t('amoscwh', '#3col_recipients_placeholder'),
+            'name' => $this->getNameField() . '[regola_pubblicazione]',
+            'id' => 'cwh-regola_pubblicazione',
+            'value' => $this->getDefault(),
+          ]
+          ]
+        ) . '
                         </div>
-                    </div>' . $this->getForm()->field($model, 'regola_pubblicazione')->hiddenInput([
-                    'value' => $model->regola_pubblicazione ? $model->regola_pubblicazione : $regolaPubblicazioneDefault,])->label(false) .
-                '</div>';
-        } else {
-            $regolaDiPubblicazioneField = $this->getForm()->field($model,
-                'regola_pubblicazione')->label(AmosCwh::t('amoscwh', 'Chi può visualizzare '). $labelSuffix); // TODO traduzione corretta
-            $RegolaDiPubblicazione = $this->getData()[0];
+                    </div>' . $this->getForm()->field($this->model, 'regola_pubblicazione')->hiddenInput([
+          'value' => $this->model->regola_pubblicazione ? $this->model->regola_pubblicazione : $regolaPubblicazioneDefault,])->label(false) .
+        '</div>';
+    } else {
+      $regolaDiPubblicazioneField = $this->getForm()->field($this->model,
+          'regola_pubblicazione')->label(AmosCwh::t('amoscwh', 'Chi può visualizzare ') . $labelSuffix); // TODO traduzione corretta
+      $RegolaDiPubblicazione = $this->getData()[0];
 
-            $regolaDiPubblicazioneField->template = "
+      $regolaDiPubblicazioneField->template = "
                 <div class=\"row\">
                     <div class=\"col-xs-6\">{label}</div>
                     <div class=\"col-xs-6\"> <span class=\"tooltip-field pull-right\"> {hint} </span> <span class=\"tooltip-error-field pull-right\"> {error} </span> </div>
                     <div class=\"col-xs-12\"><strong>" . $RegolaDiPubblicazione['nome'] . "</strong>{input}</div>
                 </div>";
 
-            $widget = $regolaDiPubblicazioneField->hiddenInput(['value' => $RegolaDiPubblicazione['id'], 'id' => 'cwh-regola_pubblicazione',]);
-        }
-
-        return $widget;
+      $widget = $regolaDiPubblicazioneField->hiddenInput(['value' => $RegolaDiPubblicazione['id'], 'id' => 'cwh-regola_pubblicazione',]);
     }
 
-    /**
-     * @return array
-     */
-    public function getData()
-    {
-        return $this->data;
-    }
+    return $widget;
+  }
 
-    /**
-     * @param array $data
-     */
-    public function setData($data)
-    {
-        $this->data = $data;
-    }
+  /**
+   * @return \yii\db\ActiveRecord
+   */
+  public function getModel() {
+    return $this->model;
+  }
 
-    /**
-     * @return \yii\widgets\ActiveForm
-     */
-    public function getForm()
-    {
-        return $this->form;
-    }
+  /**
+   * @param \yii\db\ActiveRecord $model
+   */
+  public function setModel($model) {
+    $this->model = $model;
+  }
 
-    /**
-     * @param \yii\widgets\ActiveForm $form
-     */
-    public function setForm($form)
-    {
-        $this->form = $form;
-    }
+  /**
+   * @return array
+   */
+  public function getData() {
+    return $this->data;
+  }
 
-    /**
-     * @return string
-     */
-    public function getNameField()
-    {
-        return $this->nameField;
-    }
+  /**
+   * @param array $data
+   */
+  public function setData($data) {
+    $this->data = $data;
+  }
 
-    /**
-     * @param string $nameField
-     */
-    public function setNameField($nameField)
-    {
-        $this->nameField = $nameField;
-    }
+  /**
+   * @return \yii\widgets\ActiveForm
+   */
+  public function getForm() {
+    return $this->form;
+  }
 
-    /**
-     * @return null
-     */
-    public function getDefault()
-    {
-        return $this->default;
-    }
+  /**
+   * @param \yii\widgets\ActiveForm $form
+   */
+  public function setForm($form) {
+    $this->form = $form;
+  }
 
-    /**
-     * @param null $default
-     */
-    public function setDefault($default)
-    {
-        $this->default = $default;
-    }
+  /**
+   * @return string
+   */
+  public function getNameField() {
+    return $this->nameField;
+  }
+
+  /**
+   * @param string $nameField
+   */
+  public function setNameField($nameField) {
+    $this->nameField = $nameField;
+  }
+
+  /**
+   * @return null
+   */
+  public function getDefault() {
+    return $this->default;
+  }
+
+  /**
+   * @param null $default
+   */
+  public function setDefault($default) {
+    $this->default = $default;
+  }
+
 }

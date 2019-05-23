@@ -81,12 +81,11 @@ class CwhPubblicazioni extends \lispa\amos\cwh\models\base\CwhPubblicazioni
      * This method will be removed.
      *
      * @param Record $model
-     * @return string
+     * @return string idPubblicazione
      */
     public static function getUniqueIdFor(Record $model)
     {
-        $idPubblicazione = $model->tableName() . '-' . $model->getPrimaryKey();
-        return $idPubblicazione;
+        return $model->tableName() . '-' . $model->getPrimaryKey();
     }
 
     /**
@@ -95,7 +94,8 @@ class CwhPubblicazioni extends \lispa\amos\cwh\models\base\CwhPubblicazioni
     public function aggiornaEditori($editoriCollection)
     {
         $this->unlinkAll('destinatari', true);
-        if (count($editoriCollection)) {
+        
+        if ($editoriCollection) {
             $EditoriQuery = CwhNodi::find()->andWhere(['IN', 'id', $editoriCollection]);
             $Editori = $EditoriQuery->all();
             foreach ($Editori as $Editore) {
@@ -109,12 +109,13 @@ class CwhPubblicazioni extends \lispa\amos\cwh\models\base\CwhPubblicazioni
      */
     public function aggiornaValidatori($validatoriCollection)
     {
+        
+        
         $this->unlinkAll('validatori', true);
 
-        if (count($validatoriCollection)) {
+        if ($validatoriCollection) {
             $ValidatoriQuery = CwhNodi::find()->andWhere(['IN', 'id', $validatoriCollection]);
             $Validatori = $ValidatoriQuery->all();
-
             foreach ($Validatori as $Validatore) {
                 $this->link('validatori', $Validatore);
             }

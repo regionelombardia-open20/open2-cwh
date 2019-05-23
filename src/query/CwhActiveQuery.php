@@ -129,10 +129,10 @@ class CwhActiveQuery extends ActiveQuery
             $user = Yii::$app->getUser();
             if(!is_null($user) && ! $user->isGuest) {
                 $this->setUserId($user->getId());
-                $this->setUserProfile(User::findOne($this->getUserId())->getProfile());
+                $this->setUserProfile($this->getUserProfile());
             }
         }else{
-            $this->setUserProfile(User::findOne($this->getUserId())->getProfile());
+            $this->setUserProfile($this->getUserProfile());
         }
     }
 
@@ -160,9 +160,16 @@ class CwhActiveQuery extends ActiveQuery
     /**
      * @return mixed
      */
-    public function getUserProfile(){
-        if(empty(self::$userProfile)){
-            self::$userProfile = User::findOne($this->getUserId())->getProfile();
+    public function getUserProfile()
+    {
+        if(empty(self::$userProfile))
+        {
+            $adminModule = Yii::$app->getModule('admin');
+            if(!is_null($adminModule))
+            {
+                $usermodel = $adminModule->model('UserProfile');
+                self::$userProfile = $usermodel::findOne(['user_id' => $this->getUserId()]);
+            }
         }
         return  self::$userProfile;
     }

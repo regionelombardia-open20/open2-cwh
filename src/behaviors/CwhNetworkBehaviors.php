@@ -454,5 +454,4 @@ class CwhNetworkBehaviors extends AttributeBehavior
         ]);
         return $query;
     }
-
 }

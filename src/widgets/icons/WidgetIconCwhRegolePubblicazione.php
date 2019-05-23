@@ -14,6 +14,7 @@ namespace lispa\amos\cwh\widgets\icons;
 use lispa\amos\core\icons\AmosIcons;
 use lispa\amos\core\widget\WidgetIcon;
 use lispa\amos\cwh\AmosCwh;
+
 use Yii;
 use yii\helpers\ArrayHelper;
 
@@ -23,13 +24,12 @@ use yii\helpers\ArrayHelper;
  *
  * @package lispa\amos\cwh\widgets\icons
  */
-class WidgetIconCwhRegolePubblicazione extends WidgetIcon
-{
+class WidgetIconCwhRegolePubblicazione extends WidgetIcon {
+
     /**
      * Init of the class, set of general configurations
      */
-    public function init()
-    {
+    public function init() {
         parent::init();
 
         $this->setLabel(AmosCwh::t('amoscwh', 'CWH regole di pubblicazione'));
@@ -39,9 +39,16 @@ class WidgetIconCwhRegolePubblicazione extends WidgetIcon
         $this->setCode('CWH_REGOLE_PUBBLICAZIONE');
         $this->setModuleName('cwh-regole-pubblicazione');
         $this->setNamespace(__CLASS__);
-        $this->setClassSpan(ArrayHelper::merge($this->getClassSpan(), [
-            'bk-backgroundIcon',
-            'color-darkGrey'
-        ]));
+        
+        $this->setClassSpan(
+            ArrayHelper::merge(
+                $this->getClassSpan(), 
+                [
+                    'bk-backgroundIcon',
+                    'color-darkGrey'
+                ]
+            )
+        );
     }
+
 }
