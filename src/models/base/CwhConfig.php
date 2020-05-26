@@ -1,17 +1,17 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\models\base;
+namespace open20\amos\cwh\models\base;
 
-use lispa\amos\cwh\AmosCwh;
+use open20\amos\cwh\AmosCwh;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -30,10 +30,10 @@ use yii\helpers\ArrayHelper;
  * @property integer $deleted_by
  * @property integer $version
  *
- * @property \lispa\amos\cwh\models\CwhNodi[] $cwhNodis
- * @property \lispa\amos\cwh\models\CwhPubblicazioni[] $cwhPubblicazionis
+ * @property \open20\amos\cwh\models\CwhNodi[] $cwhNodis
+ * @property \open20\amos\cwh\models\CwhPubblicazioni[] $cwhPubblicazionis
  */
-class CwhConfig extends \lispa\amos\core\record\Record
+class CwhConfig extends \open20\amos\core\record\Record
 {
     /**
      * @inheritdoc
@@ -118,7 +118,7 @@ class CwhConfig extends \lispa\amos\core\record\Record
      */
     public function getCwhNodis()
     {
-        return $this->hasMany(\lispa\amos\cwh\models\CwhNodi::className(), ['cwh_config_id' => 'id']);
+        return $this->hasMany(\open20\amos\cwh\models\CwhNodi::className(), ['cwh_config_id' => 'id']);
     }
 
     /**
@@ -126,7 +126,7 @@ class CwhConfig extends \lispa\amos\core\record\Record
      */
     public function getCwhPubblicazionis()
     {
-        return $this->hasMany(\lispa\amos\cwh\models\CwhPubblicazioni::className(), ['cwh_config_id' => 'id']);
+        return $this->hasMany(\open20\amos\cwh\models\CwhPubblicazioni::className(), ['cwh_config_id' => 'id']);
     }
 
 }

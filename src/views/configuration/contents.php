@@ -1,11 +1,20 @@
 <?php
 
-use lispa\amos\cwh\AmosCwh;
+/**
+ * Aria S.p.A.
+ * OPEN 2.0
+ *
+ *
+ * @package    Open20Package
+ * @category   CategoryName
+ */
+
+use open20\amos\cwh\AmosCwh;
 
 /**
  *
  * @var $this \yii\web\View
- * @var $Content \lispa\amos\cwh\models\CwhConfigContents
+ * @var $Content \open20\amos\cwh\models\CwhConfigContents
  */
 
 $this->title = AmosCwh::t('wizard', 'Configurazione {contents} del progetto {appName}', [
@@ -13,7 +22,7 @@ $this->title = AmosCwh::t('wizard', 'Configurazione {contents} del progetto {app
     'contents' => $Content->label
 ]);
 
-\lispa\amos\layout\assets\SpinnerWaitAsset::register($this);
+\open20\amos\layout\assets\SpinnerWaitAsset::register($this);
 
 $js = <<<JS
 $('form').on('submit', function(event) {
@@ -44,7 +53,7 @@ $this->registerJs($js);
 
     <div class="loading" id="loader" hidden></div>
 
-    <?php $form = \lispa\amos\core\forms\ActiveForm::begin() ?>
+    <?php $form = \open20\amos\core\forms\ActiveForm::begin() ?>
     <div class="col-sm-6">
         <?= $form->field($Content, 'label') ?>
     </div>
@@ -55,7 +64,7 @@ $this->registerJs($js);
         <?= $form->field($Content, 'classname') ?>
     </div>
     <div class="col-sm-6">
-        <?= $form->field($Content, 'status_attribute')->widget(\lispa\amos\core\forms\editors\Select::className(), ['data' => $Content->modelAttributes]) ?>
+        <?= $form->field($Content, 'status_attribute')->widget(\open20\amos\core\forms\editors\Select::className(), ['data' => $Content->modelAttributes]) ?>
     </div>
     <?php if (!empty($Content->statuses)): ?>
         <div class="col-sm-6">
@@ -64,10 +73,10 @@ $this->registerJs($js);
     <?php endif; ?>
     <hr/>
     <div class="col-sm-12 ">
-        <?= \lispa\amos\core\forms\CloseSaveButtonWidget::widget([
+        <?= \open20\amos\core\forms\CloseSaveButtonWidget::widget([
             'model' => $Content,
             'urlClose' => '/cwh/configuration/wizard'
         ])
         ?>
     </div>
-    <?php \lispa\amos\core\forms\ActiveForm::end() ?>
+    <?php \open20\amos\core\forms\ActiveForm::end() ?>

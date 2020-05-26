@@ -1,20 +1,20 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\widgets;
+namespace open20\amos\cwh\widgets;
 
-use lispa\amos\core\interfaces\ModelLabelsInterface;
-use lispa\amos\core\user\User;
-use lispa\amos\cwh\AmosCwh;
-use lispa\amos\cwh\models\search\CwhNodiSearch;
+use open20\amos\core\interfaces\ModelLabelsInterface;
+use open20\amos\core\user\User;
+use open20\amos\cwh\AmosCwh;
+use open20\amos\cwh\models\search\CwhNodiSearch;
 use kartik\widgets\Select2;
 use yii\base\InvalidConfigException;
 use yii\base\Widget;

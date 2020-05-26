@@ -1,12 +1,21 @@
 <?php
-use lispa\amos\core\views\AmosGridView;
-use lispa\amos\cwh\AmosCwh;
+
+/**
+ * Aria S.p.A.
+ * OPEN 2.0
+ *
+ *
+ * @package    Open20Package
+ * @category   CategoryName
+ */
+use open20\amos\core\views\AmosGridView;
+use open20\amos\cwh\AmosCwh;
 use yii\widgets\Pjax;
 
 /**
  * @var yii\web\View $this
  * @var yii\data\ActiveDataProvider $dataProvider
- * @var lispa\amos\cwh\models\search\CwhNodiSearch $searchModel
+ * @var open20\amos\cwh\models\search\CwhNodiSearch $searchModel
  */
 
 $this->title = AmosCwh::t('amoscwh', 'Cwh Nodis');
@@ -16,7 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?php  echo         \lispa\amos\core\helpers\Html::a(AmosCwh::t('amoscwh', 'Nuovo {modelClass}', [
+        <?php  echo         \open20\amos\core\helpers\Html::a(AmosCwh::t('amoscwh', 'Nuovo {modelClass}', [
     'modelClass' => 'Cwh Nodi',
 ])        , ['create'], ['class' => 'btn btn-success']) ?>
     </p>
@@ -34,7 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'classname',
 
             [
-                'class' => 'lispa\amos\core\views\grid\ActionColumn',
+                'class' => 'open20\amos\core\views\grid\ActionColumn',
             ],
         ],
     ]);

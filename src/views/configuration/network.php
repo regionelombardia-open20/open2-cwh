@@ -1,10 +1,19 @@
 <?php
-use lispa\amos\cwh\AmosCwh;
+
+/**
+ * Aria S.p.A.
+ * OPEN 2.0
+ *
+ *
+ * @package    Open20Package
+ * @category   CategoryName
+ */
+use open20\amos\cwh\AmosCwh;
 
 /**
  *
  * @var $this \yii\web\View
- * @var $Network \lispa\amos\cwh\models\CwhConfigContents
+ * @var $Network \open20\amos\cwh\models\CwhConfigContents
  */
 
 $this->title = AmosCwh::t('wizard', 'Configurazione {network} del progetto {appName}', [
@@ -35,7 +44,7 @@ $this->title = AmosCwh::t('wizard', 'Configurazione {network} del progetto {appN
 
 </div>
 <div class="">
-    <?php $form = \lispa\amos\core\forms\ActiveForm::begin() ?>
+    <?php $form = \open20\amos\core\forms\ActiveForm::begin() ?>
 
     <div class="col-sm-6">
         <?= $form->field($Network, 'classname') ?>
@@ -58,11 +67,11 @@ $this->title = AmosCwh::t('wizard', 'Configurazione {network} del progetto {appN
     <hr />
 
     <div class="col-sm-12 ">
-        <?= \lispa\amos\core\helpers\Html::a(AmosCwh::t('amoscwh', 'Chiudi'),\yii\helpers\Url::previous(), [
+        <?= \open20\amos\core\helpers\Html::a(AmosCwh::t('amoscwh', 'Chiudi'),\yii\helpers\Url::previous(), [
             'class' => 'btn btn-secondary pull-left m-t-15',
             'name' => 'close',
         ]) ?>
-        <?= \lispa\amos\core\forms\CloseSaveButtonWidget::widget([
+        <?= \open20\amos\core\forms\CloseSaveButtonWidget::widget([
             'model' => $Network,
             'buttonSaveLabel' => AmosCwh::tHtml('amoscwh', 'Salva'),
             'buttonCloseVisibility' => false,
@@ -70,6 +79,6 @@ $this->title = AmosCwh::t('wizard', 'Configurazione {network} del progetto {appN
         ?>
     </div>
 
-    <?php \lispa\amos\core\forms\ActiveForm::end() ?>
+    <?php \open20\amos\core\forms\ActiveForm::end() ?>
 
 </div>

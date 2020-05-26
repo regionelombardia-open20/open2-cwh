@@ -1,21 +1,22 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-use lispa\amos\core\migration\AmosMigration;
+use open20\amos\core\migration\AmosMigration;
 use yii\rbac\Permission;
 
 class m160928_142505_creationCwhRoles extends AmosMigration
 {
     /**
      * Use this instead of function up().
+     * @see \Yii\db\Migration::safeUp() for more info.
      */
     public function safeUp()
     {
@@ -24,6 +25,7 @@ class m160928_142505_creationCwhRoles extends AmosMigration
 
     /**
      * Use this instead of function down().
+     * @see \Yii\db\Migration::safeDown() for more info.
      */
     public function safeDown()
     {
@@ -45,58 +47,58 @@ class m160928_142505_creationCwhRoles extends AmosMigration
                 'ruleName' => null,
             ],
             [
-                'name' => \lispa\amos\cwh\widgets\icons\WidgetIconCwhAuthAssignment::className(),
+                'name' => \open20\amos\cwh\widgets\icons\WidgetIconCwhAuthAssignment::className(),
                 'type' => Permission::TYPE_PERMISSION,
                 'description' => 'Permesso per visualizzare icona WidgetIconCwhAuthAssignment',
                 'ruleName' => null,
                 'parent' => ['AMMINISTRATORE_CWH']
             ],
             [
-                'name' => \lispa\amos\cwh\widgets\icons\WidgetIconCwhConfig::className(),
+                'name' => \open20\amos\cwh\widgets\icons\WidgetIconCwhConfig::className(),
                 'type' => Permission::TYPE_PERMISSION,
                 'description' => 'Permesso per visualizzare icona WidgetIconCwhConfig',
                 'ruleName' => null,
                 'parent' => ['AMMINISTRATORE_CWH']
             ],
             [
-                'name' => \lispa\amos\cwh\widgets\icons\WidgetIconCwhNodi::className(),
+                'name' => \open20\amos\cwh\widgets\icons\WidgetIconCwhNodi::className(),
                 'type' => Permission::TYPE_PERMISSION,
                 'description' => 'Permesso per visualizzare icona WidgetIconCwhNodi',
                 'ruleName' => null,
                 'parent' => ['AMMINISTRATORE_CWH']
             ],
             [
-                'name' => \lispa\amos\cwh\widgets\icons\WidgetIconCwhRegolePubblicazione::className(),
+                'name' => \open20\amos\cwh\widgets\icons\WidgetIconCwhRegolePubblicazione::className(),
                 'type' => Permission::TYPE_PERMISSION,
                 'description' => 'Permesso per visualizzare icona WidgetIconCwhRegolePubblicazione',
                 'ruleName' => null,
                 'parent' => ['AMMINISTRATORE_CWH']
             ],
             [
-                'name' => 'CWH_PERMISSION_CREATE_lispa\amos\discussioni\models\DiscussioniTopic',
+                'name' => 'CWH_PERMISSION_CREATE_open20\amos\discussioni\models\DiscussioniTopic',
                 'type' => Permission::TYPE_PERMISSION,
-                'description' => 'Creare lispa\\amos\\discussioni\\models\\DiscussioniTopic',
+                'description' => 'Creare open20\\amos\\discussioni\\models\\DiscussioniTopic',
                 'ruleName' => null,
                 'parent' => ['AMMINISTRATORE_CWH']
             ],
             [
-                'name' => 'CWH_PERMISSION_VALIDATE_lispa\amos\discussioni\models\DiscussioniTopic',
+                'name' => 'CWH_PERMISSION_VALIDATE_open20\amos\discussioni\models\DiscussioniTopic',
                 'type' => Permission::TYPE_PERMISSION,
-                'description' => 'Validare lispa\\amos\\discussioni\\models\\DiscussioniTopic',
+                'description' => 'Validare open20\\amos\\discussioni\\models\\DiscussioniTopic',
                 'ruleName' => null,
                 'parent' => ['AMMINISTRATORE_CWH']
             ],
             [
-                'name' => 'CWH_PERMISSION_CREATE_lispa\amos\news\models\News',
+                'name' => 'CWH_PERMISSION_CREATE_open20\amos\news\models\News',
                 'type' => Permission::TYPE_PERMISSION,
-                'description' => 'Creare lispa\\amos\\news\\models\\News',
+                'description' => 'Creare open20\\amos\\news\\models\\News',
                 'ruleName' => null,
                 'parent' => ['AMMINISTRATORE_CWH']
             ],
             [
-                'name' => 'CWH_PERMISSION_VALIDATE_lispa\amos\news\models\News',
+                'name' => 'CWH_PERMISSION_VALIDATE_open20\amos\news\models\News',
                 'type' => Permission::TYPE_PERMISSION,
-                'description' => 'Validare lispa\\amos\\news\\models\\News',
+                'description' => 'Validare open20\\amos\\news\\models\\News',
                 'ruleName' => null,
                 'parent' => ['AMMINISTRATORE_CWH']
             ],

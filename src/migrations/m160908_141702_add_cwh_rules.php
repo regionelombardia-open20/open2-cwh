@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
@@ -30,7 +30,7 @@ class m160908_141702_add_cwh_rules extends Migration
         $cwhModule = Yii::$app->getModule('cwh');
 
         if (!$cwhModule || !count(Yii::$app->getModule('cwh')->modelsEnabled)) {
-            //throw new \yii\base\InvalidConfigException(\lispa\amos\cwh\AmosCwh::t('amoscwh', 'Impossibile configurare le regole della CWH : modelsEnabled deve essere valorizzato'));
+            //throw new \yii\base\InvalidConfigException(\open20\amos\cwh\AmosCwh::t('amoscwh', 'Impossibile configurare le regole della CWH : modelsEnabled deve essere valorizzato'));
         }
 
         $auth = \Yii::$app->getAuthManager();

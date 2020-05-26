@@ -1,25 +1,25 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\models\search;
+namespace open20\amos\cwh\models\search;
 
-use lispa\amos\core\record\Record;
-use lispa\amos\cwh\models\base\CwhAuthAssignment;
-use lispa\amos\cwh\models\CwhNodi;
+use open20\amos\core\record\Record;
+use open20\amos\cwh\models\base\CwhAuthAssignment;
+use open20\amos\cwh\models\CwhNodi;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
 /**
- * CwhNodiSearch represents the model behind the search form about `lispa\amos\cwh\models\CwhNodi`.
+ * CwhNodiSearch represents the model behind the search form about `open20\amos\cwh\models\CwhNodi`.
  */
 class CwhNodiSearch extends CwhNodi
 {

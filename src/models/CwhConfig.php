@@ -1,22 +1,22 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\models;
+namespace open20\amos\cwh\models;
 
-use lispa\amos\cwh\AmosCwh;
+use open20\amos\cwh\AmosCwh;
 
 /**
  * This is the model class for table "cwh_config".
  */
-class CwhConfig extends \lispa\amos\cwh\models\base\CwhConfig
+class CwhConfig extends \open20\amos\cwh\models\base\CwhConfig
 {
     
     const RAW_SQL_EXAMPLE = 'select 

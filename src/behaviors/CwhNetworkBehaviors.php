@@ -1,21 +1,21 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh\behaviors
+ * @package    open20\amos\cwh\behaviors
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\behaviors;
+namespace open20\amos\cwh\behaviors;
 
-use lispa\amos\admin\models\UserProfile;
-use lispa\amos\cwh\AmosCwh;
-use lispa\amos\cwh\models\CwhConfigContents;
-use lispa\amos\cwh\models\CwhPubblicazioni;
-use lispa\amos\cwh\query\CwhActiveQuery;
+use open20\amos\admin\models\UserProfile;
+use open20\amos\cwh\AmosCwh;
+use open20\amos\cwh\models\CwhConfigContents;
+use open20\amos\cwh\models\CwhPubblicazioni;
+use open20\amos\cwh\query\CwhActiveQuery;
 use Yii;
 use yii\base\Event;
 use yii\behaviors\AttributeBehavior;
@@ -24,7 +24,7 @@ use yii\helpers\ArrayHelper;
 
 /**
  * Class CwhNetworkBehaviors
- * @package lispa\amos\cwh\behaviors
+ * @package open20\amos\cwh\behaviors
  */
 class CwhNetworkBehaviors extends AttributeBehavior
 {
@@ -59,12 +59,12 @@ class CwhNetworkBehaviors extends AttributeBehavior
     public $publishingRule = null;
     
     /**
-     * @var \lispa\amos\cwh\models\CwhPubblicazioni $pubblicazione ;
+     * @var \open20\amos\cwh\models\CwhPubblicazioni $pubblicazione ;
      */
     private $pubblicazione;
     
     /**
-     * @var \lispa\amos\core\record\Record $sender ;
+     * @var \open20\amos\core\record\Record $sender ;
      */
     private $sender;
     
@@ -119,6 +119,7 @@ class CwhNetworkBehaviors extends AttributeBehavior
     /**
      * @return array list of targets publisher
      * @deprecated 2.1.0
+     * @see CwhNetworkBehaviors::getTarget()
      */
     public function getDestinatari()
     {
@@ -128,6 +129,7 @@ class CwhNetworkBehaviors extends AttributeBehavior
     /**
      * @param array $destinatari
      * @deprecated 2.1.0
+     * @see CwhNetworkBehaviors::setTargets()
      */
     public function setDestinatari($destinatari)
     {
@@ -137,6 +139,7 @@ class CwhNetworkBehaviors extends AttributeBehavior
     /**
      * @return array
      * @deprecated 2.1.0
+     * @see CwhNetworkBehaviors::getDraftingValidators()
      */
     public function getValidatori()
     {
@@ -146,6 +149,7 @@ class CwhNetworkBehaviors extends AttributeBehavior
     /**
      * @param array $validatori
      * @deprecated 2.1.0
+     * @see CwhNetworkBehaviors::setDraftingValidators()
      */
     public function setValidatori($validatori)
     {
@@ -170,6 +174,7 @@ class CwhNetworkBehaviors extends AttributeBehavior
     /**
      * @return string
      * @deprecated 2.1.0
+     * @see CwhNetworkBehaviors::getPublishingRule()
      */
     public function getRegolaPubblicazione()
     {
@@ -262,7 +267,7 @@ class CwhNetworkBehaviors extends AttributeBehavior
     }
     
     /**
-     * @return \lispa\amos\core\record\Record
+     * @return \open20\amos\core\record\Record
      */
     private function getSender()
     {

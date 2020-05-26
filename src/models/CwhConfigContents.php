@@ -1,11 +1,20 @@
 <?php
 
-namespace lispa\amos\cwh\models;
+/**
+ * Aria S.p.A.
+ * OPEN 2.0
+ *
+ *
+ * @package    Open20Package
+ * @category   CategoryName
+ */
+
+namespace open20\amos\cwh\models;
 
 use cornernote\workflow\manager\models\Workflow;
-use lispa\amos\core\record\Record;
-use lispa\amos\core\user\User;
-use lispa\amos\cwh\utility\CwhUtil;
+use open20\amos\core\record\Record;
+use open20\amos\core\user\User;
+use open20\amos\cwh\utility\CwhUtil;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -14,9 +23,9 @@ use yii\helpers\ArrayHelper;
  *
  * @property array statuses
  *
- * @package lispa\amos\cwh\models
+ * @package open20\amos\cwh\models
  */
-class CwhConfigContents extends \lispa\amos\cwh\models\base\CwhConfigContents
+class CwhConfigContents extends \open20\amos\cwh\models\base\CwhConfigContents
 {
 
     const WORKFLOW_AFFIX = 'Workflow';

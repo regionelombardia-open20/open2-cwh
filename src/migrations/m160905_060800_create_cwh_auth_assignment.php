@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
@@ -41,8 +41,8 @@ class m160905_060800_create_cwh_auth_assignment extends Migration
             ], $tableOptions);
 
             $this->addForeignKey('fk_item_name', self::TABLE, 'item_name', $this->getAuthManager()->itemTable, 'name');
-//            $this->addForeignKey('fk_user_id', self::TABLE, 'user_id', \lispa\amos\core\user\User::tableName() , 'id');
-//            $this->addForeignKey('fk_cwh_nodi_id', self::TABLE, 'cwh_nodi_id', \lispa\amos\cwh\models\CwhNodi::tableName() , 'id');
+//            $this->addForeignKey('fk_user_id', self::TABLE, 'user_id', \open20\amos\core\user\User::tableName() , 'id');
+//            $this->addForeignKey('fk_cwh_nodi_id', self::TABLE, 'cwh_nodi_id', \open20\amos\cwh\models\CwhNodi::tableName() , 'id');
             return true;
         } else {
             echo "Nessuna creazione eseguita in quanto la tabella esiste gia'";

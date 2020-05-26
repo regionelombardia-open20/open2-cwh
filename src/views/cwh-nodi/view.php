@@ -1,10 +1,19 @@
 <?php
-use lispa\amos\cwh\AmosCwh;
+
+/**
+ * Aria S.p.A.
+ * OPEN 2.0
+ *
+ *
+ * @package    Open20Package
+ * @category   CategoryName
+ */
+use open20\amos\cwh\AmosCwh;
 use yii\widgets\DetailView;
 
 /**
  * @var yii\web\View $this
- * @var lispa\amos\cwh\models\CwhNodi $model
+ * @var open20\amos\cwh\models\CwhNodi $model
  */
 
 $this->title = $model->id;

@@ -1,23 +1,23 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\models\search;
+namespace open20\amos\cwh\models\search;
 
-use lispa\amos\cwh\models\CwhPubblicazioni;
+use open20\amos\cwh\models\CwhPubblicazioni;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
 /**
- * CwhPubblicazioniSearch represents the model behind the search form about `lispa\amos\cwh\models\CwhPubblicazioni`.
+ * CwhPubblicazioniSearch represents the model behind the search form about `open20\amos\cwh\models\CwhPubblicazioni`.
  */
 class CwhPubblicazioniSearch extends CwhPubblicazioni
 {

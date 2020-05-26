@@ -1,11 +1,20 @@
 <?php
 
-namespace lispa\amos\cwh\base;
+/**
+ * Aria S.p.A.
+ * OPEN 2.0
+ *
+ *
+ * @package    Open20Package
+ * @category   CategoryName
+ */
+
+namespace open20\amos\cwh\base;
 
 /**
  * Interface ModelNetworkInterface
  *
- * @package lispa\amos\cwh\base
+ * @package open20\amos\cwh\base
  */
 interface ModelNetworkInterface
 {

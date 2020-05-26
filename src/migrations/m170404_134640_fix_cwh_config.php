@@ -1,16 +1,16 @@
 <?php
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 use yii\db\Migration;
-use lispa\amos\cwh\models\CwhPubblicazioni;
-use lispa\amos\cwh\models\CwhConfig;
-use lispa\amos\cwh\models\CwhNodi;
+use open20\amos\cwh\models\CwhPubblicazioni;
+use open20\amos\cwh\models\CwhConfig;
+use open20\amos\cwh\models\CwhNodi;
 
 class m170404_134640_fix_cwh_config extends Migration
 {
@@ -18,7 +18,7 @@ class m170404_134640_fix_cwh_config extends Migration
 concat(\'community-\',`community`.`id`) AS `id`,
 3 AS `cwh_config_id`,
 `community`.`id` AS `record_id`,
-\'lispa\\\\amos\\\\community\\\\models\\\\Community\' AS `classname`,
+\'open20\\\\amos\\\\community\\\\models\\\\Community\' AS `classname`,
 (CASE `community`.`community_type_id` WHEN 1 THEN 1 ELSE  0 END) AS `visibility`,
 `community`.`created_at` AS `created_at`,
 `community`.`updated_at` AS `updated_at`,
@@ -28,7 +28,7 @@ concat(\'community-\',`community`.`id`) AS `id`,
 `community`.`deleted_by` AS `deleted_by` 
 
 from `community`';
-    const CLASSNAME_COMMUNITY = 'lispa\amos\community\models\Community';
+    const CLASSNAME_COMMUNITY = 'open20\amos\community\models\Community';
     const RAW_SQL_ENTI_BACKEND = 'select 
 concat(\'enti-\',`enti`.`id`) AS `id`,
 1 AS `cwh_config_id`,
@@ -49,7 +49,7 @@ from `enti`';
 concat(\'enti-\',`enti`.`id`) AS `id`,
 1 AS `cwh_config_id`,
 `enti`.`id` AS `record_id`,
-\'lispa\\\\amos\\\\organizzazioni\\\\models\\\\Enti\' AS `classname`,
+\'open20\\\\amos\\\\organizzazioni\\\\models\\\\Enti\' AS `classname`,
 1 AS `visibility`,
 `enti`.`created_at` AS `created_at`,
 `enti`.`updated_at` AS `updated_at`,
@@ -59,7 +59,7 @@ concat(\'enti-\',`enti`.`id`) AS `id`,
 `enti`.`deleted_by` AS `deleted_by` 
 
 from `enti`';
-    const CLASSNAME_ENTI_ORG = 'lispa\amos\organizzazioni\models\Enti';
+    const CLASSNAME_ENTI_ORG = 'open20\amos\organizzazioni\models\Enti';
 
     const RAW_SQL_USER = 'select 
 concat(\'user-\',`user`.`id`) AS `id`,

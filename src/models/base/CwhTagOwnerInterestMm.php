@@ -1,17 +1,17 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh\models\base
+ * @package    open20\amos\cwh\models\base
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\models\base;
+namespace open20\amos\cwh\models\base;
 
-use lispa\amos\cwh\AmosCwh;
+use open20\amos\cwh\AmosCwh;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -32,9 +32,9 @@ use yii\helpers\ArrayHelper;
  * @property integer $updated_by
  * @property integer $deleted_by
  *
- * @package lispa\amos\cwh\models\base
+ * @package open20\amos\cwh\models\base
  */
-class CwhTagOwnerInterestMm extends \lispa\amos\core\record\AmosRecordAudit
+class CwhTagOwnerInterestMm extends \open20\amos\core\record\AmosRecordAudit
 {
     /**
      * @inheritdoc

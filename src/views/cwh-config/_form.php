@@ -1,13 +1,22 @@
 <?php
 
-use lispa\amos\core\forms\ActiveForm;
-use lispa\amos\core\forms\CloseSaveButtonWidget;
-use lispa\amos\cwh\AmosCwh;
+/**
+ * Aria S.p.A.
+ * OPEN 2.0
+ *
+ *
+ * @package    Open20Package
+ * @category   CategoryName
+ */
+
+use open20\amos\core\forms\ActiveForm;
+use open20\amos\core\forms\CloseSaveButtonWidget;
+use open20\amos\cwh\AmosCwh;
 use yii\bootstrap\Tabs;
 
 /**
  * @var yii\web\View $this
- * @var lispa\amos\cwh\models\CwhConfig $model
+ * @var open20\amos\cwh\models\CwhConfig $model
  * @var yii\widgets\ActiveForm $form
  */
 

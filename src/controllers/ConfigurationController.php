@@ -1,16 +1,25 @@
 <?php
 
-namespace lispa\amos\cwh\controllers;
+/**
+ * Aria S.p.A.
+ * OPEN 2.0
+ *
+ *
+ * @package    Open20Package
+ * @category   CategoryName
+ */
+
+namespace open20\amos\cwh\controllers;
 
 
-use lispa\amos\core\controllers\BaseController;
-use lispa\amos\cwh\AmosCwh;
-use lispa\amos\cwh\base\ModelConfig;
-use lispa\amos\cwh\helpers\ContentHelper;
-use lispa\amos\cwh\helpers\NetworkHelper;
-use lispa\amos\cwh\models\CwhConfig;
-use lispa\amos\cwh\models\CwhConfigContents;
-use lispa\amos\cwh\utility\CwhUtil;
+use open20\amos\core\controllers\BaseController;
+use open20\amos\cwh\AmosCwh;
+use open20\amos\cwh\base\ModelConfig;
+use open20\amos\cwh\helpers\ContentHelper;
+use open20\amos\cwh\helpers\NetworkHelper;
+use open20\amos\cwh\models\CwhConfig;
+use open20\amos\cwh\models\CwhConfigContents;
+use open20\amos\cwh\utility\CwhUtil;
 use Yii;
 use yii\data\ArrayDataProvider;
 use yii\filters\AccessControl;
@@ -20,7 +29,7 @@ use yii\helpers\Url;
 
 /**
  * Class ConfigurationController
- * @package lispa\amos\cwh\controllers
+ * @package open20\amos\cwh\controllers
  *
  */
 class ConfigurationController extends BaseController
@@ -150,6 +159,7 @@ class ConfigurationController extends BaseController
     /**
      * Regenerates Cwh nodi view
      *
+     * @see CwhUtil:createCwhView
      */
     public function regenerateView()
     {

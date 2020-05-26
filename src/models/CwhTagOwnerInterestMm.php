@@ -1,15 +1,15 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\models;
+namespace open20\amos\cwh\models;
 
 //use backend\modules\cwh\behaviors\CwhNetworkBehaviors;
 //use backend\modules\eventi\models\query\EventiQuery;
@@ -18,7 +18,7 @@ namespace lispa\amos\cwh\models;
 /**
  * This is the model class for table "cwh_tag_owner_interest_mm".
  */
-class CwhTagOwnerInterestMm extends \lispa\amos\cwh\models\base\CwhTagOwnerInterestMm
+class CwhTagOwnerInterestMm extends \open20\amos\cwh\models\base\CwhTagOwnerInterestMm
 {
 
 }

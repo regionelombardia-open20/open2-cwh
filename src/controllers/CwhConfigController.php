@@ -1,23 +1,23 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\controllers;
+namespace open20\amos\cwh\controllers;
 
-use lispa\amos\core\controllers\CrudController;
-use lispa\amos\core\helpers\Html;
-use lispa\amos\core\icons\AmosIcons;
-use lispa\amos\cwh\AmosCwh;
-use lispa\amos\cwh\models\CwhConfig;
-use lispa\amos\cwh\models\search\CwhConfigSearch;
-use lispa\amos\cwh\utility\CwhUtil;
+use open20\amos\core\controllers\CrudController;
+use open20\amos\core\helpers\Html;
+use open20\amos\core\icons\AmosIcons;
+use open20\amos\cwh\AmosCwh;
+use open20\amos\cwh\models\CwhConfig;
+use open20\amos\cwh\models\search\CwhConfigSearch;
+use open20\amos\cwh\utility\CwhUtil;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;

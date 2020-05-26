@@ -1,5 +1,14 @@
 <?php
-$scope = \lispa\amos\cwh\AmosCwh::getInstance()->getCwhScope();
+
+/**
+ * Aria S.p.A.
+ * OPEN 2.0
+ *
+ *
+ * @package    Open20Package
+ * @category   CategoryName
+ */
+$scope = \open20\amos\cwh\AmosCwh::getInstance()->getCwhScope();
 $scopeFilter = (empty($scope))? false : true;
 if(!$scopeFilter) {
     $this->registerJs(<<<JS
@@ -73,12 +82,12 @@ JS
 }
 ?>
 <?=
-lispa\amos\cwh\widgets\Cwh3ColsWidget::widget([
+open20\amos\cwh\widgets\Cwh3ColsWidget::widget([
     'form' => $form,
     'model' => $model,
     //'layout' => '<div class=\"col-xs-12\">{regolaPubblicazione}</div><div class=\"col-xs-12\">{destinatari}</div>',
     'regolaPubblicazione' => [
-        'data' => \lispa\amos\cwh\models\CwhPubblicazioni::find()->asArray()->all()
+        'data' => \open20\amos\cwh\models\CwhPubblicazioni::find()->asArray()->all()
     ],
     'renderCols' => true,
     'moduleCwh' => (isset($moduleCwh) ? $moduleCwh : null)

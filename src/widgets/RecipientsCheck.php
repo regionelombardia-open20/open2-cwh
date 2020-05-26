@@ -1,19 +1,19 @@
 <?php
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\widgets;
+namespace open20\amos\cwh\widgets;
 
 
-use lispa\amos\core\helpers\Html;
-use lispa\amos\core\interfaces\ModelLabelsInterface;
-use lispa\amos\cwh\AmosCwh;
+use open20\amos\core\helpers\Html;
+use open20\amos\core\interfaces\ModelLabelsInterface;
+use open20\amos\cwh\AmosCwh;
 use yii\base\Widget;
 use yii\bootstrap\Modal;
 use yii\web\View;
@@ -21,7 +21,7 @@ use yii\web\View;
 
 /**
  * Class RecipientsCheck
- * @package lispa\amos\cwh\widgets
+ * @package open20\amos\cwh\widgets
  */
 class RecipientsCheck extends Widget
 {
@@ -79,16 +79,13 @@ class RecipientsCheck extends Widget
         $js = <<<JS
         
         function drawRecipientsPopup() {
-            var tags= $('#amos-tag').find('input.hide');
-            var tagValues = ''; 
+            var tags = $('#amos-tag').find('li.kv-selected');
+            var tmp = [];
             $.each(tags, function( key, value ) { 
-                if(value.value != ''){
-                    if(tagValues != ''){
-                        tagValues = tagValues + ',';
-                    }
-                    tagValues = tagValues+ value.value; 
-                }
+                tmp.push($(value).data('key'));
             });
+            tagValues = tmp.toString(); 
+            
             $.ajax({
                 url: '/cwh/cwh-ajax/recipients-check',
                 async: true,

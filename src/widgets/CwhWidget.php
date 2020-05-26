@@ -1,19 +1,19 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\widgets;
+namespace open20\amos\cwh\widgets;
 
 use yii\base\Widget;
 use yii\helpers\ArrayHelper;
-use lispa\amos\cwh\AmosCwh;
+use open20\amos\cwh\AmosCwh;
 
 
 class CwhWidget extends Widget

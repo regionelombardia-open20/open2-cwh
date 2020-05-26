@@ -1,16 +1,25 @@
 <?php
 
-namespace lispa\amos\cwh\components\bootstrap;
+/**
+ * Aria S.p.A.
+ * OPEN 2.0
+ *
+ *
+ * @package    Open20Package
+ * @category   CategoryName
+ */
 
-use lispa\amos\cwh\models\CwhConfig;
-use lispa\amos\cwh\models\CwhConfigContents;
+namespace open20\amos\cwh\components\bootstrap;
+
+use open20\amos\cwh\models\CwhConfig;
+use open20\amos\cwh\models\CwhConfigContents;
 use yii\base\ActionEvent;
 use \Yii;
 
 /**
  * Class CheckConfigComponent
  *
- * @package lispa\amos\cwh\components\bootstrap
+ * @package open20\amos\cwh\components\bootstrap
  */
 class CheckConfigComponent extends \yii\base\Component
 {

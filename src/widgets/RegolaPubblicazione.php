@@ -1,17 +1,27 @@
 <?php
 
-namespace lispa\amos\cwh\widgets;
+/**
+ * Aria S.p.A.
+ * OPEN 2.0
+ *
+ *
+ * @package    open20\amos\cwh\widgets
+ * @category   CategoryName
+ */
 
-use lispa\amos\core\interfaces\ModelLabelsInterface;
-use lispa\amos\cwh\AmosCwh;
-use lispa\amos\cwh\utility\CwhUtil;
+namespace open20\amos\cwh\widgets;
+
+use open20\amos\core\interfaces\ModelLabelsInterface;
+use open20\amos\cwh\AmosCwh;
+use open20\amos\cwh\models\CwhRegolePubblicazione;
+use open20\amos\cwh\utility\CwhUtil;
 use kartik\select2\Select2;
 use yii\base\Widget;
 use yii\helpers\ArrayHelper;
 
 /**
  * Class RegolaPubblicazione
- * @package lispa\amos\cwh\widgets
+ * @package open20\amos\cwh\widgets
  */
 class RegolaPubblicazione extends Widget
 {
@@ -84,6 +94,9 @@ class RegolaPubblicazione extends Widget
             $labelSuffix = ' ' . AmosCwh::t('amoscwh', 'il contenuto');
         }
         if (count($this->getData()) > 1) {
+            /** @var CwhRegolePubblicazione $defaultRule */
+            $defaultRule = $this->getDefault();
+            $value = (!empty($defaultRule) ? $defaultRule->id : null);
             $widget = $this->getForm()->field($this->getModel(), 'regola_pubblicazione')->widget(
                 Select2::className(), [
                     'name' => $this->getNameField() . '[regola_pubblicazione]',
@@ -92,10 +105,9 @@ class RegolaPubblicazione extends Widget
                         //'placeholder' => AmosCwh::t('amoscwh','#3col_recipients_placeholder'),
                         'name' => $this->getNameField() . '[regola_pubblicazione]',
                         'id' => 'cwh-regola_pubblicazione',
-                        'value' => $this->getDefault(),
+                        'value' => $value,
                     ]
                 ]
-
             )->label(AmosCwh::t('amoscwh', '#3col_recipients_label{labelSuffix}', ['labelSuffix' => $labelSuffix]));
         } else {
             $regolaDiPubblicazioneField = $this->getForm()->field($this->getModel(),

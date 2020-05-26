@@ -1,21 +1,21 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\models;
+namespace open20\amos\cwh\models;
 
 
 /**
  * This is the model class for table "cwh_tag_interest_mm".
  */
-class CwhTagInterestMm extends \lispa\amos\cwh\models\base\CwhTagInterestMm
+class CwhTagInterestMm extends \open20\amos\cwh\models\base\CwhTagInterestMm
 {
 
 }

@@ -1,17 +1,17 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\models\base;
+namespace open20\amos\cwh\models\base;
 
-use lispa\amos\cwh\AmosCwh;
+use open20\amos\cwh\AmosCwh;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -30,14 +30,14 @@ use yii\helpers\ArrayHelper;
  * @property integer $version
  * @property integer $visibility
  *
- * @property \lispa\amos\cwh\models\CwhConfig $cwhConfig
- * @property \lispa\amos\cwh\models\CwhPubblicazioniCwhNodiEditoriMm[] $cwhPubblicazioniCwhNodiEditoriMms
- * @property \lispa\amos\cwh\models\CwhPubblicazioni[] $cwhPubblicazionis
- * @property \lispa\amos\cwh\models\CwhPubblicazioniCwhNodiValidatoriMm[] $cwhPubblicazioniCwhNodiValidatoriMms
- * @property \lispa\amos\cwh\models\CwhPubblicazioni[] $cwhPubblicazionis0
- * @property \lispa\amos\core\record\Record $network  - the network object (the community, organization, ...)
+ * @property \open20\amos\cwh\models\CwhConfig $cwhConfig
+ * @property \open20\amos\cwh\models\CwhPubblicazioniCwhNodiEditoriMm[] $cwhPubblicazioniCwhNodiEditoriMms
+ * @property \open20\amos\cwh\models\CwhPubblicazioni[] $cwhPubblicazionis
+ * @property \open20\amos\cwh\models\CwhPubblicazioniCwhNodiValidatoriMm[] $cwhPubblicazioniCwhNodiValidatoriMms
+ * @property \open20\amos\cwh\models\CwhPubblicazioni[] $cwhPubblicazionis0
+ * @property \open20\amos\core\record\Record $network  - the network object (the community, organization, ...)
  */
-class CwhNodi extends \lispa\amos\core\record\Record
+class CwhNodi extends \open20\amos\core\record\Record
 {
     /**
      * @inheritdoc
@@ -86,7 +86,7 @@ class CwhNodi extends \lispa\amos\core\record\Record
      */
     public function getCwhConfig()
     {
-        return $this->hasOne(\lispa\amos\cwh\models\CwhConfig::className(), ['id' => 'cwh_config_id']);
+        return $this->hasOne(\open20\amos\cwh\models\CwhConfig::className(), ['id' => 'cwh_config_id']);
     }
 
     /**
@@ -94,7 +94,7 @@ class CwhNodi extends \lispa\amos\core\record\Record
      */
     public function getCwhPubblicazioniCwhNodiEditoriMms()
     {
-        return $this->hasMany(\lispa\amos\cwh\models\CwhPubblicazioniCwhNodiEditoriMm::className(), ['cwh_nodi_id' => 'id']);
+        return $this->hasMany(\open20\amos\cwh\models\CwhPubblicazioniCwhNodiEditoriMm::className(), ['cwh_nodi_id' => 'id']);
     }
 
     /**
@@ -102,7 +102,7 @@ class CwhNodi extends \lispa\amos\core\record\Record
      */
     public function getCwhPubblicazionis()
     {
-        return $this->hasMany(\lispa\amos\cwh\models\CwhPubblicazioni::className(), ['id' => 'cwh_pubblicazioni_id'])->viaTable('cwh_pubblicazioni_cwh_nodi_editori_mm', ['cwh_nodi_id' => 'id']);
+        return $this->hasMany(\open20\amos\cwh\models\CwhPubblicazioni::className(), ['id' => 'cwh_pubblicazioni_id'])->viaTable('cwh_pubblicazioni_cwh_nodi_editori_mm', ['cwh_nodi_id' => 'id']);
     }
 
     /**
@@ -110,7 +110,7 @@ class CwhNodi extends \lispa\amos\core\record\Record
      */
     public function getCwhPubblicazioniCwhNodiValidatoriMms()
     {
-        return $this->hasMany(\lispa\amos\cwh\models\CwhPubblicazioniCwhNodiValidatoriMm::className(), ['cwh_nodi_id' => 'id']);
+        return $this->hasMany(\open20\amos\cwh\models\CwhPubblicazioniCwhNodiValidatoriMm::className(), ['cwh_nodi_id' => 'id']);
     }
 
     /**
@@ -118,7 +118,7 @@ class CwhNodi extends \lispa\amos\core\record\Record
      */
     public function getCwhPubblicazionis0()
     {
-        return $this->hasMany(\lispa\amos\cwh\models\CwhPubblicazioni::className(), ['id' => 'cwh_pubblicazioni_id'])->viaTable('cwh_pubblicazioni_cwh_nodi_validatori_mm', ['cwh_nodi_id' => 'id']);
+        return $this->hasMany(\open20\amos\cwh\models\CwhPubblicazioni::className(), ['id' => 'cwh_pubblicazioni_id'])->viaTable('cwh_pubblicazioni_cwh_nodi_validatori_mm', ['cwh_nodi_id' => 'id']);
     }
 
     /**

@@ -1,15 +1,15 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh\exceptions
+ * @package    open20\amos\cwh\exceptions
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\exceptions;
+namespace open20\amos\cwh\exceptions;
 
 class CwhException extends \Exception
 {

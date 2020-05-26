@@ -1,17 +1,17 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\models\base;
+namespace open20\amos\cwh\models\base;
 
-use lispa\amos\cwh\AmosCwh;
+use open20\amos\cwh\AmosCwh;
 use mdm\admin\models\AuthItem;
 use yii\helpers\ArrayHelper;
 
@@ -23,9 +23,9 @@ use yii\helpers\ArrayHelper;
  * @property string $auth_item
  *
  * @property AuthItem $authItem
- * @property \lispa\amos\tag\models\Tag $tag
+ * @property \open20\amos\tag\models\Tag $tag
  */
-class CwhTagInterestMm extends \lispa\amos\core\record\AmosRecordAudit
+class CwhTagInterestMm extends \open20\amos\core\record\AmosRecordAudit
 {
     /**
      * @inheritdoc
@@ -66,7 +66,7 @@ class CwhTagInterestMm extends \lispa\amos\core\record\AmosRecordAudit
     {
         $moduleTag = \Yii::$app->getModule('tag');
         if (isset($moduleTag)) {
-            return $this->hasOne(\lispa\amos\tag\models\Tag::className(),
+            return $this->hasOne(\open20\amos\tag\models\Tag::className(),
                 ['id' => 'tag_id'])->inverseOf('tagModelsAuthItemsMms');
         }
         return null;

@@ -1,22 +1,22 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\controllers;
+namespace open20\amos\cwh\controllers;
 
-use lispa\amos\core\controllers\CrudController;
-use lispa\amos\core\helpers\Html;
-use lispa\amos\core\icons\AmosIcons;
-use lispa\amos\cwh\AmosCwh;
-use lispa\amos\cwh\models\CwhNodi;
-use lispa\amos\cwh\models\search\CwhNodiSearch;
+use open20\amos\core\controllers\CrudController;
+use open20\amos\core\helpers\Html;
+use open20\amos\core\icons\AmosIcons;
+use open20\amos\cwh\AmosCwh;
+use open20\amos\cwh\models\CwhNodi;
+use open20\amos\cwh\models\search\CwhNodiSearch;
 use Yii;
 
 /**

@@ -1,12 +1,21 @@
 <?php
 
-namespace lispa\amos\cwh\helpers;
+/**
+ * Aria S.p.A.
+ * OPEN 2.0
+ *
+ *
+ * @package    Open20Package
+ * @category   CategoryName
+ */
 
-use lispa\amos\cwh\helpers\base\BaseEntitiesHelper;
+namespace open20\amos\cwh\helpers;
+
+use open20\amos\cwh\helpers\base\BaseEntitiesHelper;
 
 class NetworkHelper extends BaseEntitiesHelper
 {
-    public static function getEntities($interfaceClassname = '\lispa\amos\cwh\base\ModelNetworkInterface')
+    public static function getEntities($interfaceClassname = '\open20\amos\cwh\base\ModelNetworkInterface')
     {
         return parent::getEntities($interfaceClassname);
     }

@@ -1,18 +1,18 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\behaviors;
+namespace open20\amos\cwh\behaviors;
 
 use creocoder\taggable\TaggableBehavior as YiiTaggable;
-use lispa\amos\cwh\models\CwhTagOwnerInterestMm;
+use open20\amos\cwh\models\CwhTagOwnerInterestMm;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\db\BaseActiveRecord;
@@ -22,7 +22,7 @@ use yii\helpers\ArrayHelper;
 /**
  * Class TaggableInterestingBehavior
  *
- * @package lispa\amos\cwh\behaviors
+ * @package open20\amos\cwh\behaviors
  */
 class TaggableInterestingBehavior extends YiiTaggable
 {
@@ -54,9 +54,11 @@ class TaggableInterestingBehavior extends YiiTaggable
     /**
      * Returns tags.
      * @param boolean|null $asArray
-     * @return string|string[]
+     * @param int|null $content
+     * @param int|null $root_id
+     * @return array|mixed|string|void
      */
-    public function getInterestTagValues($asArray = null, $content = null, $root_id)
+    public function getInterestTagValues($asArray = null, $content = null, $root_id = null)
     {
         if (!$content || !$root_id) {
             return;
@@ -96,10 +98,10 @@ class TaggableInterestingBehavior extends YiiTaggable
             return ($this->_tagValues[$content][$root_id] === null ? [] : $this->_tagValues[$content][$root_id]);
         } else {
             $tagString = '';
-            if(!empty($this->_tagValues[$content][$root_id])){
-                if(is_array($this->_tagValues[$content][$root_id])){
+            if (!empty($this->_tagValues[$content][$root_id])) {
+                if (is_array($this->_tagValues[$content][$root_id])) {
                     $tagString = implode($this->tagValuesSeparatorAttribute, $this->_tagValues[$content][$root_id]);
-                }else{
+                } else {
                     $tagString = $this->_tagValues[$content][$root_id];
                 }
             }
@@ -136,7 +138,7 @@ class TaggableInterestingBehavior extends YiiTaggable
     public function eventSave()
     {
         $moduleTag = Yii::$app->getModule('tag');
-        if(isset($moduleTag)) {
+        if (isset($moduleTag)) {
             if ($this->forceTagsSave) {
                 $this->_tagValues = $this->owner->interestTagValues;
             } else {
@@ -152,7 +154,7 @@ class TaggableInterestingBehavior extends YiiTaggable
 //        }
 
             if ($this->_tagValues !== null) {
-                $class = \lispa\amos\tag\models\Tag::className();
+                $class = \open20\amos\tag\models\Tag::className();
                 $rows = [];
 
                 $user = Yii::$app->get('user', false);
@@ -227,7 +229,7 @@ class TaggableInterestingBehavior extends YiiTaggable
                     'classname' => get_class($this->owner),
                     'record_id' => $this->owner->getPrimaryKey()
                 ]);
-                $class = \lispa\amos\tag\models\Tag::className();
+                $class = \open20\amos\tag\models\Tag::className();
                 foreach ($list as $record) {
                     $tag = $class::findOne([$this->tagValueAttribute => $record->tag_id]);
                     if ($tag) {

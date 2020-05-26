@@ -1,15 +1,15 @@
 <?php
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
-\lispa\amos\cwh\assets\CwhAsset::register($this);
+\open20\amos\cwh\assets\CwhAsset::register($this);
 
-use lispa\amos\cwh\AmosCwh;
+use open20\amos\cwh\AmosCwh;
 ?>
 
 

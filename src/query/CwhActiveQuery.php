@@ -1,15 +1,30 @@
 <?php
 
-namespace lispa\amos\cwh\query;
+/**
+ * Aria S.p.A.
+ * OPEN 2.0
+ *
+ *
+ * @package    Open20Package
+ * @category   CategoryName
+ */
 
-use lispa\amos\core\record\CachedActiveQuery;
-use lispa\amos\core\user\User;
-use lispa\amos\cwh\AmosCwh;
-use lispa\amos\cwh\exceptions\CwhException;
-use lispa\amos\cwh\models\CwhConfig;
-use lispa\amos\cwh\models\CwhConfigContents;
-use lispa\amos\cwh\models\CwhNodi;
-use lispa\amos\tag\models\Tag;
+namespace open20\amos\cwh\query;
+
+use open20\amos\admin\AmosAdmin;
+use open20\amos\admin\models\UserProfile;
+use open20\amos\core\record\CachedActiveQuery;
+use open20\amos\core\user\User;
+use open20\amos\cwh\AmosCwh;
+use open20\amos\cwh\exceptions\CwhException;
+use open20\amos\cwh\models\CwhConfig;
+use open20\amos\cwh\models\CwhConfigContents;
+use open20\amos\cwh\models\CwhNodi;
+use open20\amos\cwh\models\CwhTagOwnerInterestMm;
+use open20\amos\tag\models\EntitysTagsMm;
+use open20\amos\tag\models\Tag;
+use open20\amos\tag\models\TagModelsAuthItemsMm;
+use open20\amos\tag\utility\TagUtility;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\ActiveQuery;
@@ -18,7 +33,7 @@ use yii\helpers\ArrayHelper;
 
 /**
  * Class CwhActiveQuery
- * @package lispa\amos\cwh\query
+ * @package open20\amos\cwh\query
  */
 class CwhActiveQuery extends ActiveQuery
 {
@@ -44,6 +59,11 @@ class CwhActiveQuery extends ActiveQuery
      * @var ActiveQuery $queryBase the initial query to search for content without added cwh conditions
      */
     public $queryBase;
+    
+    /*
+     * @var boolean bypassscope to search for content without added scope
+     */
+    public $bypassScope = false;
 
     public $cwhConfigContentsId;
 
@@ -129,10 +149,7 @@ class CwhActiveQuery extends ActiveQuery
             $user = Yii::$app->getUser();
             if(!is_null($user) && ! $user->isGuest) {
                 $this->setUserId($user->getId());
-                $this->setUserProfile($this->getUserProfile());
             }
-        }else{
-            $this->setUserProfile($this->getUserProfile());
         }
     }
 
@@ -140,6 +157,10 @@ class CwhActiveQuery extends ActiveQuery
      * @param $userId
      */
     public function setUserId($userId){
+        if($userId != self::$userId){
+            self::$userProfile = null;
+        }
+
         self::$userId = $userId;
     }
 
@@ -237,6 +258,8 @@ class CwhActiveQuery extends ActiveQuery
             }else{
                 $queryFacilitator = (clone $this->queryBase);
             }
+
+            $userProfile = $this->getUserProfile();
             $cwhConfigUser = CwhConfig::findOne(['tablename' => 'user']);
             $this->getPublicationJoin($queryFacilitator);
             $queryFacilitator
@@ -245,7 +268,7 @@ class CwhActiveQuery extends ActiveQuery
                         'cwh_pubblicazioni_cwh_nodi_validatori_mm.cwh_config_id = ' . $cwhConfigUser->id )
                 ->innerJoin('user_profile', 'user_profile.user_id = cwh_pubblicazioni_cwh_nodi_validatori_mm.cwh_network_id')
                 ->andWhere(
-                    'user_profile.facilitatore_id =' . $this->getUserId()
+                    'user_profile.facilitatore_id =' . $userProfile->id
                 );
 
             $queryFacilitator->select($this->tableName . '.id');
@@ -438,7 +461,7 @@ class CwhActiveQuery extends ActiveQuery
      * @param ActiveQuery $query The query to obtain contents still not filtered by scope
      */
     public function filterByScope($query){
-        if(!empty($this->moduleCwh->scope)){
+        if(!empty($this->moduleCwh->scope) && !$this->bypassScope){
             foreach ($this->moduleCwh->scope as $key => $scopeCondition){
                 $cwhConfigId = CwhConfig::findOne(['tablename' => $key])->id;
                 $query->innerJoin('cwh_pubblicazioni publications', 'publications.content_id = '.$this->tableName.'.id AND publications.cwh_config_contents_id = '.$this->cwhConfigContentsId);
@@ -461,13 +484,21 @@ class CwhActiveQuery extends ActiveQuery
         }
     }
 
+    public function getBypassScope() {
+        return $this->bypassScope;
+    }
+
+    public function setBypassScope($bypassScope) {
+        $this->bypassScope = $bypassScope;
+    }
+
     /**
      * Filter contents by a specific set of validation entities if the scope filter was setted (eg. filter by organization, community,..)
      *
      * @param ActiveQuery $query The query to obtain contents still not filtered by scope
      */
     public function filterByScopeValidation($query){
-        if(!empty($this->moduleCwh->scope)){
+        if(!empty($this->moduleCwh->scope) && !$this->bypassScope){
             foreach ($this->moduleCwh->scope as $key => $scopeCondition){
                 $cwhConfigId = CwhConfig::findOne(['tablename' => $key])->id;
                 $query
@@ -539,35 +570,40 @@ class CwhActiveQuery extends ActiveQuery
     {
         $cwhModule = \Yii::$app->getModule(AmosCwh::getModuleName());
         $userProfileId = $this->getUserProfile()->id;
-        if (!$cwhModule->tagsMatchEachTree){
 
-            $query->innerJoin('entitys_tags_mm', "entitys_tags_mm.record_id = ".$this->tableName.".id")
-                ->innerJoin('cwh_tag_owner_interest_mm',
-                    'entitys_tags_mm.tag_id = cwh_tag_owner_interest_mm.tag_id AND cwh_tag_owner_interest_mm.record_id = ' .$userProfileId)
+        $cwhTagOwnerInterestMmTable = CwhTagOwnerInterestMm::tableName();
+        $tagModelsAuthItemsMmTable = TagModelsAuthItemsMm::tableName();
+        $entityTagsMmTable = EntitysTagsMm::tableName();
+
+        if (!$cwhModule->tagsMatchEachTree) {
+
+            $query->innerJoin($entityTagsMmTable, $entityTagsMmTable . ".record_id = " . $this->tableName . ".id")
+                ->innerJoin($cwhTagOwnerInterestMmTable,
+                    $entityTagsMmTable . '.tag_id = ' . $cwhTagOwnerInterestMmTable . '.tag_id AND ' . $cwhTagOwnerInterestMmTable . '.record_id = ' . $userProfileId)
                 ->andWhere([
-                    'entitys_tags_mm.classname' => $this->modelClass ,
-                    'cwh_tag_owner_interest_mm.record_id' => $userProfileId,
-                ])->andWhere('cwh_tag_owner_interest_mm.deleted_at IS NULL')
-                ->andWhere('entitys_tags_mm.deleted_at IS NULL');
+                    $entityTagsMmTable . '.classname' => $this->modelClass,
+                    $cwhTagOwnerInterestMmTable . '.record_id' => $userProfileId,
+                ])->andWhere([$cwhTagOwnerInterestMmTable . '.deleted_at' => null])
+                ->andWhere([$entityTagsMmTable . '.deleted_at' => null]);
         } else {
 
-            $rootIds = Tag::find()->innerJoin('tag_models_auth_items_mm', "tag_models_auth_items_mm.classname = '".addslashes($this->modelClass). "' AND root = tag_models_auth_items_mm.tag_id")
-                ->innerJoin('cwh_tag_owner_interest_mm',
-                    'root = cwh_tag_owner_interest_mm.root_id AND cwh_tag_owner_interest_mm.record_id = ' .$userProfileId)
+            $rootIds = Tag::find()->innerJoin($tagModelsAuthItemsMmTable, $tagModelsAuthItemsMmTable . ".classname = '" . addslashes($this->modelClass) . "' AND root = " . $tagModelsAuthItemsMmTable . ".tag_id")
+                ->innerJoin($cwhTagOwnerInterestMmTable,
+                    'root = ' . $cwhTagOwnerInterestMmTable . '.root_id AND ' . $cwhTagOwnerInterestMmTable . '.record_id = ' . $userProfileId)
                 ->select('root')->groupBy('root')->column();
-            foreach ($rootIds as $rootId){
-                $tableTagsMmAlias = 'tag_mm_'.$rootId;
-                $tableUserTagsMmAlias = 'user_tag_mm_'.$rootId;
+            foreach ($rootIds as $rootId) {
+                $tableTagsMmAlias = 'tag_mm_' . $rootId;
+                $tableUserTagsMmAlias = 'user_tag_mm_' . $rootId;
                 $query
-                    ->innerJoin('entitys_tags_mm '.$tableTagsMmAlias, $tableTagsMmAlias.".record_id = ".$this->tableName.".id and ".$tableTagsMmAlias.'.root_id = '.$rootId)
-                    ->innerJoin('cwh_tag_owner_interest_mm '.$tableUserTagsMmAlias,
-                        $tableTagsMmAlias.'.tag_id = '.$tableUserTagsMmAlias.'.tag_id AND '.$tableUserTagsMmAlias.'.record_id = ' .$userProfileId
-                        . ' AND '. $tableUserTagsMmAlias.'.root_id = '. $rootId)
+                    ->innerJoin('entitys_tags_mm ' . $tableTagsMmAlias, $tableTagsMmAlias . ".record_id = " . $this->tableName . ".id and " . $tableTagsMmAlias . '.root_id = ' . $rootId)
+                    ->innerJoin('' . $cwhTagOwnerInterestMmTable . ' ' . $tableUserTagsMmAlias,
+                        $tableTagsMmAlias . '.tag_id = ' . $tableUserTagsMmAlias . '.tag_id AND ' . $tableUserTagsMmAlias . '.record_id = ' . $userProfileId
+                        . ' AND ' . $tableUserTagsMmAlias . '.root_id = ' . $rootId)
                     ->andWhere([
-                        $tableTagsMmAlias.'.classname' => $this->modelClass ,
-                        $tableUserTagsMmAlias.'.record_id' => $userProfileId,
-                    ])->andWhere($tableUserTagsMmAlias.'.deleted_at IS NULL')
-                    ->andWhere($tableTagsMmAlias.'.deleted_at IS NULL');
+                        $tableTagsMmAlias . '.classname' => $this->modelClass,
+                        $tableUserTagsMmAlias . '.record_id' => $userProfileId,
+                    ])->andWhere([$tableUserTagsMmAlias . '.deleted_at' => null])
+                    ->andWhere([$tableTagsMmAlias . '.deleted_at' => null]);
             }
         }
 
@@ -704,30 +740,56 @@ class CwhActiveQuery extends ActiveQuery
      */
     public function getRecipientsTag($query, $tagValues)
     {
-        if(is_array($tagValues)){
+        if (is_array($tagValues)) {
             $tags = $tagValues;
-        }else{
-            $tags = explode(',',$tagValues);
+        } else {
+            $tags = explode(',', $tagValues);
         }
 
+        /** @var UserProfile $userProfileModel */
+        $userProfileModel = AmosAdmin::instance()->createModel('UserProfile');
+        $userProfileTable = $userProfileModel::tableName();
+        $userTable = User::tableName();
+        $cwhTagOwnerInterestMmTable = CwhTagOwnerInterestMm::tableName();
+
         $cwhModule = \Yii::$app->getModule(AmosCwh::getModuleName());
-        if($cwhModule->cached) {
+        if ($cwhModule->cached) {
             $cahcehdQuery = CachedActiveQuery::instance($query);
             $cahcehdQuery->cache($cwhModule->cacheDuration);
-        }else{
+        } else {
             $cahcehdQuery = (clone $query);
         }
-        $cahcehdQuery->innerJoin('user_profile', 'user.id = user_profile.user_id');
-        $cahcehdQuery->innerJoin('cwh_tag_owner_interest_mm',
-            "cwh_tag_owner_interest_mm.record_id = user_profile.id 
-            AND cwh_tag_owner_interest_mm.interest_classname = :class ", [
-                ':class' => 'simple-choice',
-            ])
-        ->andWhere(['in','cwh_tag_owner_interest_mm.tag_id', $tags])
-            ->andWhere('cwh_tag_owner_interest_mm.deleted_at IS NULL')
-            ->andWhere('user_profile.deleted_at IS NULL')
-            ->andWhere('user.deleted_at IS NULL');
-        return $cahcehdQuery->distinct();
+        $cahcehdQuery->innerJoin($userProfileTable, $userTable . '.id = ' . $userProfileTable . '.user_id');
+
+        if (!$cwhModule->tagsMatchEachTree) {
+            $cahcehdQuery->innerJoin($cwhTagOwnerInterestMmTable,
+                $cwhTagOwnerInterestMmTable . ".record_id = " . $userProfileTable . ".id AND " . $cwhTagOwnerInterestMmTable . ".interest_classname = :class ", [':class' => 'simple-choice',])
+                ->andWhere(['in', $cwhTagOwnerInterestMmTable . '.tag_id', $tags])
+                ->andWhere([$cwhTagOwnerInterestMmTable . '.deleted_at' => null]);
+        } else {
+            $rootIds = TagUtility::findAllRootTagIds();
+            foreach ($rootIds as $rootId) {
+                $tableTagsMmAlias = 'tag_mm_' . $rootId;
+                $tableUserTagsMmAlias = 'user_tag_mm_' . $rootId;
+                $cahcehdQuery
+                    ->innerJoin($cwhTagOwnerInterestMmTable . ' ' . $tableUserTagsMmAlias,
+                        $tableUserTagsMmAlias . '.root_id = ' . $rootId . ' AND ' .
+                        $userProfileTable . '.user_id = ' . $tableUserTagsMmAlias . '.record_id')
+                    ->innerJoin('entitys_tags_mm ' . $tableTagsMmAlias,
+                        $tableTagsMmAlias . '.root_id = ' . $rootId . ' AND ' .
+                        $tableTagsMmAlias . '.tag_id = ' . $tableUserTagsMmAlias . '.tag_id')
+                    ->andWhere([$tableTagsMmAlias . '.classname' => $this->modelClass,])
+                    ->andWhere(['in', $tableUserTagsMmAlias . '.tag_id', $tags])
+                    ->andWhere([$tableUserTagsMmAlias . '.deleted_at' => null])
+                    ->andWhere([$tableTagsMmAlias . '.deleted_at' => null]);
+            }
+            $cahcehdQuery->andWhere([$userProfileTable . '.deleted_at' => null]);
+            $cahcehdQuery->andWhere([$userTable . '.deleted_at' => null]);
+        }
+
+        $cahcehdQuery->distinct();
+
+        return $cahcehdQuery;
     }
 
     /**

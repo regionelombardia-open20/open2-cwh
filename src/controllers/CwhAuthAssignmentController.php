@@ -1,23 +1,23 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\controllers;
+namespace open20\amos\cwh\controllers;
 
-use lispa\amos\chat\DataProvider;
-use lispa\amos\core\controllers\CrudController;
-use lispa\amos\core\helpers\Html;
-use lispa\amos\core\icons\AmosIcons;
-use lispa\amos\cwh\AmosCwh;
-use lispa\amos\cwh\models\CwhAuthAssignment;
-use lispa\amos\cwh\models\search\CwhAuthAssignmentSearch;
+use open20\amos\chat\DataProvider;
+use open20\amos\core\controllers\CrudController;
+use open20\amos\core\helpers\Html;
+use open20\amos\core\icons\AmosIcons;
+use open20\amos\cwh\AmosCwh;
+use open20\amos\cwh\models\CwhAuthAssignment;
+use open20\amos\cwh\models\search\CwhAuthAssignmentSearch;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -27,7 +27,7 @@ use yii\rbac\Item;
 
 /**
  * Class CwhAuthAssignmentController
- * @package lispa\amos\cwh\controllers
+ * @package open20\amos\cwh\controllers
  */
 class CwhAuthAssignmentController extends CrudController
 {

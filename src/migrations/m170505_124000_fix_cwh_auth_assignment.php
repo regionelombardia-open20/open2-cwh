@@ -1,15 +1,15 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh\migrations
+ * @package    open20\amos\cwh\migrations
  * @category   CategoryName
  */
 
-use lispa\amos\cwh\models\CwhAuthAssignment;
+use open20\amos\cwh\models\CwhAuthAssignment;
 use yii\db\Migration;
 
 class m170505_124000_fix_cwh_auth_assignment extends Migration
@@ -53,7 +53,7 @@ class m170505_124000_fix_cwh_auth_assignment extends Migration
                 $row2upd = CwhAuthAssignment::findOne($row['id']);
                 if (!is_null($row2upd)) {
                     $row2upd->detachBehaviors();
-                    /** @var \lispa\amos\cwh\ $row */
+                    /** @var \open20\amos\cwh\ $row */
                     if (isset($table->columns['created_by_dt']) && ($table->columns['created_by']->dbType == 'integer')) {
                         $row2upd->created_by = ($row['created_by_dt'] > 0) ? $row['created_by_dt'] : null;
                     }

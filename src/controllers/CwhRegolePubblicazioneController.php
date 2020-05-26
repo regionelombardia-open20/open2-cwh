@@ -1,25 +1,25 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\controllers;
+namespace open20\amos\cwh\controllers;
 
-use lispa\amos\core\controllers\CrudController;
-use lispa\amos\core\icons\AmosIcons;
-use lispa\amos\cwh\AmosCwh;
-use lispa\amos\cwh\models\CwhRegolePubblicazione;
-use lispa\amos\cwh\models\search\CwhRegolePubblicazioneSearch;
+use open20\amos\core\controllers\CrudController;
+use open20\amos\core\icons\AmosIcons;
+use open20\amos\cwh\AmosCwh;
+use open20\amos\cwh\models\CwhRegolePubblicazione;
+use open20\amos\cwh\models\search\CwhRegolePubblicazioneSearch;
 use Yii;
-use lispa\amos\core\controllers\BaseController;
+use open20\amos\core\controllers\BaseController;
 use yii\web\NotFoundHttpException;
-use lispa\amos\core\helpers\Html;
+use open20\amos\core\helpers\Html;
 
 /**
  * CwhRegolePubblicazioneController implements the CRUD actions for CwhRegolePubblicazione model.
@@ -149,7 +149,7 @@ class CwhRegolePubblicazioneController extends CrudController
         $module = \Yii::$app->getModule('layout');
         if (empty($module)) {
             if (strpos($this->layout, '@') === false) {
-                $this->layout = '@vendor/lispa/amos-core/views/layouts/'.(!empty($layout) ? $layout : $this->layout);
+                $this->layout = '@vendor/open20/amos-core/views/layouts/'.(!empty($layout) ? $layout : $this->layout);
             }
             return true;
         }

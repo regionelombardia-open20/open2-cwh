@@ -1,30 +1,35 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\widgets;
+namespace open20\amos\cwh\widgets;
 
-use lispa\amos\cwh\models\CwhTagInterestMm;
+use open20\amos\admin\AmosAdmin;
+use open20\amos\cwh\models\CwhTagInterestMm;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
 
 /**
  * Class TagWidgetAreeInteresse
- * @package lispa\amos\cwh\widgets
+ * @package open20\amos\cwh\widgets
  */
 class TagWidgetAreeInteresse extends \yii\widgets\InputWidget
 {
     public $form;
     public $contentsTrees = [];
     public $contentsTreesSimple = [];
+    public $checkNotEmptyUserId = false;
+    public $overrideContentClass = '';
+    private $contentClass = '';
+    public $overrideSelectedTags = [];
 
     /**
      * @inheritdoc
@@ -37,6 +42,7 @@ class TagWidgetAreeInteresse extends \yii\widgets\InputWidget
     public function init()
     {
         parent::init();
+        $this->contentClass = (!empty($this->overrideContentClass) ? $this->overrideContentClass : get_class($this->model));
         $this->contentsTrees = $this->fetchContentsTrees();
     }
 
@@ -49,27 +55,35 @@ class TagWidgetAreeInteresse extends \yii\widgets\InputWidget
         $contentsTrees = [];
 
         $moduleTag = Yii::$app->getModule('tag');
-        if(isset($moduleTag)) {
+        if (isset($moduleTag)) {
             $contents = Yii::$app->getModule('cwh')->modelsEnabled;
 
             foreach ($contents as $content) {
                 $refClass = new \ReflectionClass($content);
 
                 $id_user = null;
-                if (Yii::$app->getModule('admin')->modelMap['UserProfile'] == get_class($this->model)) {
-                    $id_user = $this->model['user_id'];
+                if (AmosAdmin::instance()->model('UserProfile') == $this->contentClass) {
+                    if ($this->checkNotEmptyUserId) {
+                        if (!empty($this->model->user_id)) { // Don't move this if in the same line of the previous if!!!
+                            $id_user = $this->model['user_id'];
+                        } else {
+                            $id_user = \Yii::$app->getUser()->getId();
+                        }
+                    } else {
+                        $id_user = $this->model['user_id'];
+                    }
                 } else {
                     $id_user = \Yii::$app->getUser()->getId();
                 }
 
                 //query di recupero dei tags
                 /** @var ActiveQuery $query */
-                $query = \lispa\amos\tag\models\Tag::find()
+                $query = \open20\amos\tag\models\Tag::find()
                     ->joinWith('cwhTagInterestMm')
                     ->joinWith('tagModelsAuthItems')
                     ->andWhere([
-                        \lispa\amos\tag\models\TagModelsAuthItemsMm::tableName() . '.classname' => $content,
-                        CwhTagInterestMm::tableName() . '.classname' => get_class($this->model),
+                        \open20\amos\tag\models\TagModelsAuthItemsMm::tableName() . '.classname' => $content,
+                        CwhTagInterestMm::tableName() . '.classname' => $this->contentClass,
                         CwhTagInterestMm::tableName() . '.auth_item' => array_keys(\Yii::$app->authManager->getRolesByUser($id_user))
                     ]);
 
@@ -79,8 +93,7 @@ class TagWidgetAreeInteresse extends \yii\widgets\InputWidget
                     $contentsTree['classname'] = $content;
                     $contentsTree['trees'] = $query->asArray()->all();
                     $contentsTrees[] = $contentsTree;
-                    $this->contentsTreesSimple = $this->contentsTreesSimple + ArrayHelper::map($query->all(), 'id',
-                            'nome');
+                    $this->contentsTreesSimple = $this->contentsTreesSimple + ArrayHelper::map($query->all(), 'id', 'nome');
                 }
 
             }
@@ -94,7 +107,7 @@ class TagWidgetAreeInteresse extends \yii\widgets\InputWidget
     public function run()
     {
         $moduleTag = Yii::$app->getModule('tag');
-        if(isset($moduleTag)) {
+        if (isset($moduleTag)) {
             return $this->render('tag', [
                 'model' => $this->model,
                 'form' => $this->form,
@@ -114,10 +127,14 @@ class TagWidgetAreeInteresse extends \yii\widgets\InputWidget
      */
     private function getTagsSelected()
     {
+        if (!empty($this->overrideSelectedTags)) {
+            return $this->overrideSelectedTags;
+        }
+
         //data la tabella delle mm tra record e oggetti, recupera le row
         //dell'oggetto per il model in esame
-        $listaTagId = \lispa\amos\cwh\models\CwhTagOwnerInterestMm::findAll([
-            'classname' => get_class($this->model),
+        $listaTagId = \open20\amos\cwh\models\CwhTagOwnerInterestMm::findAll([
+            'classname' => $this->contentClass,
             'record_id' => $this->model->id
         ]);
 
@@ -156,11 +173,11 @@ class TagWidgetAreeInteresse extends \yii\widgets\InputWidget
 
     /**
      * @param $tagId
-     * @return \lispa\amos\tag\models\Tag
+     * @return \open20\amos\tag\models\Tag
      */
     private function getTagById($tagId)
     {
-        return \lispa\amos\tag\models\Tag::findOne($tagId);
+        return \open20\amos\tag\models\Tag::findOne($tagId);
     }
 
     /**
@@ -195,9 +212,9 @@ class TagWidgetAreeInteresse extends \yii\widgets\InputWidget
     private function fetchRoles()
     {
         $moduleTag = Yii::$app->getModule('tag');
-        if(isset($moduleTag)) {
+        if (isset($moduleTag)) {
             /**@var ActiveQuery $query * */
-            $query = \lispa\amos\tag\models\Tag::find()->joinWith('cwhTagInterestMm')->andWhere(['auth_item' => array_keys(\Yii::$app->authManager->getRolesByUser(\Yii::$app->getUser()->getId()))]);
+            $query = \open20\amos\tag\models\Tag::find()->joinWith('cwhTagInterestMm')->andWhere(['auth_item' => array_keys(\Yii::$app->authManager->getRolesByUser(\Yii::$app->getUser()->getId()))]);
 
             return $query->all();
         }

@@ -1,46 +1,46 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\widgets;
+namespace open20\amos\cwh\widgets;
 
-use lispa\amos\admin\models\UserProfile;
-use lispa\amos\core\interfaces\ModelLabelsInterface;
-use lispa\amos\core\interfaces\OrganizationsModelInterface;
-use lispa\amos\core\user\User;
-use lispa\amos\cwh\AmosCwh;
-use lispa\amos\cwh\models\search\CwhNodiSearch;
+use open20\amos\admin\models\UserProfile;
+use open20\amos\core\user\User;
+use open20\amos\cwh\AmosCwh;
+use open20\amos\cwh\models\CwhConfig;
+use open20\amos\cwh\models\search\CwhNodiSearch;
 use kartik\widgets\Select2;
-use yii\base\InvalidConfigException;
 use Yii;
-use yii\base\Widget;
+use yii\base\InvalidConfigException;
 use yii\helpers\ArrayHelper;
-use lispa\amos\cwh\models\CwhConfig;
 
-class ValidatoriNEW extends Validatori {
-
+/**
+ * Class ValidatoriNEW
+ * @package open20\amos\cwh\widgets
+ */
+class ValidatoriNEW extends Validatori
+{
     public
         $moduleCwh;
 
     /**
-     * 
-     * @return type
-     * @throws InvalidConfigException
+     * @inheritDoc
      */
-    public function run() {
+    public function run()
+    {
         if (!count($this->moduleCwh->validateOnStatus)) {
             throw new InvalidConfigException(
-                AmosCwh::t('amoscwh', 'E\' necessario impostare il campo validateOnStatus nella configuazione della CWH per il model {classname}',
-                    [
-                        'classname' => get_class($this->model)
-                    ]
+                AmosCwh::t(
+                    'amoscwh',
+                    'E\' necessario impostare il campo validateOnStatus nella configuazione della CWH per il model {classname}',
+                    ['classname' => get_class($this->model)]
                 )
             );
         }
@@ -53,18 +53,19 @@ class ValidatoriNEW extends Validatori {
         }
 
         $nodi = CwhNodiSearch::findByModel($this->getModel());
-        $data = ArrayHelper::merge([],
+        $data = ArrayHelper::merge(
+            [],
             ArrayHelper::map(
                 $nodi, 'id', 'text'
             )
         );
-  
+
         $i = 0;
         $validators = [];
         $scope = $this->moduleCwh->getCwhScope();
         $scopeFilter = (empty($scope)) ? false : true;
         $myown_rule = null;
-
+            
         $name = \Yii::$app->user->identity->profile->getNomeCognome();
 
         $networkModels = CwhConfig::find()
@@ -88,7 +89,7 @@ class ValidatoriNEW extends Validatori {
             $i = 0;
             foreach ($data as $key => $value) {
                 if ($scopeFilter) {
-                    $pos      = strpos($key, '-');
+                    $pos = strpos($key, '-');
                     $scopeKey = substr($key, 0, $pos);
                     if (isset($scope[$scopeKey]) && $scope[$scopeKey] == $nodi[$i]->record_id) {
                         $validators[$key] = $name; //. ' (' . $data[$key] . ')'; // nomecognome utente
@@ -103,35 +104,57 @@ class ValidatoriNEW extends Validatori {
                     } else {
                         if (!$scopeFilter) {
                             if ($nodi[$i]->classname == $networkModel->classname) {
-                               $networkIds[$nodi[$i]->classname][$nodi[$i]->record_id] = $nodi[$i]->record_id;
-                               $usersId[$nodi[$i]->classname][$nodi[$i]->record_id] = $uid;
-                           }
+                                $networkIds[$nodi[$i]->classname][$nodi[$i]->record_id] = $nodi[$i]->record_id;
+                                $usersId[$nodi[$i]->classname][$nodi[$i]->record_id] = $uid;
+                            }
                         }
                     }
                 }
                 $i++;
             }
-        
+
             // Retrieve all records corresponding to the $networkModel->classname via sql
             $rows = [];
-            if (isset($networkIds[$networkModel->classname])) {
+            if (isset($networkIds[$networkModel->classname]) && $networkObject->hasMethod('getListOfRecipients')) {
                 $rows = $networkObject->getListOfRecipients(
                     array_keys($networkIds[$networkModel->classname]),
                     $usersId[$networkModel->classname]
                 );
             }
-            
+
             if (($isUpdate) || ($rows)) {
-                if (array_key_exists('lispa\amos\core\interfaces\OrganizationsModelInterface', class_implements($networkObject))) {
-                    $key = AmosCwh::t('amoscwh', 'Organizzazioni');
-                    $validators[$key] = [];
-                    foreach ($rows as $k => $v) {
-                        $validators[$key]['organizations' . '-' . $v['id']] = $name . ' (' . $v['name'] . ')';
+                if (array_key_exists('open20\amos\core\interfaces\OrganizationsModelInterface', class_implements($networkObject))) {
+                    if(!empty($rows)) {
+                        $key = AmosCwh::t('amoscwh', 'Organizzazioni');
+                        $validators[$key] = [];
+                        foreach ($rows as $k => $v) {
+                            $validators[$key][$v['id']] = $name . ' (' . $v['name'] . ')';
+                        }
                     }
                 }
             }
         }
-
+        
+        /**
+         * Check if workflow is on or off
+         * if the case add the user itself as validator
+         */        
+        $key = 'user-' . $uid;
+        $user = User::findOne($uid);
+        if (($myown_rule == null) && ($scope == 'community') ) {
+            $hideWorkflow = isset(Yii::$app->params['hideWorkflowTransitionWidget']) && Yii::$app->params['hideWorkflowTransitionWidget'];
+            /** @var AmosCommunity $amosCommunity */
+            $amosCommunity = Yii::$app->getModule('community');
+            $hideWorkflow = $hideWorkflow || $amosCommunity->bypassWorkflow;
+            if (($hideWorkflow === false) && (!is_null($user))) {
+                $myown_rule = array($key => $name);
+            }
+            $validators[$key] = $name; //.' for '.$data[$key];
+        } else if ((count($validators) == 0) && (!is_null($user))) {
+            $myown_rule = array($key => $name);
+            $validators[$key] = $name; //.' for '.$data[$key];
+        }
+        
         $data = $validators;
 
         /**
@@ -154,7 +177,10 @@ class ValidatoriNEW extends Validatori {
 
         if($this->getModel()->isNewRecord)
         {
-            $value = isset(($data)[0]) ? array_keys($data)[0] : [];
+            //get the first element of an array
+            reset($data);
+            $first_key = key($data);
+            $value = $first_key ? $first_key : [];
         }
         else
         {
@@ -178,7 +204,6 @@ class ValidatoriNEW extends Validatori {
                     'maximumInputLength' => 10
                 ],
             ]
-        )->label(AmosCwh::t('amoscwh', 'Scegli la firma')); // TODO traduzione corretta
+        )->label(AmosCwh::t('amoscwh', 'Scegli la firma'));
     }
-
 }

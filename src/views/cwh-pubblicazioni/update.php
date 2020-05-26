@@ -1,9 +1,18 @@
 <?php
-use lispa\amos\cwh\AmosCwh;
+
+/**
+ * Aria S.p.A.
+ * OPEN 2.0
+ *
+ *
+ * @package    Open20Package
+ * @category   CategoryName
+ */
+use open20\amos\cwh\AmosCwh;
 
 /**
  * @var yii\web\View $this
- * @var lispa\amos\cwh\models\CwhPubblicazioni $model
+ * @var open20\amos\cwh\models\CwhPubblicazioni $model
  */
 
 

@@ -1,10 +1,19 @@
 <?php
 
 /**
- * @var yii\web\View $this
- * @var lispa\amos\cwh\models\CwhConfig $model
+ * Aria S.p.A.
+ * OPEN 2.0
+ *
+ *
+ * @package    Open20Package
+ * @category   CategoryName
  */
-use lispa\amos\cwh\AmosCwh;
+
+/**
+ * @var yii\web\View $this
+ * @var open20\amos\cwh\models\CwhConfig $model
+ */
+use open20\amos\cwh\AmosCwh;
 
 $this->title = AmosCwh::t('amoscwh', 'Update {modelClass}: ', [
         'modelClass' => 'Cwh Config',

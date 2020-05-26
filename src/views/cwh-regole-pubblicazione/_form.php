@@ -1,13 +1,22 @@
 <?php
-use lispa\amos\core\forms\ActiveForm;
-use lispa\amos\cwh\AmosCwh;
+
+/**
+ * Aria S.p.A.
+ * OPEN 2.0
+ *
+ *
+ * @package    Open20Package
+ * @category   CategoryName
+ */
+use open20\amos\core\forms\ActiveForm;
+use open20\amos\cwh\AmosCwh;
 
 use yii\bootstrap\Tabs;
 use yii\helpers\Html;
 
 /**
  * @var yii\web\View $this
- * @var lispa\amos\cwh\models\CwhRegolePubblicazione $model
+ * @var open20\amos\cwh\models\CwhRegolePubblicazione $model
  * @var yii\widgets\ActiveForm $form
  */
 
@@ -46,6 +55,6 @@ use yii\helpers\Html;
     );
     ?>
     <?php
-    echo \lispa\amos\core\forms\CloseSaveButtonWidget::widget(['model' => $model]);
+    echo \open20\amos\core\forms\CloseSaveButtonWidget::widget(['model' => $model]);
     ActiveForm::end(); ?>
 </div>

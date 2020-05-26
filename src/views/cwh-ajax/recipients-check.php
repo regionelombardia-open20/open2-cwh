@@ -1,21 +1,35 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh\views cwh-ajax
  * @category   CategoryName
  */
 
-use lispa\amos\admin\AmosAdmin;
-use lispa\amos\core\helpers\Html;
-use lispa\amos\core\icons\AmosIcons;
-use lispa\amos\core\views\AmosGridView;
-use lispa\amos\cwh\AmosCwh;
+use open20\amos\admin\AmosAdmin;
+use open20\amos\admin\models\UserProfile;
+use open20\amos\core\helpers\Html;
+use open20\amos\core\icons\AmosIcons;
+use open20\amos\core\views\AmosGridView;
+use open20\amos\cwh\AmosCwh;
 use yii\data\ActiveDataProvider;
 
+/**
+ * @var \yii\web\View $this
+ * @var string $validators
+ * @var string $publicationRule
+ * @var string $tagValues
+ * @var string $scopes
+ * @var string $searchName
+ * @var \yii\db\ActiveQuery $query
+ * @var string $labelSuffix
+ */
+
+
+$labelSuffix = strip_tags($labelSuffix);
 ?>
 <div id='recipients-grid' data-pjax-container='' data-pjax-timeout='1000'>
 <?php if(!empty($validators)): ?>
@@ -75,6 +89,7 @@ use yii\data\ActiveDataProvider;
                      'label' => AmosAdmin::t('amosadmin', 'Photo'),
                      'format' => 'raw',
                      'value' => function ($model) {
+                         /** @var UserProfile $model */
                          $url = $model->getAvatarUrl();
                          $viewUrl = "/admin/user-profile/view?id=" . $model->id;
                          $img = Html::tag('div', Html::img($url, [
@@ -97,6 +112,7 @@ use yii\data\ActiveDataProvider;
                      ],
                      'label' => AmosAdmin::t('amosadmin', 'Name'),
                      'value' => function($model){
+                         /** @var UserProfile $model */
                          return Html::a($model->nomeCognome, ['/admin/user-profile/view', 'id' => $model->id ], [
                              'title' => AmosAdmin::t('amosadmin', 'Apri il profilo di {nome_profilo}', ['nome_profilo' => $model->nomeCognome])
                          ]);
@@ -113,7 +129,8 @@ use yii\data\ActiveDataProvider;
                      ],
                      'label' => AmosAdmin::t('amosadmin', 'Status'),
                      'value' => function ($model) {
-                         return $model->hasWorkflowStatus() ? $model->getWorkflowStatus()->getLabel() : '--';
+                         /** @var UserProfile $model */
+                         return $model->hasWorkflowStatus() ? AmosAdmin::t('amosadmin', $model->getWorkflowStatus()->getLabel()) : '--';
                      }
                  ]
              ],
@@ -122,4 +139,3 @@ use yii\data\ActiveDataProvider;
         </div>
     </div>
 </div>
-

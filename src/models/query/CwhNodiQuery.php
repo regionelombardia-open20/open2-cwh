@@ -1,19 +1,19 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\models\query;
+namespace open20\amos\cwh\models\query;
 
 
-use lispa\amos\core\record\Record;
-use lispa\amos\core\utilities\CurrentUser;
+use open20\amos\core\record\Record;
+use open20\amos\core\utilities\CurrentUser;
 
 class CwhNodiQuery extends \yii\db\ActiveQuery
 {

@@ -1,23 +1,23 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\models\search;
+namespace open20\amos\cwh\models\search;
 
-use lispa\amos\cwh\models\CwhConfig;
+use open20\amos\cwh\models\CwhConfig;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
 /**
- * CwhConfigSearch represents the model behind the search form about `lispa\amos\cwh\models\CwhConfig`.
+ * CwhConfigSearch represents the model behind the search form about `open20\amos\cwh\models\CwhConfig`.
  */
 class CwhConfigSearch extends CwhConfig
 {

@@ -1,29 +1,29 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh;
+namespace open20\amos\cwh;
 
-use lispa\amos\core\module\AmosModule;
-use lispa\amos\core\record\Record;
-use lispa\amos\core\user\User;
-use lispa\amos\cwh\base\ModelNetworkInterface;
-use lispa\amos\cwh\components\bootstrap\CheckConfigComponent;
-use lispa\amos\cwh\models\base\CwhConfigContents;
-use lispa\amos\cwh\models\CwhConfig;
-use lispa\amos\cwh\models\CwhNodi;
-use lispa\amos\cwh\models\CwhPubblicazioniCwhNodiEditoriMm;
-use lispa\amos\cwh\models\CwhPubblicazioniCwhNodiValidatoriMm;
-use lispa\amos\cwh\models\CwhTagInterestMm;
-use lispa\amos\cwh\models\CwhTagOwnerInterestMm;
-use lispa\amos\cwh\query\CwhActiveQuery;
+use open20\amos\core\module\AmosModule;
+use open20\amos\core\record\Record;
+use open20\amos\core\user\User;
+use open20\amos\cwh\base\ModelNetworkInterface;
+use open20\amos\cwh\components\bootstrap\CheckConfigComponent;
+use open20\amos\cwh\models\base\CwhConfigContents;
+use open20\amos\cwh\models\CwhConfig;
+use open20\amos\cwh\models\CwhNodi;
+use open20\amos\cwh\models\CwhPubblicazioniCwhNodiEditoriMm;
+use open20\amos\cwh\models\CwhPubblicazioniCwhNodiValidatoriMm;
+use open20\amos\cwh\models\CwhTagInterestMm;
+use open20\amos\cwh\models\CwhTagOwnerInterestMm;
+use open20\amos\cwh\query\CwhActiveQuery;
 use Yii;
 use yii\base\BootstrapInterface;
 use yii\base\Event;
@@ -38,7 +38,7 @@ use yii\web\Application;
  *
  * Collaboration Web House - This module provides management of rules, scope, relations and further more linking modules to the others
  *
- * @package lispa\amos\cwh
+ * @package open20\amos\cwh
  * @see
  */
 class AmosCwh extends AmosModule implements BootstrapInterface
@@ -46,7 +46,7 @@ class AmosCwh extends AmosModule implements BootstrapInterface
     /**
      * @var string
      */
-    public $controllerNamespace = 'lispa\amos\cwh\controllers';
+    public $controllerNamespace = 'open20\amos\cwh\controllers';
     /**
      * @var string
      */
@@ -77,10 +77,10 @@ class AmosCwh extends AmosModule implements BootstrapInterface
     ];
 
     public $permissionPrefix = 'CWH_PERMISSION';
-    public $userProfileClass = 'lispa\admin\models\UserProfile';
+    public $userProfileClass = 'open20\admin\models\UserProfile';
 
     public $behaviors = [
-        'cwhBehavior' => 'lispa\amos\cwh\behaviors\CwhNetworkBehaviors'
+        'cwhBehavior' => 'open20\amos\cwh\behaviors\CwhNetworkBehaviors'
     ];
 
     public $validatoriEnabled = true;
@@ -147,7 +147,7 @@ class AmosCwh extends AmosModule implements BootstrapInterface
         $configContents = null;
         parent::init();
 
-        \Yii::setAlias('@lispa/amos/' . static::getModuleName() . '/controllers', __DIR__ . '/controllers');
+        \Yii::setAlias('@open20/amos/' . static::getModuleName() . '/controllers', __DIR__ . '/controllers');
         \Yii::configure($this, require(__DIR__ . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php'));
         try {
             $configContents = CwhConfigContents::find()->all();
@@ -291,6 +291,7 @@ class AmosCwh extends AmosModule implements BootstrapInterface
      * @param integer $userId - if null logged user id is considered
      * @return mixed
      *
+     * @see CwhActiveQuery::getUserNetworksQuery
      */
     public function getUserNetworks($userId = null){
 
@@ -353,7 +354,7 @@ class AmosCwh extends AmosModule implements BootstrapInterface
             $moduleTag = Yii::$app->getModule('tag');
             if(isset($moduleTag)){
                 $models = ArrayHelper::merge($models, [
-                    \lispa\amos\tag\models\EntitysTagsMm::className(),
+                    \open20\amos\tag\models\EntitysTagsMm::className(),
                     CwhTagInterestMm::className(),
                     CwhTagOwnerInterestMm::className(),
                 ]);

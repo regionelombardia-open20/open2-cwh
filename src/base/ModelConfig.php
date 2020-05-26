@@ -1,15 +1,24 @@
 <?php
 
-namespace lispa\amos\cwh\base;
+/**
+ * Aria S.p.A.
+ * OPEN 2.0
+ *
+ *
+ * @package    Open20Package
+ * @category   CategoryName
+ */
 
-use lispa\amos\cwh\AmosCwh;
+namespace open20\amos\cwh\base;
+
+use open20\amos\cwh\AmosCwh;
 use yii\base\Model;
 use yii\helpers\ArrayHelper;
 
 /**
  * Class ModelConfig
  *
- * @package lispa\amos\cwh\base
+ * @package open20\amos\cwh\base
  * @var string classname
  * @var string label
  * @var string module_id

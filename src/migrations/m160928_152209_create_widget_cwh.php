@@ -1,16 +1,16 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-use lispa\amos\core\migration\AmosMigration;
-use lispa\amos\dashboard\models\AmosWidgets;
+use open20\amos\core\migration\AmosMigration;
+use open20\amos\dashboard\models\AmosWidgets;
 
 class m160928_152209_create_widget_cwh extends AmosMigration
 {
@@ -32,63 +32,63 @@ class m160928_152209_create_widget_cwh extends AmosMigration
     {
         $this->widgets = [
             [
-                'classname' => \lispa\amos\cwh\widgets\icons\WidgetIconCwhAuthAssignment::className(),
-                'type' => \lispa\amos\dashboard\models\AmosWidgets::TYPE_ICON,
+                'classname' => \open20\amos\cwh\widgets\icons\WidgetIconCwhAuthAssignment::className(),
+                'type' => \open20\amos\dashboard\models\AmosWidgets::TYPE_ICON,
                 'module' => self::MODULE_NAME,
                 'status' => AmosWidgets::STATUS_ENABLED
             ],
             [
-                'classname' => \lispa\amos\cwh\widgets\icons\WidgetIconCwhRegolePubblicazione::className(),
+                'classname' => \open20\amos\cwh\widgets\icons\WidgetIconCwhRegolePubblicazione::className(),
                 'type' => AmosWidgets::TYPE_ICON,
                 'module' => self::MODULE_NAME,
                 'status' => AmosWidgets::STATUS_ENABLED
             ],
             [
-                'classname' => \lispa\amos\cwh\widgets\icons\WidgetIconCwhNodi::className(),
+                'classname' => \open20\amos\cwh\widgets\icons\WidgetIconCwhNodi::className(),
                 'type' => AmosWidgets::TYPE_ICON,
                 'module' => self::MODULE_NAME,
                 'status' => AmosWidgets::STATUS_ENABLED
             ],
             [
-                'classname' => \lispa\amos\cwh\widgets\icons\WidgetIconCwhConfig::className(),
+                'classname' => \open20\amos\cwh\widgets\icons\WidgetIconCwhConfig::className(),
                 'type' => AmosWidgets::TYPE_ICON,
                 'module' => self::MODULE_NAME,
                 'status' => AmosWidgets::STATUS_ENABLED
             ],
 //            [
-//                'classname' => \lispa\amos\news\widgets\icons\WidgetIconNews::className(),
+//                'classname' => \open20\amos\news\widgets\icons\WidgetIconNews::className(),
 //                'type' => AmosWidgets::TYPE_ICON,
 //                'module' => self::MODULE_NAME,
 //                'status' => AmosWidgets::STATUS_ENABLED,
-//                'child_of' => \lispa\amos\news\widgets\icons\WidgetIconNewsDashboard::className()
+//                'child_of' => \open20\amos\news\widgets\icons\WidgetIconNewsDashboard::className()
 //            ],
 //            [
-//                'classname' => lispa\amos\news\widgets\icons\WidgetIconNewsCategorie::className(),
+//                'classname' => open20\amos\news\widgets\icons\WidgetIconNewsCategorie::className(),
 //                'type' => AmosWidgets::TYPE_ICON,
 //                'module' => self::MODULE_NAME,
 //                'status' => AmosWidgets::STATUS_ENABLED,
-//                'child_of' => \lispa\amos\news\widgets\icons\WidgetIconNewsDashboard::className()
+//                'child_of' => \open20\amos\news\widgets\icons\WidgetIconNewsDashboard::className()
 //            ],
 //            [
-//                'classname' => lispa\amos\news\widgets\icons\WidgetIconNewsCreatedBy::className(),
+//                'classname' => open20\amos\news\widgets\icons\WidgetIconNewsCreatedBy::className(),
 //                'type' => AmosWidgets::TYPE_ICON,
 //                'module' => self::MODULE_NAME,
 //                'status' => AmosWidgets::STATUS_ENABLED,
-//                'child_of' => \lispa\amos\news\widgets\icons\WidgetIconNewsDashboard::className()
+//                'child_of' => \open20\amos\news\widgets\icons\WidgetIconNewsDashboard::className()
 //            ],
 //            [
-//                'classname' => lispa\amos\news\widgets\icons\WidgetIconNewsDaValidare::className(),
+//                'classname' => open20\amos\news\widgets\icons\WidgetIconNewsDaValidare::className(),
 //                'type' => AmosWidgets::TYPE_ICON,
 //                'module' => self::MODULE_NAME,
 //                'status' => AmosWidgets::STATUS_ENABLED,
-//                'child_of' => \lispa\amos\news\widgets\icons\WidgetIconNewsDashboard::className()
+//                'child_of' => \open20\amos\news\widgets\icons\WidgetIconNewsDashboard::className()
 //            ],
 //            [
-//                'classname' => \lispa\amos\news\widgets\graphics\WidgetGraphicsUltimeNews::className(),
+//                'classname' => \open20\amos\news\widgets\graphics\WidgetGraphicsUltimeNews::className(),
 //                'type' => AmosWidgets::TYPE_GRAPHIC,
 //                'module' => self::MODULE_NAME,
 //                'status' => AmosWidgets::STATUS_ENABLED,
-//                'child_of' => \lispa\amos\news\widgets\icons\WidgetIconNewsDashboard::className()
+//                'child_of' => \open20\amos\news\widgets\icons\WidgetIconNewsDashboard::className()
 //            ]
         ];
     }

@@ -1,13 +1,22 @@
 <?php
 
-use lispa\amos\core\forms\ActiveForm;
-use lispa\amos\cwh\AmosCwh;
+/**
+ * Aria S.p.A.
+ * OPEN 2.0
+ *
+ *
+ * @package    Open20Package
+ * @category   CategoryName
+ */
+
+use open20\amos\core\forms\ActiveForm;
+use open20\amos\cwh\AmosCwh;
 use yii\helpers\Html;
-use lispa\amos\core\icons\AmosIcons;
+use open20\amos\core\icons\AmosIcons;
 
 /**
  * @var yii\web\View $this
- * @var lispa\amos\cwh\models\search\CwhConfigSearch $model
+ * @var open20\amos\cwh\models\search\CwhConfigSearch $model
  * @var yii\widgets\ActiveForm $form
  */
 ?>

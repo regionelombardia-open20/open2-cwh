@@ -1,8 +1,17 @@
 <?php
 
-namespace lispa\amos\cwh\models\base;
+/**
+ * Aria S.p.A.
+ * OPEN 2.0
+ *
+ *
+ * @package    Open20Package
+ * @category   CategoryName
+ */
 
-use lispa\amos\cwh\AmosCwh;
+namespace open20\amos\cwh\models\base;
+
+use open20\amos\cwh\AmosCwh;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -22,7 +31,7 @@ use yii\helpers\ArrayHelper;
  * @property integer $deleted_by
  *
  */
-class CwhConfigContents extends \lispa\amos\core\record\Record
+class CwhConfigContents extends \open20\amos\core\record\Record
 {
     /**
      * @inheritdoc

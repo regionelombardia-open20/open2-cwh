@@ -1,10 +1,19 @@
 <?php
 
-namespace lispa\amos\cwh\helpers\base;
+/**
+ * Aria S.p.A.
+ * OPEN 2.0
+ *
+ *
+ * @package    Open20Package
+ * @category   CategoryName
+ */
+
+namespace open20\amos\cwh\helpers\base;
 
 
-use lispa\amos\core\module\AmosModule;
-use lispa\amos\cwh\base\ModelConfig;
+use open20\amos\core\module\AmosModule;
+use open20\amos\cwh\base\ModelConfig;
 use hanneskod\classtools\Iterator\ClassIterator;
 use Symfony\Component\Finder\Finder;
 use yii\helpers\ArrayHelper;
@@ -12,8 +21,8 @@ use yii\helpers\ArrayHelper;
 class BaseEntitiesHelper
 {
 
-    const INTERFACE_CONTENT = '\lispa\amos\core\interfaces\ContentModelInterface';
-    const INTERFACE_NETWORK = '\lispa\amos\cwh\base\ModelNetworkInterface';
+    const INTERFACE_CONTENT = '\open20\amos\core\interfaces\ContentModelInterface';
+    const INTERFACE_NETWORK = '\open20\amos\cwh\base\ModelNetworkInterface';
 
     /**
      * Get classname listed by module name that implements {{$interfaceClassname}}
@@ -103,10 +112,10 @@ class BaseEntitiesHelper
     private static function retreiveConfigClass($interfaceClassname)
     {
         if ($interfaceClassname == self::INTERFACE_CONTENT) {
-            return '\lispa\amos\cwh\models\CwhConfigContents';
+            return '\open20\amos\cwh\models\CwhConfigContents';
         }
         if ($interfaceClassname == self::INTERFACE_NETWORK) {
-            return '\lispa\amos\cwh\models\CwhConfig';
+            return '\open20\amos\cwh\models\CwhConfig';
         }
 
         return null;

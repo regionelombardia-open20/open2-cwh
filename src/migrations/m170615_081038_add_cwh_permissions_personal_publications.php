@@ -1,8 +1,17 @@
 <?php
 
+/**
+ * Aria S.p.A.
+ * OPEN 2.0
+ *
+ *
+ * @package    Open20Package
+ * @category   CategoryName
+ */
+
 use yii\db\Migration;
-use lispa\amos\core\user\User;
-use lispa\amos\cwh\models\CwhAuthAssignment;
+use open20\amos\core\user\User;
+use open20\amos\cwh\models\CwhAuthAssignment;
 
 /**
  * For each platform user add cwh permissions to create contents in personal scope; redactor user will be the validator of all these contents
@@ -13,7 +22,7 @@ class m170615_081038_add_cwh_permissions_personal_publications extends Migration
 {
     public function safeUp()
     {
-        /** @var lispa\amos\cwh\AmosCwh $moduleCwh */
+        /** @var open20\amos\cwh\AmosCwh $moduleCwh */
         $moduleCwh = Yii::$app->getModule('cwh');
         if(!empty($moduleCwh)){
             $userIds = User::find()->select('id')->all();

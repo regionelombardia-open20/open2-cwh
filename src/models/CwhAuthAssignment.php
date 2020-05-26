@@ -1,22 +1,22 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\models;
-use lispa\amos\admin\models\UserProfile;
+namespace open20\amos\cwh\models;
+use open20\amos\admin\models\UserProfile;
 use yii\db\Expression;
 
 /**
  * This is the model class for table "cwh_auth_assignment".
  */
-class CwhAuthAssignment extends \lispa\amos\cwh\models\base\CwhAuthAssignment
+class CwhAuthAssignment extends \open20\amos\cwh\models\base\CwhAuthAssignment
 {
     public function representingColumn()
     {
@@ -30,7 +30,7 @@ class CwhAuthAssignment extends \lispa\amos\cwh\models\base\CwhAuthAssignment
 
     public function getUtenti() {
         $exp = new Expression("CONCAT_WS(' ', nome, cognome) as nome_cognome");
-        $utenti = \lispa\amos\core\user\User::find()->innerJoinWith('userProfile')->select(['user.id as id', $exp])->asArray()->all();
+        $utenti = \open20\amos\core\user\User::find()->innerJoinWith('userProfile')->select(['user.id as id', $exp])->asArray()->all();
         return $utenti;
     }
 

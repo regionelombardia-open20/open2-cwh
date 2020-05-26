@@ -1,15 +1,15 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\models\search;
+namespace open20\amos\cwh\models\search;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -17,7 +17,7 @@ use yii\data\ActiveDataProvider;
 /**
  * This is the model class for table "cwh_auth_assignment".
  */
-class CwhAuthAssignmentSearch extends \lispa\amos\cwh\models\base\CwhAuthAssignment
+class CwhAuthAssignmentSearch extends \open20\amos\cwh\models\base\CwhAuthAssignment
 {
     public function rules()
     {

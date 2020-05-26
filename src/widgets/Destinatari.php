@@ -1,22 +1,22 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\widgets;
+namespace open20\amos\cwh\widgets;
 
-use lispa\amos\core\interfaces\ModelLabelsInterface;
-use lispa\amos\cwh\AmosCwh;
-use lispa\amos\cwh\models\CwhConfig;
-use lispa\amos\cwh\models\CwhNodi;
-use lispa\amos\cwh\models\CwhRegolePubblicazione;
-use lispa\amos\cwh\utility\CwhUtil;
+use open20\amos\core\interfaces\ModelLabelsInterface;
+use open20\amos\cwh\AmosCwh;
+use open20\amos\cwh\models\CwhConfig;
+use open20\amos\cwh\models\CwhNodi;
+use open20\amos\cwh\models\CwhRegolePubblicazione;
+use open20\amos\cwh\utility\CwhUtil;
 use Yii;
 use yii\base\Widget;
 use yii\helpers\ArrayHelper;

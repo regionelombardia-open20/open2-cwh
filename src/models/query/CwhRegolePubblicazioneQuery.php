@@ -1,6 +1,6 @@
 <?php
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
@@ -8,11 +8,11 @@
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\models\query;
+namespace open20\amos\cwh\models\query;
 
 
-use lispa\amos\cwh\AmosCwh;
-use lispa\amos\cwh\models\CwhRegolePubblicazione;
+use open20\amos\cwh\AmosCwh;
+use open20\amos\cwh\models\CwhRegolePubblicazione;
 use yii\db\ActiveQuery;
 
 class CwhRegolePubblicazioneQuery extends ActiveQuery

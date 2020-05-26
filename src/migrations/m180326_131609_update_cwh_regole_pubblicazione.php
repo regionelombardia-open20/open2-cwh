@@ -1,19 +1,19 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh\migrations
+ * @package    open20\amos\cwh\migrations
  * @category   CategoryName
  */
 
-use lispa\amos\cwh\models\CwhConfig;
-use lispa\amos\cwh\models\CwhConfigContents;
-use lispa\amos\cwh\models\CwhPubblicazioni;
-use lispa\amos\cwh\models\CwhPubblicazioniCwhNodiEditoriMm;
-use lispa\amos\cwh\models\CwhPubblicazioniCwhNodiValidatoriMm;
+use open20\amos\cwh\models\CwhConfig;
+use open20\amos\cwh\models\CwhConfigContents;
+use open20\amos\cwh\models\CwhPubblicazioni;
+use open20\amos\cwh\models\CwhPubblicazioniCwhNodiEditoriMm;
+use open20\amos\cwh\models\CwhPubblicazioniCwhNodiValidatoriMm;
 use yii\db\Migration;
 use yii\db\Query;
 

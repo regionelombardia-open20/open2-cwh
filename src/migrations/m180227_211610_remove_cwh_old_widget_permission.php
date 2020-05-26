@@ -1,8 +1,17 @@
 <?php
 
-use lispa\amos\core\migration\AmosMigrationPermissions;
+/**
+ * Aria S.p.A.
+ * OPEN 2.0
+ *
+ *
+ * @package    Open20Package
+ * @category   CategoryName
+ */
+
+use open20\amos\core\migration\AmosMigrationPermissions;
 use yii\rbac\Permission;
-use lispa\amos\dashboard\models\AmosWidgets;
+use open20\amos\dashboard\models\AmosWidgets;
 
 class m180227_211610_remove_cwh_old_widget_permission extends AmosMigrationPermissions
 {
@@ -16,25 +25,25 @@ class m180227_211610_remove_cwh_old_widget_permission extends AmosMigrationPermi
     {
         $this->widgets = [
             [
-                'classname' => \lispa\amos\cwh\widgets\icons\WidgetIconCwhAuthAssignment::className(),
-                'type' => \lispa\amos\dashboard\models\AmosWidgets::TYPE_ICON,
+                'classname' => \open20\amos\cwh\widgets\icons\WidgetIconCwhAuthAssignment::className(),
+                'type' => \open20\amos\dashboard\models\AmosWidgets::TYPE_ICON,
                 'module' => self::MODULE_NAME,
                 'status' => AmosWidgets::STATUS_ENABLED
             ],
             [
-                'classname' => \lispa\amos\cwh\widgets\icons\WidgetIconCwhRegolePubblicazione::className(),
+                'classname' => \open20\amos\cwh\widgets\icons\WidgetIconCwhRegolePubblicazione::className(),
                 'type' => AmosWidgets::TYPE_ICON,
                 'module' => self::MODULE_NAME,
                 'status' => AmosWidgets::STATUS_ENABLED
             ],
             [
-                'classname' => \lispa\amos\cwh\widgets\icons\WidgetIconCwhNodi::className(),
+                'classname' => \open20\amos\cwh\widgets\icons\WidgetIconCwhNodi::className(),
                 'type' => AmosWidgets::TYPE_ICON,
                 'module' => self::MODULE_NAME,
                 'status' => AmosWidgets::STATUS_ENABLED
             ],
             [
-                'classname' => \lispa\amos\cwh\widgets\icons\WidgetIconCwhConfig::className(),
+                'classname' => \open20\amos\cwh\widgets\icons\WidgetIconCwhConfig::className(),
                 'type' => AmosWidgets::TYPE_ICON,
                 'module' => self::MODULE_NAME,
                 'status' => AmosWidgets::STATUS_ENABLED
@@ -108,28 +117,28 @@ class m180227_211610_remove_cwh_old_widget_permission extends AmosMigrationPermi
         $this->authorizations = [
             
             [
-                'name' => \lispa\amos\cwh\widgets\icons\WidgetIconCwhAuthAssignment::className(),
+                'name' => \open20\amos\cwh\widgets\icons\WidgetIconCwhAuthAssignment::className(),
                 'type' => Permission::TYPE_PERMISSION,
                 'description' => 'Permesso per visualizzare icona WidgetIconCwhAuthAssignment',
                 'ruleName' => null,
                 'parent' => ['AMMINISTRATORE_CWH']
             ],
             [
-                'name' => \lispa\amos\cwh\widgets\icons\WidgetIconCwhConfig::className(),
+                'name' => \open20\amos\cwh\widgets\icons\WidgetIconCwhConfig::className(),
                 'type' => Permission::TYPE_PERMISSION,
                 'description' => 'Permesso per visualizzare icona WidgetIconCwhConfig',
                 'ruleName' => null,
                 'parent' => ['AMMINISTRATORE_CWH']
             ],
             [
-                'name' => \lispa\amos\cwh\widgets\icons\WidgetIconCwhNodi::className(),
+                'name' => \open20\amos\cwh\widgets\icons\WidgetIconCwhNodi::className(),
                 'type' => Permission::TYPE_PERMISSION,
                 'description' => 'Permesso per visualizzare icona WidgetIconCwhNodi',
                 'ruleName' => null,
                 'parent' => ['AMMINISTRATORE_CWH']
             ],
             [
-                'name' => \lispa\amos\cwh\widgets\icons\WidgetIconCwhRegolePubblicazione::className(),
+                'name' => \open20\amos\cwh\widgets\icons\WidgetIconCwhRegolePubblicazione::className(),
                 'type' => Permission::TYPE_PERMISSION,
                 'description' => 'Permesso per visualizzare icona WidgetIconCwhRegolePubblicazione',
                 'ruleName' => null,

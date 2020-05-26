@@ -1,32 +1,32 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\utility;
+namespace open20\amos\cwh\utility;
 
-use lispa\amos\admin\AmosAdmin;
-use lispa\amos\core\record\Record;
-use lispa\amos\cwh\AmosCwh;
-use lispa\amos\cwh\base\ModelNetworkInterface;
-use lispa\amos\cwh\exceptions\CwhException;
-use lispa\amos\cwh\models\base\CwhNodiView;
-use lispa\amos\cwh\models\CwhAuthAssignment;
-use lispa\amos\cwh\models\CwhConfig;
-use lispa\amos\cwh\models\CwhConfigContents;
-use lispa\amos\cwh\models\CwhNodi;
-use lispa\amos\cwh\models\CwhPubblicazioni;
-use lispa\amos\cwh\models\CwhPubblicazioniCwhNodiEditoriMm;
-use lispa\amos\cwh\models\CwhPubblicazioniCwhNodiValidatoriMm;
-use lispa\amos\cwh\models\CwhRegolePubblicazione;
-use lispa\amos\cwh\models\CwhTagOwnerInterestMm;
-use lispa\amos\cwh\query\CwhActiveQuery;
+use open20\amos\admin\AmosAdmin;
+use open20\amos\core\record\Record;
+use open20\amos\cwh\AmosCwh;
+use open20\amos\cwh\base\ModelNetworkInterface;
+use open20\amos\cwh\exceptions\CwhException;
+use open20\amos\cwh\models\base\CwhNodiView;
+use open20\amos\cwh\models\CwhAuthAssignment;
+use open20\amos\cwh\models\CwhConfig;
+use open20\amos\cwh\models\CwhConfigContents;
+use open20\amos\cwh\models\CwhNodi;
+use open20\amos\cwh\models\CwhPubblicazioni;
+use open20\amos\cwh\models\CwhPubblicazioniCwhNodiEditoriMm;
+use open20\amos\cwh\models\CwhPubblicazioniCwhNodiValidatoriMm;
+use open20\amos\cwh\models\CwhRegolePubblicazione;
+use open20\amos\cwh\models\CwhTagOwnerInterestMm;
+use open20\amos\cwh\query\CwhActiveQuery;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\Query;
@@ -34,7 +34,7 @@ use yii\helpers\ArrayHelper;
 
 /**
  * Class CwhUtil
- * @package lispa\amos\cwh\utility
+ * @package open20\amos\cwh\utility
  */
 class CwhUtil
 {
@@ -71,14 +71,14 @@ class CwhUtil
         $moduleTag = \Yii::$app->getModule('tag');
         if (isset($moduleTag) && !empty($tagIds)) {
             if (is_array($tagIds)) {
-                $tags = ArrayHelper::map(\lispa\amos\tag\models\Tag::find()->andWhere([
+                $tags = ArrayHelper::map(\open20\amos\tag\models\Tag::find()->andWhere([
                     'in',
                     'id',
                     $tagIds
                 ])->all(),
                     'id', 'nome');
             } else {
-                $tags = ArrayHelper::map(\lispa\amos\tag\models\Tag::find()->andWhere('id in (' . $tagIds . ')')->all(),
+                $tags = ArrayHelper::map(\open20\amos\tag\models\Tag::find()->andWhere('id in (' . $tagIds . ')')->all(),
                     'id', 'nome');
             }
             $tagNames = implode(', ', $tags);
@@ -141,7 +141,7 @@ class CwhUtil
 
     /**
      * Query for publication rules enabled for logged user
-     * @return \lispa\amos\cwh\models\query\CwhRegolePubblicazioneQuery|mixed $publicationRulesQuery
+     * @return \open20\amos\cwh\models\query\CwhRegolePubblicazioneQuery|mixed $publicationRulesQuery
      */
     public static function getPublicationRulesQuery()
     {
@@ -475,35 +475,39 @@ class CwhUtil
     }
 
     /**
-     * This method returns all tag ids selected by a user.
-     * @param int $userId
+     * This method returns all tag ids selected by a user. The param is the user profile id, not the user id!!!
+     * @param int $userProfileId
      * @return array
      * @throws \yii\base\InvalidConfigException
      */
-    public static function findInterestTagIdsByUser($userId)
+    public static function findInterestTagIdsByUser($userProfileId)
     {
         $query = new Query();
         $query->select(['tag_id'])->distinct();
         $query->from(CwhTagOwnerInterestMm::tableName());
         $query->andWhere(['deleted_at' => null]);
         $query->andWhere(['classname' => AmosAdmin::instance()->createModel('UserProfile')->className()]);
-        $query->andWhere(['record_id' => $userId]);
+        $query->andWhere(['record_id' => $userProfileId]);
         $tagIds = $query->column();
         return $tagIds;
     }
 
     /**
-     * @param \lispa\amos\tag\models\Tag $organizationTag
-     * @param int $userId
+     * This method a user interest. The param is the user profile id, not the user id!!!
+     * @param \open20\amos\tag\models\Tag $organizationTag
+     * @param int $userProfileId
+     * @param string $interestClassname
+     * @param string|null $className
      * @return bool
+     * @throws CwhException
      * @throws \yii\base\InvalidConfigException
      */
-    public static function addNewUserInterest($organizationTag, $userId, $interestClassname = 'simple-choice', $className = null)
+    public static function addNewUserInterest($organizationTag, $userProfileId, $interestClassname = 'simple-choice', $className = null)
     {
-        if (!($organizationTag instanceof \lispa\amos\tag\models\Tag)) {
-            throw new CwhException('Param organizationTag must be an instance of \lispa\amos\tag\models\Tag');
+        if (!($organizationTag instanceof \open20\amos\tag\models\Tag)) {
+            throw new CwhException('Param organizationTag must be an instance of \open20\amos\tag\models\Tag');
         }
-        if (!is_integer($userId) && !is_numeric($userId)) {
+        if (!is_integer($userProfileId) && !is_numeric($userProfileId)) {
             throw new CwhException('Param userId must be an integer');
         }
         if (is_null($className)) {
@@ -512,7 +516,7 @@ class CwhUtil
         $interest = new CwhTagOwnerInterestMm();
         $interest->interest_classname = $interestClassname;
         $interest->classname = $className;
-        $interest->record_id = $userId;
+        $interest->record_id = $userProfileId;
         $interest->tag_id = $organizationTag->id;
         $interest->root_id = $organizationTag->root;
         $ok = $interest->save();

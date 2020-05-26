@@ -1,17 +1,17 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh\models\base
+ * @package    open20\amos\cwh\models\base
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\models\base;
+namespace open20\amos\cwh\models\base;
 
-use lispa\amos\cwh\AmosCwh;
+use open20\amos\cwh\AmosCwh;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -32,13 +32,13 @@ use yii\helpers\ArrayHelper;
  * @property integer $deleted_by
  * @property integer $version
  *
- * @property \lispa\amos\cwh\models\CwhNodi $cwhNodi
- * @property \lispa\amos\cwh\models\CwhPubblicazioni $cwhPubblicazioni
- * @property \lispa\amos\cwh\models\CwhConfig $cwhConfig
+ * @property \open20\amos\cwh\models\CwhNodi $cwhNodi
+ * @property \open20\amos\cwh\models\CwhPubblicazioni $cwhPubblicazioni
+ * @property \open20\amos\cwh\models\CwhConfig $cwhConfig
  *
- * @package lispa\amos\cwh\models\base
+ * @package open20\amos\cwh\models\base
  */
-class CwhPubblicazioniCwhNodiValidatoriMm extends \lispa\amos\core\record\Record
+class CwhPubblicazioniCwhNodiValidatoriMm extends \open20\amos\core\record\Record
 {
     /**
      * @inheritdoc
@@ -86,7 +86,7 @@ class CwhPubblicazioniCwhNodiValidatoriMm extends \lispa\amos\core\record\Record
      */
     public function getCwhNodi()
     {
-        return $this->hasOne(\lispa\amos\cwh\models\CwhNodi::className(), ['id' => 'cwh_nodi_id', 'cwh_config_id' => 'cwh_config_id', 'record_id' => 'cwh_network_id']);
+        return $this->hasOne(\open20\amos\cwh\models\CwhNodi::className(), ['id' => 'cwh_nodi_id', 'cwh_config_id' => 'cwh_config_id', 'record_id' => 'cwh_network_id']);
     }
 
     /**
@@ -94,7 +94,7 @@ class CwhPubblicazioniCwhNodiValidatoriMm extends \lispa\amos\core\record\Record
      */
     public function getCwhPubblicazioni()
     {
-        return $this->hasOne(\lispa\amos\cwh\models\CwhPubblicazioni::className(), ['id' => 'cwh_pubblicazioni_id']);
+        return $this->hasOne(\open20\amos\cwh\models\CwhPubblicazioni::className(), ['id' => 'cwh_pubblicazioni_id']);
     }
 
     /**
@@ -102,6 +102,6 @@ class CwhPubblicazioniCwhNodiValidatoriMm extends \lispa\amos\core\record\Record
      */
     public function getCwhConfig()
     {
-        return $this->hasOne(\lispa\amos\cwh\models\CwhConfig::className(), ['id' => 'cwh_config_id']);
+        return $this->hasOne(\open20\amos\cwh\models\CwhConfig::className(), ['id' => 'cwh_config_id']);
     }
 }

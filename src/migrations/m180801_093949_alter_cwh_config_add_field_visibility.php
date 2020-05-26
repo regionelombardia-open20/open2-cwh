@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh\migrations
+ * @package    open20\amos\cwh\migrations
  * @category   CategoryName
  */
 
@@ -49,7 +49,7 @@ class m180801_093949_alter_cwh_config_add_field_visibility extends Migration
 
         $this->dropColumn(self::TABLENAME, 'raw_sql');
 
-        \lispa\amos\cwh\utility\CwhUtil::createCwhView();
+        \open20\amos\cwh\utility\CwhUtil::createCwhView();
 
         return true;
     }
@@ -67,7 +67,7 @@ class m180801_093949_alter_cwh_config_add_field_visibility extends Migration
 
         $this->renameTable(self::TABLENAME_BK, self::TABLENAME);
         $this->execute("SET foreign_key_checks = 1;");
-        \lispa\amos\cwh\utility\CwhUtil::createCwhView();
+        \open20\amos\cwh\utility\CwhUtil::createCwhView();
 
         return true;
     }

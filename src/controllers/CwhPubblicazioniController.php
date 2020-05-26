@@ -1,20 +1,20 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\controllers;
+namespace open20\amos\cwh\controllers;
 
-use lispa\amos\cwh\models\CwhPubblicazioni;
-use lispa\amos\cwh\models\search\CwhPubblicazioniSearch;
+use open20\amos\cwh\models\CwhPubblicazioni;
+use open20\amos\cwh\models\search\CwhPubblicazioniSearch;
 use Yii;
-use lispa\amos\core\controllers\BaseController;
+use open20\amos\core\controllers\BaseController;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -32,6 +32,7 @@ class CwhPubblicazioniController extends BaseController
      */
     public function init() {
 
+        $this->setModelObj(new CwhPubblicazioni());
         parent::init();
         $this->setUpLayout();
         // custom initialization code goes here
@@ -132,7 +133,7 @@ class CwhPubblicazioniController extends BaseController
         $module = \Yii::$app->getModule('layout');
         if (empty($module)) {
             if (strpos($this->layout, '@') === false) {
-                $this->layout = '@vendor/lispa/amos-core/views/layouts/'.(!empty($layout) ? $layout : $this->layout);
+                $this->layout = '@vendor/open20/amos-core/views/layouts/'.(!empty($layout) ? $layout : $this->layout);
             }
             return true;
         }

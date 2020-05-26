@@ -1,17 +1,17 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh\migrations
+ * @package    open20\amos\cwh\migrations
  * @category   CategoryName
  */
 
 use yii\db\Migration;
 use yii\db\Schema;
-use lispa\amos\cwh\models\CwhNodi;
+use open20\amos\cwh\models\CwhNodi;
 
 class m171011_123326_add_index_refactor_cwh extends Migration
 {

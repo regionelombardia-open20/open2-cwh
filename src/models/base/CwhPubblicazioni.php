@@ -1,17 +1,17 @@
 <?php
 
 /**
- * Lombardia Informatica S.p.A.
+ * Aria S.p.A.
  * OPEN 2.0
  *
  *
- * @package    lispa\amos\cwh
+ * @package    open20\amos\cwh
  * @category   CategoryName
  */
 
-namespace lispa\amos\cwh\models\base;
+namespace open20\amos\cwh\models\base;
 
-use lispa\amos\cwh\AmosCwh;
+use open20\amos\cwh\AmosCwh;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -30,14 +30,14 @@ use yii\helpers\ArrayHelper;
  * @property integer $deleted_by
  * @property integer $version
  *
- * @property \lispa\amos\cwh\models\CwhConfig $cwhConfig
- * @property \lispa\amos\cwh\models\CwhRegolePubblicazione $cwhRegolePubblicazione
- * @property \lispa\amos\cwh\models\CwhPubblicazioniCwhNodiEditoriMm[] $cwhPubblicazioniCwhNodiEditoriMms
- * @property \lispa\amos\cwh\models\CwhNodi[] $destinatari
- * @property \lispa\amos\cwh\models\CwhPubblicazioniCwhNodiValidatoriMm[] $cwhPubblicazioniCwhNodiValidatoriMms
- * @property \lispa\amos\cwh\models\CwhNodi[] $validatori
+ * @property \open20\amos\cwh\models\CwhConfig $cwhConfig
+ * @property \open20\amos\cwh\models\CwhRegolePubblicazione $cwhRegolePubblicazione
+ * @property \open20\amos\cwh\models\CwhPubblicazioniCwhNodiEditoriMm[] $cwhPubblicazioniCwhNodiEditoriMms
+ * @property \open20\amos\cwh\models\CwhNodi[] $destinatari
+ * @property \open20\amos\cwh\models\CwhPubblicazioniCwhNodiValidatoriMm[] $cwhPubblicazioniCwhNodiValidatoriMms
+ * @property \open20\amos\cwh\models\CwhNodi[] $validatori
  */
-class CwhPubblicazioni extends \lispa\amos\core\record\Record
+class CwhPubblicazioni extends \open20\amos\core\record\Record
 {
     /**
      * @inheritdoc
@@ -85,7 +85,7 @@ class CwhPubblicazioni extends \lispa\amos\core\record\Record
      */
     public function getCwhConfigContents()
     {
-        return $this->hasOne(\lispa\amos\cwh\models\CwhConfigContents::className(), ['id' => 'cwh_config_contents_id']);
+        return $this->hasOne(\open20\amos\cwh\models\CwhConfigContents::className(), ['id' => 'cwh_config_contents_id']);
     }
 
     /**
@@ -93,7 +93,7 @@ class CwhPubblicazioni extends \lispa\amos\core\record\Record
      */
     public function getCwhRegolePubblicazione()
     {
-        return $this->hasOne(\lispa\amos\cwh\models\CwhRegolePubblicazione::className(), ['id' => 'cwh_regole_pubblicazione_id']);
+        return $this->hasOne(\open20\amos\cwh\models\CwhRegolePubblicazione::className(), ['id' => 'cwh_regole_pubblicazione_id']);
     }
 
     /**
@@ -101,7 +101,7 @@ class CwhPubblicazioni extends \lispa\amos\core\record\Record
      */
     public function getCwhPubblicazioniCwhNodiEditoriMms()
     {
-        return $this->hasMany(\lispa\amos\cwh\models\CwhPubblicazioniCwhNodiEditoriMm::className(), ['cwh_pubblicazioni_id' => 'id']);
+        return $this->hasMany(\open20\amos\cwh\models\CwhPubblicazioniCwhNodiEditoriMm::className(), ['cwh_pubblicazioni_id' => 'id']);
     }
 
     /**
@@ -110,7 +110,7 @@ class CwhPubblicazioni extends \lispa\amos\core\record\Record
     public function getDestinatari()
     {
         //using ->via(relationName), it was viaTable(cwh_pubblicazioni_nodi_editori) but it did ignore soft delete
-        return $this->hasMany(\lispa\amos\cwh\models\CwhNodi::className(), ['id' => 'cwh_nodi_id', 'cwh_config_id' => 'cwh_config_id', 'record_id' => 'cwh_network_id'])->via('cwhPubblicazioniCwhNodiEditoriMms');
+        return $this->hasMany(\open20\amos\cwh\models\CwhNodi::className(), ['id' => 'cwh_nodi_id', 'cwh_config_id' => 'cwh_config_id', 'record_id' => 'cwh_network_id'])->via('cwhPubblicazioniCwhNodiEditoriMms');
     }
 
     /**
@@ -118,7 +118,7 @@ class CwhPubblicazioni extends \lispa\amos\core\record\Record
      */
     public function getCwhPubblicazioniCwhNodiValidatoriMms()
     {
-        return $this->hasMany(\lispa\amos\cwh\models\CwhPubblicazioniCwhNodiValidatoriMm::className(), ['cwh_pubblicazioni_id' => 'id']);
+        return $this->hasMany(\open20\amos\cwh\models\CwhPubblicazioniCwhNodiValidatoriMm::className(), ['cwh_pubblicazioni_id' => 'id']);
     }
 
     /**
@@ -127,6 +127,6 @@ class CwhPubblicazioni extends \lispa\amos\core\record\Record
     public function getValidatori()
     {
         //using ->via(relationName), it was viaTable(cwh_pubblicazioni_nodi_validatori) but it did ignore soft delete
-        return $this->hasMany(\lispa\amos\cwh\models\CwhNodi::className(), ['id' => 'cwh_nodi_id', 'cwh_config_id' => 'cwh_config_id', 'record_id' => 'cwh_network_id'])->via('cwhPubblicazioniCwhNodiValidatoriMms');
+        return $this->hasMany(\open20\amos\cwh\models\CwhNodi::className(), ['id' => 'cwh_nodi_id', 'cwh_config_id' => 'cwh_config_id', 'record_id' => 'cwh_network_id'])->via('cwhPubblicazioniCwhNodiValidatoriMms');
     }
 }
