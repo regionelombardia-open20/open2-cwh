@@ -19,7 +19,7 @@
     "require": {
         "php": ">=5.4.0",
         "open20/amos-admin": "^2.0",
-        "open20/amos-core":"^1.9.60",
+        "open20/amos-core":"^1.19.1",
         "hanneskod/classtools": "~1.0"
     },
     "config": {

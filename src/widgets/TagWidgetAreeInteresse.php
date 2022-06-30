@@ -30,7 +30,6 @@ class TagWidgetAreeInteresse extends \yii\widgets\InputWidget
     public $overrideContentClass = '';
     private $contentClass = '';
     public $overrideSelectedTags = [];
-    public $singleFixedTreeId;
 
     /**
      * @inheritdoc
@@ -87,9 +86,6 @@ class TagWidgetAreeInteresse extends \yii\widgets\InputWidget
                         CwhTagInterestMm::tableName() . '.classname' => $this->contentClass,
                         CwhTagInterestMm::tableName() . '.auth_item' => array_keys(\Yii::$app->authManager->getRolesByUser($id_user))
                     ]);
-                if (!empty($this->singleFixedTreeId)) {
-                    $query->andWhere(["tag.id" => $this->singleFixedTreeId]);
-                }
 
                 if ($query->count()) {
                     $contentsTree['label'] = $refClass->getShortName();

@@ -183,7 +183,7 @@ class CwhActiveQuery extends ActiveQuery
      */
     public function getUserProfile()
     {
-        if (get_class(\Yii::$app) == 'open20\amos\core\applications\ConsoleApplication' && !empty(\Yii::$app->user) && !empty(\Yii::$app->user->id)) {
+        if (get_class(\Yii::$app) == 'open20\amos\core\applications\ConsoleApplication' && !empty(\Yii::$app->user)) {
             $this->setUserId(\Yii::$app->user->id);
             self::$userProfile = null;
         }
@@ -315,6 +315,8 @@ class CwhActiveQuery extends ActiveQuery
             $query = (clone $this->queryBase);
         }
 
+        $userProfileId = $this->getUserProfile()->id;
+        $userHasTags = CwhTagOwnerInterestMm::find()->andWhere(['record_id' => $userProfileId])->exists();
 
         $tag        = false;
         $network    = false;
@@ -326,7 +328,7 @@ class CwhActiveQuery extends ActiveQuery
         $queryAllUsers->select($this->tableName.'.id');
 
 
-        if ($this->moduleTagEnabled) {
+        if ($this->moduleTagEnabled && $userHasTags) {
             $tag      = true;
             $queryTag = $this->getUserTagQuery([self::RULE_TAG]);
             $queryTag->select($this->tableName.'.id');
@@ -338,7 +340,7 @@ class CwhActiveQuery extends ActiveQuery
             $queryUserNetwork->select($this->tableName.'.id');
         }
 
-        if ($this->moduleTagEnabled) {
+        if ($this->moduleTagEnabled && $userHasTags) {
             $queryUserNetworkAndTag = $this->getUserNetworkAndTagQuery([self::RULE_NETWORK_TAG]);
             if ($queryUserNetworkAndTag != null) {
                 $networkTag = true;
@@ -456,13 +458,25 @@ class CwhActiveQuery extends ActiveQuery
         }
 
         if (!$this->validByScopeIgnoreDates) {
-            $dataOdierna = date('Y-m-d');
-            $table       = Yii::$app->db->schema->getTableSchema($this->tableName);
-            if (isset($table->columns['data_pubblicazione'])) {
-                $query->andWhere("ISNULL(".$this->tableName.".data_pubblicazione) OR ".$this->tableName.".data_pubblicazione <= '".$dataOdierna."'");
-            }
-            if (isset($table->columns['data_rimozione'])) {
-                $query->andWhere("ISNULL(".$this->tableName.".data_rimozione) OR ".$this->tableName.".data_rimozione >= '".$dataOdierna."'");
+            if (interface_exists('open20\amos\core\interfaces\PublicationDateFieldsInterface') && ($this->modelObject instanceof \open20\amos\core\interfaces\PublicationDateFieldsInterface)) {
+                $dataOdierna = ($this->modelObject->theDatesAreDatetime() ? date('Y-m-d H:i:s') : date('Y-m-d'));
+                $dataPubblicazioneField = $this->modelObject->getPublicatedFromField();
+                $dataRimozioneField = $this->modelObject->getPublicatedAtField();
+                if (!empty($dataPubblicazioneField)) {
+                    $query->andWhere("ISNULL(" . $dataPubblicazioneField . ") OR " . $dataPubblicazioneField . " <= '" . $dataOdierna . "'");
+                }
+                if (!empty($dataRimozioneField)) {
+                    $query->andWhere("ISNULL(" . $dataRimozioneField . ") OR " . $dataRimozioneField . " >= '" . $dataOdierna . "'");
+                }
+            } else {
+                $dataOdierna = date('Y-m-d');
+                $table = Yii::$app->db->schema->getTableSchema($this->tableName);
+                if (isset($table->columns['data_pubblicazione'])) {
+                    $query->andWhere("ISNULL(" . $this->tableName . ".data_pubblicazione) OR " . $this->tableName . ".data_pubblicazione <= '" . $dataOdierna . "'");
+                }
+                if (isset($table->columns['data_rimozione'])) {
+                    $query->andWhere("ISNULL(" . $this->tableName . ".data_rimozione) OR " . $this->tableName . ".data_rimozione >= '" . $dataOdierna . "'");
+                }
             }
         }
 
