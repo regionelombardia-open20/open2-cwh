@@ -225,9 +225,10 @@ JS
                         'disabled' => $destinatariFromScope && !$this->scopeFilter
                     ]
                 ) . '
-                        </div> 
-                    </div>' . //$this->getForm()->field($this->model, 'regola_pubblicazione')->hiddenInput([
-                    //'value' => $this->model->regola_pubblicazione ? $this->model->regola_pubblicazione : $regolaPubblicazioneDefault,])->label(false) .
+                        </div>
+                    </div>' . 
+//                    $this->getForm()->field($this->model, 'regola_pubblicazione')->hiddenInput([
+//                    'value' => $this->model->regola_pubblicazione ? $this->model->regola_pubblicazione : $regolaPubblicazioneDefault,])->label(false) .
                 '</div>';
         } else {
             $regolaDiPubblicazioneField = $this->getForm()->field($this->model,

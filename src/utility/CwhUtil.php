@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Aria S.p.A.
  * OPEN 2.0
@@ -38,6 +37,7 @@ use yii\helpers\ArrayHelper;
  */
 class CwhUtil
 {
+
     /**
      * Given the list of CwhNodes id (as array o string with comma separator), get the list as domains name separeted by comma
      *
@@ -49,11 +49,9 @@ class CwhUtil
         $domainNames = '';
         if (!empty($cwhNodeIds)) {
             if (is_array($cwhNodeIds)) {
-                $domains = ArrayHelper::map(CwhNodi::find()->andWhere(['in', 'id', $cwhNodeIds])->all(),
-                    'id', 'text');
+                $domains = ArrayHelper::map(CwhNodi::find()->andWhere(['in', 'id', $cwhNodeIds])->all(), 'id', 'text');
             } else {
-                $domains = ArrayHelper::map(CwhNodi::find()->andWhere("id in ('" . $cwhNodeIds . "')")->all(),
-                    'id', 'text');
+                $domains = ArrayHelper::map(CwhNodi::find()->andWhere("id in ('".$cwhNodeIds."')")->all(), 'id', 'text');
             }
             $domainNames = implode(', ', $domains);
         }
@@ -67,19 +65,22 @@ class CwhUtil
     public static function getTagNames($tagIds)
     {
 
-        $tagNames = '';
+        $tagNames  = '';
         $moduleTag = \Yii::$app->getModule('tag');
         if (isset($moduleTag) && !empty($tagIds)) {
             if (is_array($tagIds)) {
                 $tags = ArrayHelper::map(\open20\amos\tag\models\Tag::find()->andWhere([
-                    'in',
-                    'id',
-                    $tagIds
-                ])->all(),
-                    'id', 'nome');
+                            'in',
+                            'id',
+                            $tagIds
+                        ])->all(), 'id', 'nome');
             } else {
-                $tags = ArrayHelper::map(\open20\amos\tag\models\Tag::find()->andWhere('id in (' . $tagIds . ')')->all(),
-                    'id', 'nome');
+                if ($tagIds != ',') {
+                    $tagIds = ltrim($tagIds, ',');
+                    $tagIds = rtrim($tagIds, ',');
+                    $tags   = ArrayHelper::map(\open20\amos\tag\models\Tag::find()->andWhere('id in ('.$tagIds.')')->all(),
+                            'id', 'nome');
+                }
             }
             $tagNames = implode(', ', $tags);
         }
@@ -93,7 +94,7 @@ class CwhUtil
     public static function getPublicationRuleLabel($publicationRuleId)
     {
 
-        $name = '';
+        $name            = '';
         $publicationRule = CwhRegolePubblicazione::findOne($publicationRuleId);
         if (!empty($publicationRule)) {
             $name = $publicationRule->nome;
@@ -122,22 +123,21 @@ class CwhUtil
                 $networksQuery = $network->getUserNetworkQuery($userId);
             } else {
                 $networksQuery = $network->find()->innerJoin($mmTable,
-                    $mmTable . '.' . $network->getMmUserIdFieldName() . '=' . $userId
-                    . " AND " . $mmTable . '.' . $network->getMmNetworkIdFieldName() . '=' . $cwhConfig->tablename . '.id')
-                    ->andWhere($mmTable . '.deleted_at IS NULL')
-                    ->andWhere($cwhConfig->tablename . '.deleted_at IS NULL');
+                        $mmTable.'.'.$network->getMmUserIdFieldName().'='.$userId
+                        ." AND ".$mmTable.'.'.$network->getMmNetworkIdFieldName().'='.$cwhConfig->tablename.'.id')
+                    ->andWhere($mmTable.'.deleted_at IS NULL')
+                    ->andWhere($cwhConfig->tablename.'.deleted_at IS NULL');
             }
             if ($checkActive) {
                 $mmTableSchema = Yii::$app->db->schema->getTableSchema($mmTable);
                 if (isset($mmTableSchema->columns['status'])) {
-                    $networksQuery->andWhere([$mmTable . '.status' => 'ACTIVE']);
+                    $networksQuery->andWhere([$mmTable.'.status' => 'ACTIVE']);
                 }
             }
             return $networksQuery;
         }
         return null;
     }
-
 
     /**
      * Query for publication rules enabled for logged user
@@ -147,14 +147,14 @@ class CwhUtil
     {
         /** @var AmosCwh $cwhModule */
         $cwhModule = AmosCwh::getInstance();
-        $scope = $cwhModule->getCwhScope();
+        $scope     = $cwhModule->getCwhScope();
 
         //if we are working under a specific network scope (eg. community dashboard)
         $scopeFilter = (empty($scope) ? false : true);
 
         $publicationRulesQuery = CwhRegolePubblicazione::find();
         //If module tag is not active, exclude publication rule based on tag
-        $moduleTag = \Yii::$app->getModule('tag');
+        $moduleTag             = \Yii::$app->getModule('tag');
         if (!isset($moduleTag)) {
             $publicationRulesQuery->excludeTag();
         }
@@ -189,7 +189,7 @@ class CwhUtil
     {
 
         $cwhConfigContents = CwhConfigContents::find()->all();
-        $contentArray = [];
+        $contentArray      = [];
         /** @var CwhConfigContents $cwhConfigContent */
         foreach ($cwhConfigContents as $cwhConfigContent) {
             $query = new CwhActiveQuery($cwhConfigContent->classname);
@@ -221,7 +221,8 @@ class CwhUtil
                 if (count($content->destinatari) > 1) {
                     $publication = CwhPubblicazioni::findOne(['cwh_config_contents_id' => $configContentId, 'content_id' => $content->id]);
                     if (!is_null($publication)) {
-                        $editorNode = CwhPubblicazioniCwhNodiEditoriMm::findOne(['cwh_pubblicazioni_id' => $publication->id, 'cwh_config_id' => $configId, 'cwh_network_id' => $networkId]);
+                        $editorNode = CwhPubblicazioniCwhNodiEditoriMm::findOne(['cwh_pubblicazioni_id' => $publication->id,
+                                'cwh_config_id' => $configId, 'cwh_network_id' => $networkId]);
                         if (!is_null($editorNode)) {
                             $editorNode->delete();
                         }
@@ -238,16 +239,16 @@ class CwhUtil
         $validatorNodes = CwhPubblicazioniCwhNodiValidatoriMm::find()->andWhere(['cwh_config_id' => $configId, 'cwh_network_id' => $networkId])->all();
         if (count($validatorNodes)) {
             //get user scope configurations
-            $cwhConfigUser = CwhConfig::findOne(['tablename' => 'user']);
-            $cwhNodiIdPrefix = $cwhConfigUser->tablename . '-';
+            $cwhConfigUser   = CwhConfig::findOne(['tablename' => 'user']);
+            $cwhNodiIdPrefix = $cwhConfigUser->tablename.'-';
             $cwhConfigIdUser = $cwhConfigUser->id;
             /** @var CwhPubblicazioniCwhNodiValidatoriMm $validatorNode */
             foreach ($validatorNodes as $validatorNode) {
                 $userId = $validatorNode->cwhPubblicazioni->created_by;
                 if (!is_null($userId)) {
-                    $validatorNode->cwh_config_id = $cwhConfigIdUser;
+                    $validatorNode->cwh_config_id  = $cwhConfigIdUser;
                     $validatorNode->cwh_network_id = $userId;
-                    $validatorNode->cwh_nodi_id = $cwhNodiIdPrefix . $userId;
+                    $validatorNode->cwh_nodi_id    = $cwhNodiIdPrefix.$userId;
                     $validatorNode->save();
                 }
             }
@@ -263,9 +264,9 @@ class CwhUtil
     {
         $listaConf = CwhConfig::find()->all();
 
-        $sqlSelect = '( ';
+        $sqlSelect  = '( ';
         $numeroConf = count($listaConf);
-        $i = 1;
+        $i          = 1;
         foreach ($listaConf as $conf) {
             $sqlSelect .= $conf->getRawSql();
             if ($i < $numeroConf) {
@@ -275,13 +276,13 @@ class CwhUtil
         }
         $sqlSelect .= ' );';
 
-        $sql = 'CREATE OR REPLACE VIEW cwh_nodi_view AS ' . $sqlSelect;
+        $sql = 'CREATE OR REPLACE VIEW cwh_nodi_view AS '.$sqlSelect;
 
         $db = Yii::$app->getDb();
 
         $db->createCommand($sql)->execute();
         $db->createCommand()->truncateTable(CwhNodi::tableName())->execute();
-        $db->createCommand('INSERT ' . CwhNodi::tableName() . ' SELECT * FROM ' . CwhNodiView::tablename())->execute();
+        $db->createCommand('INSERT '.CwhNodi::tableName().' SELECT * FROM '.CwhNodiView::tablename())->execute();
     }
 
     /**
@@ -312,21 +313,22 @@ class CwhUtil
      * @param string|null $modelClassName
      * @param CwhConfig|null $cwhConfig
      */
-    public static function setCwhAuthAssignments($network = null, $networkUserMmRow, $delete = false, $modelClassName = null, $cwhConfig = null)
+    public static function setCwhAuthAssignments($network = null, $networkUserMmRow, $delete = false,
+                                                 $modelClassName = null, $cwhConfig = null)
     {
         $cwhModule = Yii::$app->getModule('cwh');
         if (is_null($network)) {
             $networkClassName = $cwhConfig->classname;
-            $networkObj = Yii::createObject($networkClassName);
-            $networkId = $networkUserMmRow->{$networkObj->getMmUserIdFieldName()};
-            $network = $networkObj->findOne($networkId);
+            $networkObj       = Yii::createObject($networkClassName);
+            $networkId        = $networkUserMmRow->{$networkObj->getMmUserIdFieldName()};
+            $network          = $networkObj->findOne($networkId);
         } else {
             $networkId = $network->id;
         }
         if (!is_null($network)) {
-            $cwhNodeId = $network->tableName() . '-' . $networkId;
+            $cwhNodeId   = $network->tableName().'-'.$networkId;
             $cwhConfigId = !is_null($cwhConfig) ? $cwhConfig->id : $network->getCwhConfigId();
-            $userId = $networkUserMmRow->{$network->getMmUserIdFieldName()};
+            $userId      = $networkUserMmRow->{$network->getMmUserIdFieldName()};
 
             $cwhPermissionsQuery = CwhAuthAssignment::find()->andWhere([
                 'user_id' => $userId,
@@ -336,8 +338,8 @@ class CwhUtil
             if (!is_null($modelClassName)) {
                 $cwhPermissionsQuery->andWhere([
                     'item_name' => [
-                        $cwhModule->permissionPrefix . "_CREATE_" . $modelClassName,
-                        $cwhModule->permissionPrefix . "_VALIDATE_" . $modelClassName
+                        $cwhModule->permissionPrefix."_CREATE_".$modelClassName,
+                        $cwhModule->permissionPrefix."_VALIDATE_".$modelClassName
                     ]
                 ]);
             };
@@ -361,7 +363,7 @@ class CwhUtil
                         if ($network->hasAttribute('context') && !is_null($network->context) & strcmp($network->context,
                                 get_class($network))
                         ) {
-                            $callingModel = Yii::createObject($network->context);
+                            $callingModel    = Yii::createObject($network->context);
                             /** @var array $rolePermissions */
                             $rolePermissions = $callingModel->getRolePermissions($networkUserMmRow->role);
                         } else {
@@ -370,7 +372,7 @@ class CwhUtil
                     }
                 }
                 if (!isset($rolePermissions)) {
-                    $rolePermissions = [$cwhModule->permissionPrefix . '_CREATE'];
+                    $rolePermissions = [$cwhModule->permissionPrefix.'_CREATE'];
                 }
                 $permissionsToAdd = [];
                 if (!is_null($rolePermissions) && count($rolePermissions)) {
@@ -383,12 +385,12 @@ class CwhUtil
                     }
                     foreach ($modelsEnabled as $modelClassname) {
                         foreach ($rolePermissions as $permission) {
-                            $cwhAuthAssignment = new CwhAuthAssignment();
-                            $cwhAuthAssignment->user_id = $userId;
-                            $cwhAuthAssignment->item_name = $permission . '_' . $modelClassname;
-                            $cwhAuthAssignment->cwh_nodi_id = $cwhNodeId;
-                            $cwhAuthAssignment->cwh_config_id = $cwhConfigId;
-                            $cwhAuthAssignment->cwh_network_id = $networkId;
+                            $cwhAuthAssignment                               = new CwhAuthAssignment();
+                            $cwhAuthAssignment->user_id                      = $userId;
+                            $cwhAuthAssignment->item_name                    = $permission.'_'.$modelClassname;
+                            $cwhAuthAssignment->cwh_nodi_id                  = $cwhNodeId;
+                            $cwhAuthAssignment->cwh_config_id                = $cwhConfigId;
+                            $cwhAuthAssignment->cwh_network_id               = $networkId;
                             $permissionsToAdd[$cwhAuthAssignment->item_name] = $cwhAuthAssignment;
                         }
                     }
@@ -426,9 +428,9 @@ class CwhUtil
         if (!empty($cwhModule->getCwhScope())) {
             foreach ($cwhModule->getCwhScope() as $tablename => $networkId) {
                 $cwhConfigId = CwhConfig::findOne(['tablename' => $tablename])->id;
-                $cwhNode = CwhNodi::findOne([
-                    'cwh_config_id' => $cwhConfigId,
-                    'record_id' => $networkId
+                $cwhNode     = CwhNodi::findOne([
+                        'cwh_config_id' => $cwhConfigId,
+                        'record_id' => $networkId
                 ]);
                 if (!is_null($cwhNode)) {
                     return $cwhNode->network;
@@ -447,9 +449,9 @@ class CwhUtil
         if (!empty($cwhModule->getCwhScope())) {
             foreach ($cwhModule->getCwhScope() as $tablename => $networkId) {
                 $cwhConfigId = CwhConfig::findOne(['tablename' => $tablename])->id;
-                $cwhNode = CwhNodi::findOne([
-                    'cwh_config_id' => $cwhConfigId,
-                    'record_id' => $networkId
+                $cwhNode     = CwhNodi::findOne([
+                        'cwh_config_id' => $cwhConfigId,
+                        'record_id' => $networkId
                 ]);
                 return $cwhNode;
             }
@@ -482,7 +484,7 @@ class CwhUtil
      */
     public static function findInterestTagIdsByUser($userProfileId)
     {
-        $query = new Query();
+        $query  = new Query();
         $query->select(['tag_id'])->distinct();
         $query->from(CwhTagOwnerInterestMm::tableName());
         $query->andWhere(['deleted_at' => null]);
@@ -502,7 +504,8 @@ class CwhUtil
      * @throws CwhException
      * @throws \yii\base\InvalidConfigException
      */
-    public static function addNewUserInterest($organizationTag, $userProfileId, $interestClassname = 'simple-choice', $className = null)
+    public static function addNewUserInterest($organizationTag, $userProfileId, $interestClassname = 'simple-choice',
+                                              $className = null)
     {
         if (!($organizationTag instanceof \open20\amos\tag\models\Tag)) {
             throw new CwhException('Param organizationTag must be an instance of \open20\amos\tag\models\Tag');
@@ -513,13 +516,13 @@ class CwhUtil
         if (is_null($className)) {
             $className = AmosAdmin::instance()->createModel('UserProfile')->className();
         }
-        $interest = new CwhTagOwnerInterestMm();
+        $interest                     = new CwhTagOwnerInterestMm();
         $interest->interest_classname = $interestClassname;
-        $interest->classname = $className;
-        $interest->record_id = $userProfileId;
-        $interest->tag_id = $organizationTag->id;
-        $interest->root_id = $organizationTag->root;
-        $ok = $interest->save();
+        $interest->classname          = $className;
+        $interest->record_id          = $userProfileId;
+        $interest->tag_id             = $organizationTag->id;
+        $interest->root_id            = $organizationTag->root;
+        $ok                           = $interest->save();
         return $ok;
     }
 }
