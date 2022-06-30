@@ -26,6 +26,8 @@ use open20\amos\cwh\models\CwhPubblicazioniCwhNodiValidatoriMm;
 use open20\amos\cwh\models\CwhRegolePubblicazione;
 use open20\amos\cwh\models\CwhTagOwnerInterestMm;
 use open20\amos\cwh\query\CwhActiveQuery;
+use open20\amos\tag\AmosTag;
+use open20\amos\tag\models\Tag;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\Query;
@@ -479,19 +481,44 @@ class CwhUtil
     /**
      * This method returns all tag ids selected by a user. The param is the user profile id, not the user id!!!
      * @param int $userProfileId
+     * @param string $interestClassname
      * @return array
      * @throws \yii\base\InvalidConfigException
      */
-    public static function findInterestTagIdsByUser($userProfileId)
+    public static function findInterestTagIdsByUser($userProfileId, $interestClassname = 'simple-choice')
     {
         $query  = new Query();
         $query->select(['tag_id'])->distinct();
         $query->from(CwhTagOwnerInterestMm::tableName());
         $query->andWhere(['deleted_at' => null]);
-        $query->andWhere(['classname' => AmosAdmin::instance()->createModel('UserProfile')->className()]);
+        $query->andWhere(['classname' => AmosAdmin::instance()->model('UserProfile')]);
         $query->andWhere(['record_id' => $userProfileId]);
+        $query->andWhere(['interest_classname' => $interestClassname]);
         $tagIds = $query->column();
         return $tagIds;
+    }
+
+    /**
+     * This method returns all tags selected by a user. The param is the user profile id, not the user id!!!
+     * @param int $userProfileId
+     * @param string $interestClassname
+     * @return array
+     * @throws \yii\base\InvalidConfigException
+     */
+    public static function findInterestTagsByUser($userProfileId, $interestClassname = 'simple-choice')
+    {
+        /** @var AmosTag $tagModule */
+        $tagModule = AmosTag::instance();
+        $tagModel = $tagModule->createModel('Tag');
+        $userInterestTagIds = CwhUtil::findInterestTagIdsByUser($userProfileId, $interestClassname);
+        if (empty($userInterestTagIds)) {
+            return [];
+        }
+        /** @var ActiveQuery $query */
+        $query = $tagModel::find();
+        $query->andWhere(['id' => $userInterestTagIds]);
+        $tags = $query->all();
+        return $tags;
     }
 
     /**

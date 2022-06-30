@@ -194,8 +194,8 @@ JS;
                 ['class' => 'am am-eye']
             )
                 . AmosCwh::t('amoscwh', '#recipients_check_btn'),
-            null,
-            ['id' => 'recipients-check', 'class' => 'recipients-check']
+                '#',
+            ['id' => 'recipients-check', 'class' => 'recipients-check', 'title' => AmosCwh::t('amoscwh', '#recipients_check_btn')]
         );
     }
 
