@@ -1,14 +1,5 @@
 <?php
 
-/**
- * Aria S.p.A.
- * OPEN 2.0
- *
- *
- * @package    Open20Package
- * @category   CategoryName
- */
-
 namespace open20\amos\cwh\controllers;
 
 
@@ -159,7 +150,6 @@ class ConfigurationController extends BaseController
     /**
      * Regenerates Cwh nodi view
      *
-     * @see CwhUtil:createCwhView
      */
     public function regenerateView()
     {

@@ -291,7 +291,6 @@ class AmosCwh extends AmosModule implements BootstrapInterface
      * @param integer $userId - if null logged user id is considered
      * @return mixed
      *
-     * @see CwhActiveQuery::getUserNetworksQuery
      */
     public function getUserNetworks($userId = null){
 

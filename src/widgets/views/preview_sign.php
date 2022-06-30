@@ -1,13 +1,4 @@
 <?php
-
-/**
- * Aria S.p.A.
- * OPEN 2.0
- *
- *
- * @package    Open20Package
- * @category   CategoryName
- */
 /** @var $profile \open20\amos\admin\models\UserProfile */
 $js = <<<JS
 $('#validatori-cwh').on('select2:select', function() {

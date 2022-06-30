@@ -1,13 +1,4 @@
 <?php
-
-/**
- * Aria S.p.A.
- * OPEN 2.0
- *
- *
- * @package    Open20Package
- * @category   CategoryName
- */
 $scope = \open20\amos\cwh\AmosCwh::getInstance()->getCwhScope();
 $scopeFilter = (empty($scope))? false : true;
 if(!$scopeFilter) {

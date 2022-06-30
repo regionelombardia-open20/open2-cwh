@@ -8,7 +8,7 @@
     ],
     "homepage": "http://www.open20.it/",
     "type": "component",
-    "license": "BSD-3-Clause",
+    "proscription": "BSD-3-Clause",
     "support": {
         "issues": "https://github.com/yiisoft/yii2/issues?state=open",
         "forum": "http://www.yiiframework.com/forum/",
@@ -18,7 +18,7 @@
     },
     "require": {
         "php": ">=5.4.0",
-        "open20/amos-admin": "^2.0",
+        "open20/amos-admin": "^2.2.0",
         "open20/amos-core":"^1.9.60",
         "hanneskod/classtools": "~1.0"
     },

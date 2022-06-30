@@ -1,14 +1,5 @@
 <?php
 
-/**
- * Aria S.p.A.
- * OPEN 2.0
- *
- *
- * @package    Open20Package
- * @category   CategoryName
- */
-
 namespace open20\amos\cwh\query;
 
 use open20\amos\admin\AmosAdmin;
@@ -267,9 +258,11 @@ class CwhActiveQuery extends ActiveQuery
                         'cwh_pubblicazioni_cwh_nodi_validatori_mm.cwh_pubblicazioni_id = cwh_pubblicazioni.id AND ' .
                         'cwh_pubblicazioni_cwh_nodi_validatori_mm.cwh_config_id = ' . $cwhConfigUser->id )
                 ->innerJoin('user_profile', 'user_profile.user_id = cwh_pubblicazioni_cwh_nodi_validatori_mm.cwh_network_id')
-                ->andWhere(
-                    'user_profile.facilitatore_id =' . $userProfile->id
-                );
+                ->andWhere([
+                    'OR',
+                    ['user_profile.facilitatore_id' =>  $userProfile->id],
+                    ['user_profile.external_facilitator_id' =>  $userProfile->id],
+                ]);
 
             $queryFacilitator->select($this->tableName . '.id');
             $query->orWhere([$this->tableName . '.id' => $queryFacilitator]);
@@ -284,7 +277,6 @@ class CwhActiveQuery extends ActiveQuery
         }
 
         $this->filterByScopeValidation($query);
-
         return $query;
     }
 

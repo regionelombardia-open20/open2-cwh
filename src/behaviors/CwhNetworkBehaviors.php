@@ -119,7 +119,6 @@ class CwhNetworkBehaviors extends AttributeBehavior
     /**
      * @return array list of targets publisher
      * @deprecated 2.1.0
-     * @see CwhNetworkBehaviors::getTarget()
      */
     public function getDestinatari()
     {
@@ -129,7 +128,6 @@ class CwhNetworkBehaviors extends AttributeBehavior
     /**
      * @param array $destinatari
      * @deprecated 2.1.0
-     * @see CwhNetworkBehaviors::setTargets()
      */
     public function setDestinatari($destinatari)
     {
@@ -139,7 +137,6 @@ class CwhNetworkBehaviors extends AttributeBehavior
     /**
      * @return array
      * @deprecated 2.1.0
-     * @see CwhNetworkBehaviors::getDraftingValidators()
      */
     public function getValidatori()
     {
@@ -149,7 +146,6 @@ class CwhNetworkBehaviors extends AttributeBehavior
     /**
      * @param array $validatori
      * @deprecated 2.1.0
-     * @see CwhNetworkBehaviors::setDraftingValidators()
      */
     public function setValidatori($validatori)
     {
@@ -174,7 +170,6 @@ class CwhNetworkBehaviors extends AttributeBehavior
     /**
      * @return string
      * @deprecated 2.1.0
-     * @see CwhNetworkBehaviors::getPublishingRule()
      */
     public function getRegolaPubblicazione()
     {
