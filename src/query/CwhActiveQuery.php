@@ -581,10 +581,12 @@ class CwhActiveQuery extends ActiveQuery
                 ->andWhere([$entityTagsMmTable . '.deleted_at' => null]);
         } else {
 
-            $rootIds = Tag::find()->innerJoin($tagModelsAuthItemsMmTable, $tagModelsAuthItemsMmTable . ".classname = '" . addslashes($this->modelClass) . "' AND root = " . $tagModelsAuthItemsMmTable . ".tag_id")
-                ->innerJoin($cwhTagOwnerInterestMmTable,
-                    'root = ' . $cwhTagOwnerInterestMmTable . '.root_id AND ' . $cwhTagOwnerInterestMmTable . '.record_id = ' . $userProfileId)
-                ->select('root')->groupBy('root')->column();
+            $allRootTagModelsAuthItemsMmTable  = TagModelsAuthItemsMm::find()->andWhere(['classname' => $this->modelClass])->select('tag_id')->distinct();
+            $allRootCwhTagOwnerInterestMmTable = CwhTagOwnerInterestMm::find()->andWhere(['record_id' => $userProfileId])->select('root_id')->distinct();
+            $rootIds                           = Tag::find()
+                    ->andWhere(['in', 'root', $allRootTagModelsAuthItemsMmTable])
+                    ->andWhere(['in', 'root', $allRootCwhTagOwnerInterestMmTable])
+                    ->select('root')->groupBy('root')->column();
             foreach ($rootIds as $rootId) {
                 $tableTagsMmAlias = 'tag_mm_' . $rootId;
                 $tableUserTagsMmAlias = 'user_tag_mm_' . $rootId;
