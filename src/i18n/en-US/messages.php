@@ -125,6 +125,7 @@ return [
     '#new_config' => 'Add Configuration',
     'Nome tabella' => 'Table name',
     'Nuovo {modelClass}' => 'New {modelClass}',
+    '#only_users_of' => 'Only users of',
     'Organizzazioni' => 'Organizations',
     'Permesso' => 'Permission',
     'Permission' => 'Permission',

@@ -104,7 +104,7 @@ class DestinatariNEW extends Widget
                 /** @var ModelGrammarInterface $networkModelGrammar */
                 $networkModelGrammar = $networkObject->getGrammar();
                 if ($networkModelGrammar) {
-                    $categoryName = AmosCwh::t('messages', 'Solo gli utenti delle ').$networkModelGrammar->getModelLabel();
+                    $categoryName = AmosCwh::t('amoscwh', '#only_users_of') . ' ' . $networkModelGrammar->getModelLabel();
                 }
             }
 
@@ -151,8 +151,9 @@ class DestinatariNEW extends Widget
                     }
                 }
             }
+            $networkIds[$networkModel->classname] = array_unique($networkIds[$networkModel->classname]);
+            $userIds[$networkModel->classname] = array_unique($userIds[$networkModel->classname]);
 
-            $rows = [];
             if (isset($networkIds[$networkModel->classname]) && $networkObject->hasMethod('getListOfRecipients')) {
                 $rows = $networkObject->getListOfRecipients(
                     $networkIds[$networkModel->classname], $userIds[$networkModel->classname]

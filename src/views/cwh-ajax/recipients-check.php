@@ -91,7 +91,7 @@ $labelSuffix = strip_tags($labelSuffix);
                      'value' => function ($model) {
                          /** @var UserProfile $model */
                          $url = $model->getAvatarUrl();
-                         $viewUrl = "/admin/user-profile/view?id=" . $model->id;
+                         $viewUrl = "/".AmosAdmin::getModuleName()."/user-profile/view?id=" . $model->id;
                          $img = Html::tag('div', Html::img($url, [
                              'class' => Yii::$app->imageUtility->getRoundImage($model)['class'],
                              'style' => "margin-left: " . Yii::$app->imageUtility->getRoundImage($model)['margin-left'] . "%; margin-top: " . Yii::$app->imageUtility->getRoundImage($model)['margin-top'] . "%;",
@@ -113,7 +113,7 @@ $labelSuffix = strip_tags($labelSuffix);
                      'label' => AmosAdmin::t('amosadmin', 'Name'),
                      'value' => function($model){
                          /** @var UserProfile $model */
-                         return Html::a($model->nomeCognome, ['/admin/user-profile/view', 'id' => $model->id ], [
+                         return Html::a($model->nomeCognome, ['/'.AmosAdmin::getModuleName().'/user-profile/view', 'id' => $model->id ], [
                              'title' => AmosAdmin::t('amosadmin', 'Apri il profilo di {nome_profilo}', ['nome_profilo' => $model->nomeCognome])
                          ]);
                      },

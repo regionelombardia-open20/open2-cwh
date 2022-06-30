@@ -170,6 +170,12 @@ To do so:
 ]
 ```
 
+#### Commands ####
+##### Command to generate the personal and networks publications
+```php
+php yii cwh/commands/add-cwh-permissions-publications
+```
+
 #### Module Parameters ####
 **regolaPubblicazioneFilter** - see section Publication rule customization  
 **regolaPubblicazioneFilterRole** - see section Publication rule customization  

@@ -226,7 +226,8 @@ JS
                     ]
                 ) . '
                         </div>
-                    </div>' . 
+                    </div>' .
+                //COMMENTATO HIDDEN INPUT PER FIX
 //                    $this->getForm()->field($this->model, 'regola_pubblicazione')->hiddenInput([
 //                    'value' => $this->model->regola_pubblicazione ? $this->model->regola_pubblicazione : $regolaPubblicazioneDefault,])->label(false) .
                 '</div>';

@@ -69,16 +69,26 @@ class ConfigurationController extends BaseController
         return $behaviors;
     }
 
-    public function actionContent($id = null)
+    public function actionContent($classname = null)
     {
         set_time_limit(0);
-        $Content = CwhConfigContents::findOne($id);
-
+        $Content = CwhConfigContents::findOne(['classname' => $classname]);
         if (!($Content)) {
             $Content = new CwhConfigContents();
+        }
+        if (\Yii::$app->getRequest()->getIsPost()) {
+            $Content->load(\Yii::$app->getRequest()->post());
+            if ($Content->save(false)) {
+                Yii::$app->session->addFlash('success', AmosCwh::t('amoscwh', '#configuration_saved'));
+            }
+        }
+        
+        if(\Yii::$app->getRequest()->isGet)
+        {
             $Content->load(\Yii::$app->getRequest()->getQueryParams(), '');
             if($Content->classname){
                 if(class_exists($Content->classname)){
+                    $Content->loadFromDb();
                     $modelObject = \Yii::createObject($Content->classname);
                     if(!$Content->status_attribute) {
                         if ($modelObject->hasProperty('status')) {
@@ -89,16 +99,6 @@ class ConfigurationController extends BaseController
                         }
                     }
                 }
-            }
-        }
-
-        if (\Yii::$app->getRequest()->getIsPost()) {
-            $Content->load(\Yii::$app->getRequest()->post());
-            if ($Content->save(false)) {
-                Yii::$app->session->addFlash('success', AmosCwh::t('amoscwh', '#configuration_saved'));
-                return $this->redirect(['content',
-                    'id' => $Content->id
-                ]);
             }
         }
 
@@ -124,9 +124,14 @@ class ConfigurationController extends BaseController
 
     }
 
-    public function actionNetwork($id = null)
+    /**
+     * 
+     * @param type $classname
+     * @return type
+     */
+    public function actionNetwork($classname = null)
     {
-        $Network = CwhConfig::findOne($id);
+        $Network = CwhConfig::findOne(['classname' => $classname]);
 
         if (!($Network)) {
             $Network = new CwhConfig();
@@ -136,9 +141,7 @@ class ConfigurationController extends BaseController
         if (\Yii::$app->getRequest()->getIsPost()) {
             $Network->load(\Yii::$app->getRequest()->post());
             if ($Network->save(false)) {
-                return $this->redirect(['network',
-                    'id' => $Network->id
-                ]);
+                Yii::$app->session->addFlash('success', AmosCwh::t('amoscwh', '#configuration_saved'));
             }
         }
 

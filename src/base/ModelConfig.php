@@ -48,13 +48,8 @@ class ModelConfig extends Model
 
     public function composeUrl()
     {
-        $attributes = $this->getAttributes();
-
-        if ($this->isConfigured()) {
-            $configClass = $this->getConfigWrapper();
-            $attributes = $configClass::getConfig($this->classname)->getAttributes();
-        }
-
+        $attributes = ['classname' => $this->classname, 'label' => $this->label, 'tablename' => $this->tablename
+                , 'module_id' => $this->module_id, 'configured' => $this->configured];
         return ArrayHelper::merge(
             [
                 $this->base_url_config

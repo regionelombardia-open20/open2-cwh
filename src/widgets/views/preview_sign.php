@@ -35,7 +35,7 @@ if ($model->isNewRecord) {
 ?>
 
 <div id="preview-sign">
-    <div id="profile-image-preview" class="signature-preview col-xs-12">
+    <div id="profile-image-preview" class="signature-preview">
         <p><?= \open20\amos\cwh\AmosCwh::t('amoscwh', 'Example sign') ?></p>
         <?php
         echo \open20\amos\core\forms\ItemAndCardHeaderWidget::widget([

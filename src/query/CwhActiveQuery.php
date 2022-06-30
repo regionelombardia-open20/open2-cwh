@@ -183,6 +183,10 @@ class CwhActiveQuery extends ActiveQuery
      */
     public function getUserProfile()
     {
+        if (get_class(\Yii::$app) == 'open20\amos\core\applications\ConsoleApplication' && !empty(\Yii::$app->user)) {
+            $this->setUserId(\Yii::$app->user->id);
+            self::$userProfile = null;
+        }
         if (empty(self::$userProfile)) {
             $adminModule = Yii::$app->getModule(AmosAdmin::getModuleName());
             if (!is_null($adminModule)) {
@@ -708,7 +712,8 @@ class CwhActiveQuery extends ActiveQuery
             $networkObject   = Yii::createObject($networkModel->classname);
             $query->leftJoin($networkObject->getMmTableName(),
                     $networkObject->getMmTableName().'.'.$networkObject->getMmUserIdFieldName().'='.$this->getUserId()
-                    ." AND ".$networkObject->getMmTableName().'.'.$networkObject->getMmNetworkIdFieldName().'= cwh_pubblicazioni_cwh_nodi_editori_mm.cwh_network_id')
+                    ." AND ".$networkObject->getMmTableName().'.'.$networkObject->getMmNetworkIdFieldName().'= cwh_pubblicazioni_cwh_nodi_editori_mm.cwh_network_id'
+                    ." AND cwh_pubblicazioni_cwh_nodi_editori_mm.cwh_config_id = " . $networkConfigId)
                 ->andWhere($networkObject->getMmTableName().'.deleted_at IS NULL');
             $mmTable         = Yii::$app->db->schema->getTableSchema($networkObject->getMmTableName());
             if (isset($mmTable->columns['status'])) {
@@ -787,9 +792,12 @@ class CwhActiveQuery extends ActiveQuery
                 ]);
             }
         } else {
-            $query->innerJoin(CwhNodi::tableName().' vsbq',
+            $query->leftJoin(CwhNodi::tableName().' vsbq',
                 'cwh_pubblicazioni_cwh_nodi_editori_mm.cwh_config_id = vsbq.cwh_config_id AND cwh_pubblicazioni_cwh_nodi_editori_mm.cwh_network_id = vsbq.record_id');
-            $query->andWhere(['vsbq.visibility' => 1]);
+            $query->andWhere(['or',
+                ['vsbq.visibility' => 1],
+                ['vsbq.visibility' => null]
+            ]);
         }
         return $query;
     }

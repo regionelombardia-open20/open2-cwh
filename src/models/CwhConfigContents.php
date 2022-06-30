@@ -37,6 +37,22 @@ class CwhConfigContents extends \open20\amos\cwh\models\base\CwhConfigContents
     {
         return self::find()->all();
     }
+    
+    /**
+     * 
+     */
+    public function loadFromDb()
+    {
+        if(!empty($this->classname))
+        {
+            $dbModel = self::findOne(['classname' => $this->classname]);
+            if(!is_null($dbModel))
+            {
+                $this->setAttributes($dbModel->attributes);
+                $this->isNewRecord =false;
+            }
+        }
+    }
 
     /**
      * @return array
