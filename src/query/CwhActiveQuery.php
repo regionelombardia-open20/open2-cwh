@@ -290,35 +290,84 @@ class CwhActiveQuery extends ActiveQuery
     public function getQueryCwhOwnInterest()
     {
         $cwhModule = \Yii::$app->getModule(AmosCwh::getModuleName());
-        if($cwhModule->cached) {
+        if ($cwhModule->cached) {
             $query = CachedActiveQuery::instance($this->queryBase);
             $query->cache($cwhModule->cacheDuration);
-        }else{
+        } else {
             $query = (clone $this->queryBase);
         }
 
+
+        $tag        = false;
+        $network    = false;
+        $networkTag = false;
+
+        // Contenuti pubblicati verso tutti equivale ad un contenuto con
+        // tutti i tag e quindi va in own-interest
         $queryAllUsers = $this->getQueryAllUsers([self::RULE_PUBLIC]);
         $queryAllUsers->select($this->tableName.'.id');
-        $query->andWhere([$this->tableName.'.id' => $queryAllUsers]);
 
-        if($this->moduleTagEnabled) {
+
+        if ($this->moduleTagEnabled) {
+            $tag      = true;
             $queryTag = $this->getUserTagQuery([self::RULE_TAG]);
-            $queryTag->select($this->tableName . '.id');
-            $query->orWhere([$this->tableName . '.id' => $queryTag]);
+            $queryTag->select($this->tableName.'.id');
         }
 
-        $queryUserNetwork = $this->getUserNetworkQuery([ self::RULE_NETWORK ]);
-        if($queryUserNetwork != null){
+        $queryUserNetwork = $this->getUserNetworkQuery([self::RULE_NETWORK]);
+        if ($queryUserNetwork != null) {
+            $network = true;
             $queryUserNetwork->select($this->tableName.'.id');
-            $query->orWhere([$this->tableName.'.id' => $queryUserNetwork]);
         }
 
-        if($this->moduleTagEnabled) {
+        if ($this->moduleTagEnabled) {
             $queryUserNetworkAndTag = $this->getUserNetworkAndTagQuery([self::RULE_NETWORK_TAG]);
             if ($queryUserNetworkAndTag != null) {
-                $queryUserNetworkAndTag->select($this->tableName . '.id');
-                $query->orWhere([$this->tableName . '.id' => $queryUserNetworkAndTag]);
+                $networkTag = true;
+                $queryUserNetworkAndTag->select($this->tableName.'.id');
             }
+        }
+
+        if ($tag && $network && $networkTag) {
+            $query->andWhere(['or',
+                [$this->tableName.'.id' => $queryTag],
+                [$this->tableName.'.id' => $queryUserNetwork],
+                [$this->tableName.'.id' => $queryUserNetworkAndTag],
+                [$this->tableName.'.id' => $queryAllUsers],
+            ]);
+        } else if ($tag && $network) {
+            $query->andWhere(['or',
+                [$this->tableName.'.id' => $queryTag],
+                [$this->tableName.'.id' => $queryUserNetwork],
+                [$this->tableName.'.id' => $queryAllUsers],
+            ]);
+        } else if ($tag && $networkTag) {
+            $query->andWhere(['or',
+                [$this->tableName.'.id' => $queryTag],
+                [$this->tableName.'.id' => $queryUserNetworkAndTag],
+                [$this->tableName.'.id' => $queryAllUsers],
+            ]);
+        } else if ($network && $networkTag) {
+            $query->andWhere(['or',
+                [$this->tableName.'.id' => $queryUserNetwork],
+                [$this->tableName.'.id' => $queryUserNetworkAndTag],
+                [$this->tableName.'.id' => $queryAllUsers],
+            ]);
+        } else if ($tag) {
+            $query->andWhere(['or',
+                [$this->tableName.'.id' => $queryTag],
+                [$this->tableName.'.id' => $queryAllUsers],
+            ]);
+        } else if ($network) {
+            $query->andWhere(['or',
+                [$this->tableName.'.id' => $queryUserNetwork],
+                [$this->tableName.'.id' => $queryAllUsers],
+            ]);
+        } else if ($networkTag) {
+            $query->andWhere(['or',
+                [$this->tableName.'.id' => $queryUserNetworkAndTag],
+                [$this->tableName.'.id' => $queryAllUsers],
+            ]);
         }
 
         $this->filterValidatedByScope($query);
