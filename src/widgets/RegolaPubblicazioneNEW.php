@@ -213,7 +213,7 @@ JS
                         <div class="col-xs-12">' . Html::label(AmosCwh::t('amoscwh', 'Chi può visualizzare ') . $labelSuffix, null, ['class' => 'control-label']) . '</div>
                         <div class="col-xs-12">' .
                 Select2::widget([
-                        'name' => 'regola',
+                        'name' => $this->getNameField() . '[regola_pubblicazione]',
                         'value' => $this->model->regola_pubblicazione ? $this->model->regola_pubblicazione : $regolaPubblicazioneDefault,
                         'data' => $rules,
                         'options' => [
@@ -225,9 +225,9 @@ JS
                         'disabled' => $destinatariFromScope && !$this->scopeFilter
                     ]
                 ) . '
-                        </div>
-                    </div>' . $this->getForm()->field($this->model, 'regola_pubblicazione')->hiddenInput([
-                    'value' => $this->model->regola_pubblicazione ? $this->model->regola_pubblicazione : $regolaPubblicazioneDefault,])->label(false) .
+                        </div> 
+                    </div>' . //$this->getForm()->field($this->model, 'regola_pubblicazione')->hiddenInput([
+                    //'value' => $this->model->regola_pubblicazione ? $this->model->regola_pubblicazione : $regolaPubblicazioneDefault,])->label(false) .
                 '</div>';
         } else {
             $regolaDiPubblicazioneField = $this->getForm()->field($this->model,

@@ -15,7 +15,6 @@ use open20\amos\core\helpers\Html;
 use open20\amos\core\interfaces\ModelLabelsInterface;
 use open20\amos\cwh\AmosCwh;
 use yii\base\Widget;
-use yii\bootstrap\Modal;
 use yii\web\View;
 
 /**
@@ -56,6 +55,16 @@ class RecipientsCheckNEW extends Widget
         } else {
             $labelSuffix = ' ' . AmosCwh::t('amoscwh', 'il contenuto');
         }
+
+
+        $classnameModal = \yii\bootstrap\Modal::className();
+        if (!empty(\Yii::$app->params['bsVersion']) && \Yii::$app->params['bsVersion'] == '4.x') {
+            $classnameModal = \yii\bootstrap4\Modal::className();
+            $headerProps = 'title';
+        } else {
+            $headerProps = 'header';
+        }
+
 
         $refClass = new \ReflectionClass(get_class($model));
         $formPrefix = strtolower($refClass->getShortName());
@@ -164,18 +173,19 @@ JS;
         $this->getView()->registerJs($js, View::POS_LOAD);
 
         // TODO traduzione corretta
-        Modal::begin([
+        $classnameModal::begin([
             'id' => 'recipientsPopup',
-            'header' => AmosCwh::t('amoscwh', "Chi può visualizzare ") . $labelSuffix,
-            'size' => Modal::SIZE_LARGE
+            $headerProps => AmosCwh::t('amoscwh', "Chi può visualizzare ") . $labelSuffix,
+            'size' => $classnameModal::SIZE_LARGE
         ]);
 
         echo Html::tag('div', '', ['id' => 'recipients-preview']);
-        echo Html::tag('div',
+        echo Html::tag(
+            'div',
             Html::a(AmosCwh::t('amoscwh', 'Close'), null, ['data-dismiss' => 'modal', 'class' => 'btn btn-secondary']),
             ['class' => 'pull-right', 'style' => 'margin: 15px 0']
         );
-        Modal::end();
+        $classnameModal::end();
 
         return Html::a(
             Html::tag(
@@ -183,8 +193,10 @@ JS;
                 '',
                 ['class' => 'am am-eye']
             )
-            . AmosCwh::t('amoscwh', '#recipients_check_btn'), null, ['id' => 'recipients-check', 'class' => 'recipients-check']);
-
+                . AmosCwh::t('amoscwh', '#recipients_check_btn'),
+            null,
+            ['id' => 'recipients-check', 'class' => 'recipients-check']
+        );
     }
 
     /**

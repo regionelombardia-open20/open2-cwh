@@ -34,12 +34,6 @@ class ModuleAttivitaAsset extends AssetBundle
 
     public function init()
     {
-        $moduleL = \Yii::$app->getModule('layout');
-        if (!empty($moduleL)) {
-            $this->depends [] = 'open20\amos\layout\assets\BaseAsset';
-        } else {
-            $this->depends [] = 'open20\amos\core\views\assets\AmosCoreAsset';
-        }
         $moduleTag = \Yii::$app->getModule('tag');
         if(!empty($moduleTag)){
             $this->depends [] = 'open20\amos\tag\assets\ModuleTagFormAsset';

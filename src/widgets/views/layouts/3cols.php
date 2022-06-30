@@ -7,7 +7,11 @@
  * @package    open20\amos\cwh
  * @category   CategoryName
  */
-\open20\amos\cwh\assets\CwhAsset::register($this);
+if (!empty(\Yii::$app->params['bsVersion']) && \Yii::$app->params['bsVersion'] == '4.x') {
+  
+} else {
+  \open20\amos\cwh\assets\CwhAsset::register($this);
+}
 
 use open20\amos\cwh\AmosCwh;
 ?>

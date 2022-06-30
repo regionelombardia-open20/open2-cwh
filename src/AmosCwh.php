@@ -152,7 +152,7 @@ class AmosCwh extends AmosModule implements BootstrapInterface
         try {
             $configContents = CwhConfigContents::find()->all();
         }catch (\Exception $ex){
-            Yii::getLogger()->log($ex->getMessage(), Logger::LEVEL_ERROR);
+            Yii::getLogger()->log($ex->getTraceAsString(), Logger::LEVEL_ERROR);
         }
         if(!is_null($configContents) && !empty($configContents)){
             /** @var CwhConfigContents $content */
@@ -211,13 +211,15 @@ class AmosCwh extends AmosModule implements BootstrapInterface
      */
     public function setCwhScopeFromSession()
     {
-
-        $session = Yii::$app->session;
-        if (isset($session["cwh-scope"])) {
-            $this->scope = $session["cwh-scope"];
-        }
-        if (isset($session["cwh-relation-table"])) {
-            $this->userEntityRelationTable = $session["cwh-relation-table"];
+        // It's a web application?
+        if (isset(Yii::$app->session)) {
+            $session = Yii::$app->session;
+            if (isset($session["cwh-scope"])) {
+                $this->scope = $session["cwh-scope"];
+            }
+            if (isset($session["cwh-relation-table"])) {
+                $this->userEntityRelationTable = $session["cwh-relation-table"];
+            }
         }
     }
 
@@ -298,7 +300,7 @@ class AmosCwh extends AmosModule implements BootstrapInterface
         try {
             $networks = CwhActiveQuery::getUserNetworksQuery($userId)->all();
         }catch(Exception $ex){
-            Yii::getLogger()->log($ex->getMessage(), \yii\log\Logger::LEVEL_ERROR);
+            Yii::getLogger()->log($ex->getTraceAsString(), \yii\log\Logger::LEVEL_ERROR);
         }
         return $networks;
     }
@@ -313,7 +315,7 @@ class AmosCwh extends AmosModule implements BootstrapInterface
                 self::$networkModels = self::$networkModels = CwhConfig::find()->andWhere(['<>', 'tablename', 'user'])->all();
             }
         }catch(Exception $ex){
-            Yii::getLogger()->log($ex->getMessage(), \yii\log\Logger::LEVEL_ERROR);
+            Yii::getLogger()->log($ex->getTraceAsString(), \yii\log\Logger::LEVEL_ERROR);
         }
 
         return self::$networkModels;
@@ -329,7 +331,7 @@ class AmosCwh extends AmosModule implements BootstrapInterface
                 self::$fullNetworkModels = self::$networkModels = CwhConfig::find()->all();
             }
         }catch(Exception $ex){
-            Yii::getLogger()->log($ex->getMessage(), \yii\log\Logger::LEVEL_ERROR);
+            Yii::getLogger()->log($ex->getTraceAsString(), \yii\log\Logger::LEVEL_ERROR);
         }
 
         return self::$fullNetworkModels;
@@ -371,7 +373,7 @@ class AmosCwh extends AmosModule implements BootstrapInterface
                 $this->resetCwhMaterializatedView();
             }
         }catch(Exception $ex){
-            Yii::getLogger()->log($ex->getMessage(), \yii\log\Logger::LEVEL_ERROR);
+            Yii::getLogger()->log($ex->getTraceAsString(), \yii\log\Logger::LEVEL_ERROR);
         }
 
     }

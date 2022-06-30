@@ -76,7 +76,7 @@ class CwhNodi extends \open20\amos\cwh\models\base\CwhNodi
                 \Yii::$app->db->createCommand('INSERT ' . CwhNodi::tableName() . ' SELECT * FROM ' . CwhNodiView::tablename())->execute();
             }
         } catch (Exception $ex) {
-            \Yii::getLogger()->log($ex->getMessage(), \yii\log\Logger::LEVEL_ERROR);
+            \Yii::getLogger()->log($ex->getTraceAsString(), \yii\log\Logger::LEVEL_ERROR);
         }
     }
 
