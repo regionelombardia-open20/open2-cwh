@@ -191,7 +191,9 @@ class CwhActiveQuery extends ActiveQuery
             $adminModule = Yii::$app->getModule(AmosAdmin::getModuleName());
             if (!is_null($adminModule)) {
                 $usermodel         = $adminModule->model('UserProfile');
-                self::$userProfile = $usermodel::findOne(['user_id' => $this->getUserId()]);
+                $queryCache = CachedActiveQuery::instance($usermodel::find()->andWhere(['user_id' => $this->getUserId()]));
+                $queryCache->cache(60);
+                self::$userProfile = $queryCache->one();
             }
         }
         return self::$userProfile;

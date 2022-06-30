@@ -21,6 +21,7 @@ use yii\base\Event;
 use yii\behaviors\AttributeBehavior;
 use yii\db\BaseActiveRecord;
 use yii\helpers\ArrayHelper;
+use open20\amos\core\record\CachedActiveQuery;
 
 /**
  * Class CwhNetworkBehaviors
@@ -214,35 +215,46 @@ class CwhNetworkBehaviors extends AttributeBehavior
         $this->getSender()->regola_pubblicazione = null;
         
         if ($this->getSender() && !$this->getSender()->isNewRecord) {
-
-            $cwhConfigContents = CwhConfigContents::findOne(['tablename' => $this->getSender()->tableName()]);
+            $cwhConfigContentsQuery =  CwhConfigContents::find()->andWhere(['tablename' => $this->getSender()->tableName()]);
+            $cwhConfigContentsQuery = CachedActiveQuery::instance($cwhConfigContentsQuery);
+            $cwhConfigContentsQuery->cache(60);
+            $cwhConfigContents = $cwhConfigContentsQuery->one();
 
             /**
              * @var CwhPubblicazioni $Pubblicazione ;
              */
-            $pubblicazione = CwhPubblicazioni::findOne([
-                'content_id' => $this->getSender()->id,
-                'cwh_config_contents_id' => $cwhConfigContents->id
-            ]);
+            $pubblicazioneQuery = CwhPubblicazioni::find()
+                ->andWhere(['content_id' => $this->getSender()->id])
+                ->andWhere(['cwh_config_contents_id' => $cwhConfigContents->id]);
+            $pubblicazioneQuery = CachedActiveQuery::instance($pubblicazioneQuery);
+            $pubblicazioneQuery->cache(60);
+            $pubblicazione = $pubblicazioneQuery->one();
 
             $this->setPubblicazione($pubblicazione);
             
             if ($this->getPubblicazione()) {
-                $this->getSender()->regola_pubblicazione = $this->getPubblicazione()->cwhRegolePubblicazione->getPrimaryKey();
-                
-                $targetsArrayMap = ArrayHelper::map($this->getPubblicazione()
-                    ->getDestinatari()
+                $regolaPubb =  $this->getPubblicazione()->getCwhRegolePubblicazione();
+                $regolaPubb = CachedActiveQuery::instance($regolaPubb);
+                $regolaPubb->cache(60);
+                $this->getSender()->regola_pubblicazione = $regolaPubb->one()->getPrimaryKey();
+
+                $relationMap = $this->getPubblicazione()->getDestinatari();
+                $relationMap = CachedActiveQuery::instance($relationMap);
+                $relationMap->cache(60);
+                $targetsArrayMap = ArrayHelper::map($relationMap
                     ->all(), 'id', 'id');
-                
+
                 $this->getSender()->setDestinatari($targetsArrayMap);
-                
+
                 $this->getSender()->setTargets($targetsArrayMap);
-                
+
                 $this->getSender()->destinatari = $targetsArrayMap;
-                
-                $draftingValidatorsArrayMap = ArrayHelper::map($this->getPubblicazione()
-                    ->getValidatori()
-                    ->all(), 'id', 'id');
+
+                $validatorsMap = $this->getPubblicazione()->getValidatori();
+                $validatorsMap = CachedActiveQuery::instance($validatorsMap);
+                $validatorsMap->cache(60);
+                $draftingValidatorsArrayMap = ArrayHelper::map($validatorsMap
+                            ->all(), 'id', 'id');
                 
                 $this->getSender()->setValidatori($draftingValidatorsArrayMap);
                 
