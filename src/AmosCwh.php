@@ -32,6 +32,7 @@ use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 use yii\log\Logger;
 use yii\web\Application;
+use open20\amos\core\record\CachedActiveQuery;
 
 /**
  * Class AmosCwh
@@ -323,7 +324,8 @@ class AmosCwh extends AmosModule implements BootstrapInterface
 
         $networks = [];
         try {
-            $networks = CwhActiveQuery::getUserNetworksQuery($userId)->all();
+            $networksQuery = CachedActiveQuery::instance(CwhActiveQuery::getUserNetworksQuery($userId));
+            $networks = $networksQuery->all();
         } catch (Exception $ex) {
             Yii::getLogger()->log($ex->getTraceAsString(), \yii\log\Logger::LEVEL_ERROR);
         }
@@ -338,7 +340,8 @@ class AmosCwh extends AmosModule implements BootstrapInterface
 
         try {
             if (!self::$networkModels) {
-                self::$networkModels = self::$networkModels = CwhConfig::find()->andWhere(['<>', 'tablename', 'user'])->all();
+                $networkModelsQuery = CachedActiveQuery::instance(CwhConfig::find()->andWhere(['<>', 'tablename', 'user']));
+                self::$networkModels = $networkModelsQuery->all();
             }
         } catch (Exception $ex) {
             Yii::getLogger()->log($ex->getTraceAsString(), \yii\log\Logger::LEVEL_ERROR);
@@ -355,7 +358,8 @@ class AmosCwh extends AmosModule implements BootstrapInterface
 
         try {
             if (!self::$fullNetworkModels) {
-                self::$fullNetworkModels = self::$networkModels = CwhConfig::find()->all();
+                $networkModelsQuery = CachedActiveQuery::instance(CwhConfig::find()->all());
+                self::$fullNetworkModels = $networkModelsQuery->all();
             }
         } catch (Exception $ex) {
             Yii::getLogger()->log($ex->getTraceAsString(), \yii\log\Logger::LEVEL_ERROR);

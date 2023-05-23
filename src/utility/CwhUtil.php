@@ -12,6 +12,7 @@ namespace open20\amos\cwh\utility;
 
 use open20\amos\admin\AmosAdmin;
 use open20\amos\core\record\CachedActiveQuery;
+use open20\amos\core\record\CachedQuery;
 use open20\amos\core\record\Record;
 use open20\amos\cwh\AmosCwh;
 use open20\amos\cwh\base\ModelNetworkInterface;
@@ -539,16 +540,17 @@ class CwhUtil
      * @return array
      * @throws \yii\base\InvalidConfigException
      */
-    public static function findInterestTagIdsByUser($userProfileId, $interestClassname = 'simple-choice')
-    {
-        $query  = new Query();
+    public static function findInterestTagIdsByUser($userProfileId, $interestClassname = 'simple-choice') {
+        $query = CachedQuery::instance(new Query);
+        $query->cache(60);
         $query->select(['tag_id'])->distinct();
         $query->from(CwhTagOwnerInterestMm::tableName());
         $query->andWhere(['deleted_at' => null]);
         $query->andWhere(['classname' => AmosAdmin::instance()->model('UserProfile')]);
         $query->andWhere(['record_id' => $userProfileId]);
         $query->andWhere(['interest_classname' => $interestClassname]);
-        $tagIds = $query->column();
+        $tagIds = $query->column(CwhTagOwnerInterestMm::getDb());
+
         return $tagIds;
     }
 
