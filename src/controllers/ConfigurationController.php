@@ -228,5 +228,4 @@ class ConfigurationController extends BaseController
         die;
     }
 
-
 }

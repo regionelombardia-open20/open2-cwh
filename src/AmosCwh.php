@@ -37,7 +37,8 @@ use open20\amos\core\record\CachedActiveQuery;
 /**
  * Class AmosCwh
  *
- * Collaboration Web House - This module provides management of rules, scope, relations and further more linking modules to the others
+ * Collaboration Web House - This module provides management of rules, scope, relations and further
+ * more linking modules to the others
  *
  * @package open20\amos\cwh
  * @see
@@ -58,8 +59,7 @@ class AmosCwh extends AmosModule implements BootstrapInterface
     /**
      * @var array
      */
-    public $modelsEnabled = [
-    ];
+    public $modelsEnabled = [];
 
     /**
      * @var array $validateOnStatus Configuration array: for each content
@@ -76,22 +76,61 @@ class AmosCwh extends AmosModule implements BootstrapInterface
      *      ]
      *  ]
      */
-    public $validateOnStatus = [
-    ];
+    public $validateOnStatus = [];
     
+    /**
+     *
+     * @var string
+     */
     public $permissionPrefix = 'CWH_PERMISSION';
     
+    /**
+     *
+     * @var string
+     */
     public $userProfileClass = 'open20\admin\models\UserProfile';
     
+    /**
+     *
+     * @var array
+     */
     public $behaviors = [
         'cwhBehavior' => 'open20\amos\cwh\behaviors\CwhNetworkBehaviors'
     ];
-    
+
+    /**
+     *
+     * @var boolean
+     */
     public $validatoriEnabled = true;
     
+    /**
+     *
+     * @var boolean
+     */
     public $destinatariEnabled = true;
-    
+
+    /**
+     *
+     * @var boolean
+     */
     public $regolaPubblicazioneEnabled = true;
+
+    /**
+     * TODO
+     * bonificare anche i seguenti plugin
+     *
+     * @var array
+     */
+    public $pluginBlacklisted = [
+        'admin', //non perché sia da bonificare dagli errori ma perché non da considerare come contenitore modelli di rete/ di contenuti
+        'upload',
+        'aliases',
+        'file',
+        'myactivities',
+        'proposte_collaborazione',
+        'uikit'
+    ];
 
     /**
      * @var bool $regolaPubblicazioneFilter
@@ -113,10 +152,28 @@ class AmosCwh extends AmosModule implements BootstrapInterface
      * to be filtered
     **/
     public $scope = [];
+
+    /**
+     *
+     * @var array
+     */
     public $userEntityRelationTable = [];
+    
+    /**
+     * 
+     */
     public $cwhConfWizardEnabled = false;
+
+    /**
+     *
+     * @var boolean
+     */
     public $enableDestinatariFatherChildren = false;
 
+    /**
+     *
+     * @var boolean
+     */
     public $enableTagsAjax  = false;
 
     /**
@@ -145,7 +202,17 @@ class AmosCwh extends AmosModule implements BootstrapInterface
      * Default is false - at least one content tag matching user interest (any tree)
      */
     public $tagsMatchEachTree = false;
+
+    /**
+     *
+     * @var [type]
+     */
     private static $networkModels = null;
+    
+    /**
+     *
+     * @var [type]
+     */
     private static $fullNetworkModels = null;
 
     /**
@@ -166,6 +233,10 @@ class AmosCwh extends AmosModule implements BootstrapInterface
         $this->postKey = $postKey;
     }
 
+    /**
+     *
+     * @return void
+     */
     public function init()
     {
         $configContents = null;
@@ -202,11 +273,19 @@ class AmosCwh extends AmosModule implements BootstrapInterface
         return 'cwh';
     }
 
+    /**
+     *
+     * @return void
+     */
     public function getWidgetGraphics()
     {
         return [];
     }
 
+    /**
+     *
+     * @return void
+     */
     public function getWidgetIcons()
     {
         return [];
@@ -219,13 +298,13 @@ class AmosCwh extends AmosModule implements BootstrapInterface
     public function getDefaultModels()
     {
         return [
-            'CwhAuthAssignment' => __NAMESPACE__ . '\\' . 'models\CwhAuthAssignment',
-            'CwhConfig' => __NAMESPACE__ . '\\' . 'models\CwhConfig',
-            'CwhNodi' => __NAMESPACE__ . '\\' . 'models\CwhNodi',
-            'CwhPubblicazioni' => __NAMESPACE__ . '\\' . 'models\CwhPubblicazioni',
-            'CwhPubblicazioniCwhNodiEditoriMm' => __NAMESPACE__ . '\\' . 'models\CwhPubblicazioniCwhNodiEditoriMm',
-            'CwhPubblicazioniCwhNodiValidatoriMm' => __NAMESPACE__ . '\\' . 'models\CwhPubblicazioniCwhNodiValidatoriMm',
-            'CwhRegolePubblicazione' => __NAMESPACE__ . '\\' . 'models\CwhRegolePubblicazione',
+            'CwhAuthAssignment' => __NAMESPACE__ . '\models\CwhAuthAssignment',
+            'CwhConfig' => __NAMESPACE__ . '\models\CwhConfig',
+            'CwhNodi' => __NAMESPACE__ . '\models\CwhNodi',
+            'CwhPubblicazioni' => __NAMESPACE__ . '\models\CwhPubblicazioni',
+            'CwhPubblicazioniCwhNodiEditoriMm' => __NAMESPACE__ . '\models\CwhPubblicazioniCwhNodiEditoriMm',
+            'CwhPubblicazioniCwhNodiValidatoriMm' => __NAMESPACE__ . '\models\CwhPubblicazioniCwhNodiValidatoriMm',
+            'CwhRegolePubblicazione' => __NAMESPACE__ . '\models\CwhRegolePubblicazione',
         ];
     }
 
@@ -337,7 +416,6 @@ class AmosCwh extends AmosModule implements BootstrapInterface
      */
     public function getNetworkModels()
     {
-
         try {
             if (!self::$networkModels) {
                 $networkModelsQuery = CachedActiveQuery::instance(CwhConfig::find()->andWhere(['<>', 'tablename', 'user']));
@@ -355,7 +433,6 @@ class AmosCwh extends AmosModule implements BootstrapInterface
      */
     public function getFullNetworkModels()
     {
-
         try {
             if (!self::$fullNetworkModels) {
                 $networkModelsQuery = CachedActiveQuery::instance(CwhConfig::find()->all());
@@ -387,23 +464,27 @@ class AmosCwh extends AmosModule implements BootstrapInterface
      */
     public function afterSaveModelDelCache($event)
     {
-
         try {
 
-            $models = ArrayHelper::merge($this->modelsEnabled,
-                    [
-                        CwhPubblicazioniCwhNodiValidatoriMm::className(),
-                        CwhPubblicazioniCwhNodiEditoriMm::className(),
-                        User::className()
-            ]);
+            $models = ArrayHelper::merge(
+                $this->modelsEnabled,
+                [
+                    CwhPubblicazioniCwhNodiValidatoriMm::class,
+                    CwhPubblicazioniCwhNodiEditoriMm::class,
+                    User::class
+                ]
+            );
 
             $moduleTag = Yii::$app->getModule('tag');
             if (isset($moduleTag)) {
-                $models = ArrayHelper::merge($models, [
-                        \open20\amos\tag\models\EntitysTagsMm::className(),
-                        CwhTagInterestMm::className(),
-                        CwhTagOwnerInterestMm::className(),
-                ]);
+                $models = ArrayHelper::merge(
+                    $models,
+                    [
+                        \open20\amos\tag\models\EntitysTagsMm::class,
+                        CwhTagInterestMm::class,
+                        CwhTagOwnerInterestMm::class,
+                    ]
+                );
             }
 
             /** @var ModelNetworkInterface $model */

@@ -30,5 +30,5 @@ use open20\amos\cwh\AmosCwh;
     <div class='row'>
         <div class='col-md-6'>{ignore_notify_from_editorial_staff}</div>
     </div>
-<?php } ?>
+<?php }
 

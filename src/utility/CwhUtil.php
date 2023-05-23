@@ -370,7 +370,7 @@ class CwhUtil
      * @param string|null $modelClassName
      * @param CwhConfig|null $cwhConfig
      */
-    public static function setCwhAuthAssignments($network = null, $networkUserMmRow, $delete = false,
+    public static function setCwhAuthAssignments($network = null, $networkUserMmRow = null, $delete = false,
                                                  $modelClassName = null, $cwhConfig = null)
     {
         $cwhModule = Yii::$app->getModule('cwh');
