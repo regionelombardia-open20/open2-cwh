@@ -83,8 +83,7 @@ function setRegolaPubblicazione () {
     // }
 }
 
-$("#cwh-regola_pubblicazione").on('change', function(e) {
-    
+$("#cwh-regola_pubblicazione").on('change', function(e) {    
     setRegolaPubblicazione();
         
     if($("#cwh-regola_pubblicazione").val() == 1 || $("#cwh-regola_pubblicazione").val() == 3){
@@ -135,7 +134,7 @@ JS
             'model' => $model,
             'attribute' => 'tagValues',
             'form' => \yii\base\Widget::$stack[0],
-            'moduleCwh' => $moduleCwh
+            'moduleCwh' => $moduleCwh,
         ];
         if (isset($singleFixedTreeId)) {
             $tagWidgetConf['singleFixedTreeId'] = $singleFixedTreeId;

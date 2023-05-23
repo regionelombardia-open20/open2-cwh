@@ -119,6 +119,11 @@ class AmosCwh extends AmosModule implements BootstrapInterface
     /**
      * @var bool
      */
+    public $showContensPublicNetwork = false;
+
+    /**
+     * @var bool
+     */
     public $cached = false;
 
     /**

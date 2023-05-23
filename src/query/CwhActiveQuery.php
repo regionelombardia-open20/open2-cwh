@@ -119,13 +119,13 @@ class CwhActiveQuery extends ActiveQuery
         if (!$refClass->isSubclassOf(ActiveRecord::className())) {
             throw new InvalidConfigException(AmosCwh::t('amoscwh',
                 'Impossibile applicare filtraggi a {$modelClass}, in quanto non è un contenuto'),
-            [
-            'modelClass' => $this->modelClass
-            ]);
+                [
+                    'modelClass' => $this->modelClass
+                ]);
         }
-        $this->modelObject      = Yii::createObject($this->modelClass);
-        $this->moduleCwh        = Yii::$app->getModule('cwh');
-        $moduleTag              = Yii::$app->getModule('tag');
+        $this->modelObject = Yii::createObject($this->modelClass);
+        $this->moduleCwh = Yii::$app->getModule('cwh');
+        $moduleTag = Yii::$app->getModule('tag');
         $this->moduleTagEnabled = isset($moduleTag);
 
         if (!isset($this->tableName)) {
@@ -134,8 +134,8 @@ class CwhActiveQuery extends ActiveQuery
         if (!isset($this->cwhConfigContentsId)) {
             $configContent = CwhConfigContents::findOne(['tablename' => $this->tableName]);
             if (is_null($configContent)) {
-                $message = AmosCwh::t('amoscwh', '#cwh_exception_content_type_not_configured').' '.$this->tableName;
-                $message .= '. '.AmosCwh::t('amoscwh', '#configure').' /cwh/configuration/wizard';
+                $message = AmosCwh::t('amoscwh', '#cwh_exception_content_type_not_configured') . ' ' . $this->tableName;
+                $message .= '. ' . AmosCwh::t('amoscwh', '#configure') . ' /cwh/configuration/wizard';
                 throw new CwhException($message);
             }
             $this->cwhConfigContentsId = $configContent->id;
@@ -190,7 +190,7 @@ class CwhActiveQuery extends ActiveQuery
         if (empty(self::$userProfile)) {
             $adminModule = Yii::$app->getModule(AmosAdmin::getModuleName());
             if (!is_null($adminModule)) {
-                $usermodel         = $adminModule->model('UserProfile');
+                $usermodel = $adminModule->model('UserProfile');
                 $queryCache = CachedActiveQuery::instance($usermodel::find()->andWhere(['user_id' => $this->getUserId()]));
                 $queryCache->cache(60);
                 self::$userProfile = $queryCache->one();
@@ -205,7 +205,7 @@ class CwhActiveQuery extends ActiveQuery
     public function getPublicationJoin($query)
     {
         $query->innerJoin('cwh_pubblicazioni',
-            'cwh_pubblicazioni.content_id = '.$this->tableName.'.id AND cwh_pubblicazioni.cwh_config_contents_id = '.$this->cwhConfigContentsId);
+            'cwh_pubblicazioni.content_id = ' . $this->tableName . '.id AND cwh_pubblicazioni.cwh_config_contents_id = ' . $this->cwhConfigContentsId);
     }
 
     /**
@@ -214,7 +214,7 @@ class CwhActiveQuery extends ActiveQuery
     public function joinPublication()
     {
         $this->innerJoin('cwh_pubblicazioni',
-            'cwh_pubblicazioni.content_id = '.$this->tableName.'.id AND cwh_pubblicazioni.cwh_config_contents_id = '.$this->cwhConfigContentsId);
+            'cwh_pubblicazioni.content_id = ' . $this->tableName . '.id AND cwh_pubblicazioni.cwh_config_contents_id = ' . $this->cwhConfigContentsId);
         return $this;
     }
 
@@ -251,17 +251,17 @@ class CwhActiveQuery extends ActiveQuery
             $queryUser->innerJoin('cwh_pubblicazioni_cwh_nodi_validatori_mm',
                 'cwh_pubblicazioni_cwh_nodi_validatori_mm.cwh_pubblicazioni_id = cwh_pubblicazioni.id');
             $queryUser->innerJoin('cwh_auth_assignment',
-                'cwh_auth_assignment.user_id = '.$this->getUserId().' AND '.
-                'cwh_auth_assignment.cwh_network_id = cwh_pubblicazioni_cwh_nodi_validatori_mm.cwh_network_id'.' AND '.
+                'cwh_auth_assignment.user_id = ' . $this->getUserId() . ' AND ' .
+                'cwh_auth_assignment.cwh_network_id = cwh_pubblicazioni_cwh_nodi_validatori_mm.cwh_network_id' . ' AND ' .
                 'cwh_auth_assignment.cwh_config_id = cwh_pubblicazioni_cwh_nodi_validatori_mm.cwh_config_id'
             );
             $queryUser->andWhere(['is', 'cwh_auth_assignment.deleted_at', null]);
             $queryUser->andWhere([
-                'cwh_auth_assignment.item_name' => "CWH_PERMISSION_VALIDATE_".$this->modelClass,
+                'cwh_auth_assignment.item_name' => "CWH_PERMISSION_VALIDATE_" . $this->modelClass,
             ]);
-            $queryUser->select($this->tableName.'.id');
+            $queryUser->select($this->tableName . '.id');
 
-            $query->andWhere([$this->tableName.'.id' => $queryUser]);
+            $query->andWhere([$this->tableName . '.id' => $queryUser]);
 
 
             if ($cwhModule->cached) {
@@ -271,27 +271,27 @@ class CwhActiveQuery extends ActiveQuery
                 $queryFacilitator = (clone $this->queryBase);
             }
 
-            $userProfile   = $this->getUserProfile();
+            $userProfile = $this->getUserProfile();
             $cwhConfigUser = CwhConfig::findOne(['tablename' => 'user']);
             $this->getPublicationJoin($queryFacilitator);
             $queryFacilitator
                 ->innerJoin('cwh_pubblicazioni_cwh_nodi_validatori_mm',
-                    'cwh_pubblicazioni_cwh_nodi_validatori_mm.cwh_pubblicazioni_id = cwh_pubblicazioni.id AND '.
-                    'cwh_pubblicazioni_cwh_nodi_validatori_mm.cwh_config_id = '.$cwhConfigUser->id)
+                    'cwh_pubblicazioni_cwh_nodi_validatori_mm.cwh_pubblicazioni_id = cwh_pubblicazioni.id AND ' .
+                    'cwh_pubblicazioni_cwh_nodi_validatori_mm.cwh_config_id = ' . $cwhConfigUser->id)
                 ->innerJoin('user_profile',
                     'user_profile.user_id = cwh_pubblicazioni_cwh_nodi_validatori_mm.cwh_network_id')
                 ->andWhere(
-                    'user_profile.facilitatore_id ='.$userProfile->id
-            );
+                    'user_profile.facilitatore_id =' . $userProfile->id
+                );
 
-            $queryFacilitator->select($this->tableName.'.id');
-            $query->orWhere([$this->tableName.'.id' => $queryFacilitator]);
+            $queryFacilitator->select($this->tableName . '.id');
+            $query->orWhere([$this->tableName . '.id' => $queryFacilitator]);
         }
         if ($checkStatus) {
             if ($this->modelObject->getBehavior('workflow') != null) {
 
                 $this->status = $this->modelObject->getToValidateStatus();
-                $query->andWhere([$this->tableName.'.status' => $this->status]);
+                $query->andWhere([$this->tableName . '.status' => $this->status]);
             }
         }
 
@@ -318,75 +318,75 @@ class CwhActiveQuery extends ActiveQuery
         $userProfileId = $this->getUserProfile()->id;
         $userHasTags = CwhTagOwnerInterestMm::find()->andWhere(['record_id' => $userProfileId])->exists();
 
-        $tag        = false;
-        $network    = false;
+        $tag = false;
+        $network = false;
         $networkTag = false;
 
         // Contenuti pubblicati verso tutti equivale ad un contenuto con 
         // tutti i tag e quindi va in own-interest
         $queryAllUsers = $this->getQueryAllUsers([self::RULE_PUBLIC]);
-        $queryAllUsers->select($this->tableName.'.id');
+        $queryAllUsers->select($this->tableName . '.id');
 
 
         if ($this->moduleTagEnabled && $userHasTags) {
-            $tag      = true;
+            $tag = true;
             $queryTag = $this->getUserTagQuery([self::RULE_TAG]);
-            $queryTag->select($this->tableName.'.id');
+            $queryTag->select($this->tableName . '.id');
         }
 
         $queryUserNetwork = $this->getUserNetworkQuery([self::RULE_NETWORK]);
         if ($queryUserNetwork != null) {
             $network = true;
-            $queryUserNetwork->select($this->tableName.'.id');
+            $queryUserNetwork->select($this->tableName . '.id');
         }
 
         if ($this->moduleTagEnabled && $userHasTags) {
             $queryUserNetworkAndTag = $this->getUserNetworkAndTagQuery([self::RULE_NETWORK_TAG]);
             if ($queryUserNetworkAndTag != null) {
                 $networkTag = true;
-                $queryUserNetworkAndTag->select($this->tableName.'.id');
+                $queryUserNetworkAndTag->select($this->tableName . '.id');
             }
         }
 
         if ($tag && $network && $networkTag) {
             $query->andWhere(['or',
-                [$this->tableName.'.id' => $queryTag],
-                [$this->tableName.'.id' => $queryUserNetwork],
-                [$this->tableName.'.id' => $queryUserNetworkAndTag],
-                [$this->tableName.'.id' => $queryAllUsers],
+                [$this->tableName . '.id' => $queryTag],
+                [$this->tableName . '.id' => $queryUserNetwork],
+                [$this->tableName . '.id' => $queryUserNetworkAndTag],
+                [$this->tableName . '.id' => $queryAllUsers],
             ]);
         } else if ($tag && $network) {
             $query->andWhere(['or',
-                [$this->tableName.'.id' => $queryTag],
-                [$this->tableName.'.id' => $queryUserNetwork],
-                [$this->tableName.'.id' => $queryAllUsers],
+                [$this->tableName . '.id' => $queryTag],
+                [$this->tableName . '.id' => $queryUserNetwork],
+                [$this->tableName . '.id' => $queryAllUsers],
             ]);
         } else if ($tag && $networkTag) {
             $query->andWhere(['or',
-                [$this->tableName.'.id' => $queryTag],
-                [$this->tableName.'.id' => $queryUserNetworkAndTag],
-                [$this->tableName.'.id' => $queryAllUsers],
+                [$this->tableName . '.id' => $queryTag],
+                [$this->tableName . '.id' => $queryUserNetworkAndTag],
+                [$this->tableName . '.id' => $queryAllUsers],
             ]);
         } else if ($network && $networkTag) {
             $query->andWhere(['or',
-                [$this->tableName.'.id' => $queryUserNetwork],
-                [$this->tableName.'.id' => $queryUserNetworkAndTag],
-                [$this->tableName.'.id' => $queryAllUsers],
+                [$this->tableName . '.id' => $queryUserNetwork],
+                [$this->tableName . '.id' => $queryUserNetworkAndTag],
+                [$this->tableName . '.id' => $queryAllUsers],
             ]);
         } else if ($tag) {
             $query->andWhere(['or',
-                [$this->tableName.'.id' => $queryTag],
-                [$this->tableName.'.id' => $queryAllUsers],
+                [$this->tableName . '.id' => $queryTag],
+                [$this->tableName . '.id' => $queryAllUsers],
             ]);
         } else if ($network) {
             $query->andWhere(['or',
-                [$this->tableName.'.id' => $queryUserNetwork],
-                [$this->tableName.'.id' => $queryAllUsers],
+                [$this->tableName . '.id' => $queryUserNetwork],
+                [$this->tableName . '.id' => $queryAllUsers],
             ]);
         } else if ($networkTag) {
             $query->andWhere(['or',
-                [$this->tableName.'.id' => $queryUserNetworkAndTag],
-                [$this->tableName.'.id' => $queryAllUsers],
+                [$this->tableName . '.id' => $queryUserNetworkAndTag],
+                [$this->tableName . '.id' => $queryAllUsers],
             ]);
         }
 
@@ -420,7 +420,7 @@ class CwhActiveQuery extends ActiveQuery
                     "cwh_pubblicazioni_cwh_nodi_editori_mm.cwh_pubblicazioni_id = cwh_pubblicazioni.id")
                 ->andWhere([
                     'cwh_pubblicazioni_cwh_nodi_editori_mm.cwh_config_id' => $cwhConfigId
-            ]);
+                ]);
 
             if (isset($cwhNetworkId)) {
                 //search contents for specified nwtwork editor
@@ -433,7 +433,7 @@ class CwhActiveQuery extends ActiveQuery
             $query
                 ->leftJoin('cwh_pubblicazioni_cwh_nodi_editori_mm',
                     "cwh_pubblicazioni_cwh_nodi_editori_mm.cwh_pubblicazioni_id = cwh_pubblicazioni.id")
-                ->leftJoin(CwhNodi::tableName().' qca',
+                ->leftJoin(CwhNodi::tableName() . ' qca',
                     'cwh_pubblicazioni_cwh_nodi_editori_mm.cwh_config_id = qca.cwh_config_id AND cwh_pubblicazioni_cwh_nodi_editori_mm.cwh_network_id = qca.record_id');
             $query = $this->getVisibilityQuery($query, null, $checkUser, 'qca');
         }
@@ -453,7 +453,7 @@ class CwhActiveQuery extends ActiveQuery
         if (!$this->validByScopeIgnoreStatus) {
             if ($this->modelObject->getBehavior('workflow') != null) {
                 $this->status = $this->modelObject->getCwhValidationStatuses();
-                $query->andWhere([$this->tableName.'.status' => $this->status]);
+                $query->andWhere([$this->tableName . '.status' => $this->status]);
             }
         }
 
@@ -501,11 +501,11 @@ class CwhActiveQuery extends ActiveQuery
         if ($this->modelObject->getBehavior('workflow') != null) {
 
             $this->status = $this->modelObject->getDraftStatus();
-            $query->andWhere([$this->tableName.'.status' => $this->status]);
+            $query->andWhere([$this->tableName . '.status' => $this->status]);
         }
 
         $query->andFilterWhere([
-            $this->tableName.'.created_by' => $this->getUserId()
+            $this->tableName . '.created_by' => $this->getUserId()
         ]);
 
         $this->filterByScope($query);
@@ -528,7 +528,7 @@ class CwhActiveQuery extends ActiveQuery
             $query = (clone $this->queryBase);
         }
         $query->andFilterWhere([
-            $this->tableName.'.created_by' => $this->getUserId()
+            $this->tableName . '.created_by' => $this->getUserId()
         ]);
 
         $this->filterByScope($query);
@@ -546,22 +546,22 @@ class CwhActiveQuery extends ActiveQuery
             foreach ($this->moduleCwh->scope as $key => $scopeCondition) {
                 $cwhConfigId = CwhConfig::findOne(['tablename' => $key])->id;
                 $query->innerJoin('cwh_pubblicazioni publications',
-                    'publications.content_id = '.$this->tableName.'.id AND publications.cwh_config_contents_id = '.$this->cwhConfigContentsId);
+                    'publications.content_id = ' . $this->tableName . '.id AND publications.cwh_config_contents_id = ' . $this->cwhConfigContentsId);
                 if (is_null($this->networkIds)) {
                     $query
-                        ->innerJoin('cwh_pubblicazioni_cwh_nodi_editori_mm editors_mm_'.$key,
-                            'editors_mm_'.$key.'.cwh_config_id = '.$cwhConfigId.' AND editors_mm_'.$key.'.cwh_network_id = '.$scopeCondition.' AND editors_mm_'.$key.'.cwh_pubblicazioni_id = publications.id ')
+                        ->innerJoin('cwh_pubblicazioni_cwh_nodi_editori_mm editors_mm_' . $key,
+                            'editors_mm_' . $key . '.cwh_config_id = ' . $cwhConfigId . ' AND editors_mm_' . $key . '.cwh_network_id = ' . $scopeCondition . ' AND editors_mm_' . $key . '.cwh_pubblicazioni_id = publications.id ')
                         ->andWhere([
-                            'editors_mm_'.$key.'.deleted_at' => null,
-                    ]);
+                            'editors_mm_' . $key . '.deleted_at' => null,
+                        ]);
                 } else {
                     $query
-                        ->innerJoin('cwh_pubblicazioni_cwh_nodi_editori_mm editors_mm_'.$key,
-                            'editors_mm_'.$key.'.cwh_config_id = '.$cwhConfigId.' AND editors_mm_'.$key.'.cwh_pubblicazioni_id = publications.id ')
+                        ->innerJoin('cwh_pubblicazioni_cwh_nodi_editori_mm editors_mm_' . $key,
+                            'editors_mm_' . $key . '.cwh_config_id = ' . $cwhConfigId . ' AND editors_mm_' . $key . '.cwh_pubblicazioni_id = publications.id ')
                         ->andWhere([
-                            'editors_mm_'.$key.'.cwh_network_id' => $this->networkIds,
-                            'editors_mm_'.$key.'.deleted_at' => null,
-                    ]);
+                            'editors_mm_' . $key . '.cwh_network_id' => $this->networkIds,
+                            'editors_mm_' . $key . '.deleted_at' => null,
+                        ]);
                 }
             }
         }
@@ -589,13 +589,13 @@ class CwhActiveQuery extends ActiveQuery
                 $cwhConfigId = CwhConfig::findOne(['tablename' => $key])->id;
                 $query
                     ->innerJoin('cwh_pubblicazioni publications',
-                        'publications.content_id = '.$this->tableName.'.id AND publications.cwh_config_contents_id = '.$this->cwhConfigContentsId)
+                        'publications.content_id = ' . $this->tableName . '.id AND publications.cwh_config_contents_id = ' . $this->cwhConfigContentsId)
                     ->innerJoin('cwh_pubblicazioni_cwh_nodi_validatori_mm validators_mm',
-                        'validators_mm.cwh_config_id = '.$cwhConfigId.' AND validators_mm.cwh_network_id = '.$scopeCondition.
+                        'validators_mm.cwh_config_id = ' . $cwhConfigId . ' AND validators_mm.cwh_network_id = ' . $scopeCondition .
                         ' AND validators_mm.cwh_pubblicazioni_id = publications.id ')
                     ->andWhere([
                         'validators_mm.deleted_at' => null,
-                ]);
+                    ]);
             }
         }
     }
@@ -619,7 +619,7 @@ class CwhActiveQuery extends ActiveQuery
         $query
             ->andWhere([
                 'cwh_pubblicazioni.cwh_regole_pubblicazione_id' => $publicationRules,
-        ]);
+            ]);
         return $query;
     }
 
@@ -655,45 +655,45 @@ class CwhActiveQuery extends ActiveQuery
      */
     public function getTagMatchQuery($query)
     {
-        $cwhModule     = \Yii::$app->getModule(AmosCwh::getModuleName());
+        $cwhModule = \Yii::$app->getModule(AmosCwh::getModuleName());
         $userProfileId = $this->getUserProfile()->id;
 
         $cwhTagOwnerInterestMmTable = CwhTagOwnerInterestMm::tableName();
-        $tagModelsAuthItemsMmTable  = TagModelsAuthItemsMm::tableName();
-        $entityTagsMmTable          = EntitysTagsMm::tableName();
+        $tagModelsAuthItemsMmTable = TagModelsAuthItemsMm::tableName();
+        $entityTagsMmTable = EntitysTagsMm::tableName();
 
         if (!$cwhModule->tagsMatchEachTree) {
 
-            $query->innerJoin($entityTagsMmTable, $entityTagsMmTable.".record_id = ".$this->tableName.".id")
+            $query->innerJoin($entityTagsMmTable, $entityTagsMmTable . ".record_id = " . $this->tableName . ".id")
                 ->innerJoin($cwhTagOwnerInterestMmTable,
-                    $entityTagsMmTable.'.tag_id = '.$cwhTagOwnerInterestMmTable.'.tag_id AND '.$cwhTagOwnerInterestMmTable.'.record_id = '.$userProfileId)
+                    $entityTagsMmTable . '.tag_id = ' . $cwhTagOwnerInterestMmTable . '.tag_id AND ' . $cwhTagOwnerInterestMmTable . '.record_id = ' . $userProfileId)
                 ->andWhere([
-                    $entityTagsMmTable.'.classname' => $this->modelClass,
-                    $cwhTagOwnerInterestMmTable.'.record_id' => $userProfileId,
-                ])->andWhere([$cwhTagOwnerInterestMmTable.'.deleted_at' => null])
-                ->andWhere([$entityTagsMmTable.'.deleted_at' => null]);
+                    $entityTagsMmTable . '.classname' => $this->modelClass,
+                    $cwhTagOwnerInterestMmTable . '.record_id' => $userProfileId,
+                ])->andWhere([$cwhTagOwnerInterestMmTable . '.deleted_at' => null])
+                ->andWhere([$entityTagsMmTable . '.deleted_at' => null]);
         } else {
 
-            $allRootTagModelsAuthItemsMmTable  = TagModelsAuthItemsMm::find()->andWhere(['classname' => $this->modelClass])->select('tag_id')->distinct();
+            $allRootTagModelsAuthItemsMmTable = TagModelsAuthItemsMm::find()->andWhere(['classname' => $this->modelClass])->select('tag_id')->distinct();
             $allRootCwhTagOwnerInterestMmTable = CwhTagOwnerInterestMm::find()->andWhere(['record_id' => $userProfileId])->select('root_id')->distinct();
-            $rootIds                           = Tag::find()
-                    ->andWhere(['in', 'root', $allRootTagModelsAuthItemsMmTable])
-                    ->andWhere(['in', 'root', $allRootCwhTagOwnerInterestMmTable])
-                    ->select('root')->groupBy('root')->column();
+            $rootIds = Tag::find()
+                ->andWhere(['in', 'root', $allRootTagModelsAuthItemsMmTable])
+                ->andWhere(['in', 'root', $allRootCwhTagOwnerInterestMmTable])
+                ->select('root')->groupBy('root')->column();
             foreach ($rootIds as $rootId) {
-                $tableTagsMmAlias     = 'tag_mm_'.$rootId;
-                $tableUserTagsMmAlias = 'user_tag_mm_'.$rootId;
+                $tableTagsMmAlias = 'tag_mm_' . $rootId;
+                $tableUserTagsMmAlias = 'user_tag_mm_' . $rootId;
                 $query
-                    ->innerJoin('entitys_tags_mm '.$tableTagsMmAlias,
-                        $tableTagsMmAlias.".record_id = ".$this->tableName.".id and ".$tableTagsMmAlias.'.root_id = '.$rootId)
-                    ->innerJoin(''.$cwhTagOwnerInterestMmTable.' '.$tableUserTagsMmAlias,
-                        $tableTagsMmAlias.'.tag_id = '.$tableUserTagsMmAlias.'.tag_id AND '.$tableUserTagsMmAlias.'.record_id = '.$userProfileId
-                        .' AND '.$tableUserTagsMmAlias.'.root_id = '.$rootId)
+                    ->innerJoin('entitys_tags_mm ' . $tableTagsMmAlias,
+                        $tableTagsMmAlias . ".record_id = " . $this->tableName . ".id and " . $tableTagsMmAlias . '.root_id = ' . $rootId)
+                    ->innerJoin('' . $cwhTagOwnerInterestMmTable . ' ' . $tableUserTagsMmAlias,
+                        $tableTagsMmAlias . '.tag_id = ' . $tableUserTagsMmAlias . '.tag_id AND ' . $tableUserTagsMmAlias . '.record_id = ' . $userProfileId
+                        . ' AND ' . $tableUserTagsMmAlias . '.root_id = ' . $rootId)
                     ->andWhere([
-                        $tableTagsMmAlias.'.classname' => $this->modelClass,
-                        $tableUserTagsMmAlias.'.record_id' => $userProfileId,
-                    ])->andWhere([$tableUserTagsMmAlias.'.deleted_at' => null])
-                    ->andWhere([$tableTagsMmAlias.'.deleted_at' => null]);
+                        $tableTagsMmAlias . '.classname' => $this->modelClass,
+                        $tableUserTagsMmAlias . '.record_id' => $userProfileId,
+                    ])->andWhere([$tableUserTagsMmAlias . '.deleted_at' => null])
+                    ->andWhere([$tableTagsMmAlias . '.deleted_at' => null]);
             }
         }
 
@@ -725,19 +725,19 @@ class CwhActiveQuery extends ActiveQuery
 
         foreach (self::$networkModels as $networkModel) {
             $networkConfigId = $networkModel->id;
-            $networkObject   = Yii::createObject($networkModel->classname);
+            $networkObject = Yii::createObject($networkModel->classname);
             $query->leftJoin($networkObject->getMmTableName(),
-                    $networkObject->getMmTableName().'.'.$networkObject->getMmUserIdFieldName().'='.$this->getUserId()
-                    ." AND ".$networkObject->getMmTableName().'.'.$networkObject->getMmNetworkIdFieldName().'= cwh_pubblicazioni_cwh_nodi_editori_mm.cwh_network_id'
-                    ." AND cwh_pubblicazioni_cwh_nodi_editori_mm.cwh_config_id = " . $networkConfigId)
-                ->andWhere($networkObject->getMmTableName().'.deleted_at IS NULL');
-            $mmTable         = Yii::$app->db->schema->getTableSchema($networkObject->getMmTableName());
+                $networkObject->getMmTableName() . '.' . $networkObject->getMmUserIdFieldName() . '=' . $this->getUserId()
+                . " AND " . $networkObject->getMmTableName() . '.' . $networkObject->getMmNetworkIdFieldName() . '= cwh_pubblicazioni_cwh_nodi_editori_mm.cwh_network_id'
+                . " AND cwh_pubblicazioni_cwh_nodi_editori_mm.cwh_config_id = " . $networkConfigId)
+                ->andWhere($networkObject->getMmTableName() . '.deleted_at IS NULL');
+            $mmTable = Yii::$app->db->schema->getTableSchema($networkObject->getMmTableName());
             if (isset($mmTable->columns['status'])) {
-                $query->andWhere("ISNULL(".$networkObject->getMmTableName().".status) OR ".$networkObject->getMmTableName().".status = 'ACTIVE'");
+                $query->andWhere("ISNULL(" . $networkObject->getMmTableName() . ".status) OR " . $networkObject->getMmTableName() . ".status = 'ACTIVE'");
             }
             $query->andWhere(['or',
                 ['and',
-                    ['not', [$networkObject->getMmTableName().".".$networkObject->getMmNetworkIdFieldName() => null]],
+                    ['not', [$networkObject->getMmTableName() . "." . $networkObject->getMmNetworkIdFieldName() => null]],
                     ['cwh_pubblicazioni_cwh_nodi_editori_mm.cwh_config_id' => $networkConfigId]
                 ],
                 ['not', ['cwh_pubblicazioni_cwh_nodi_editori_mm.cwh_config_id' => $networkConfigId]]
@@ -795,20 +795,20 @@ class CwhActiveQuery extends ActiveQuery
         if (!is_null($this->getUserId()) && $checkUser) {
             $queryUserNetwork = $this->getUserNetworkQuery($publicationRules);
             if ($queryUserNetwork != null) {
-                $queryUserNetwork->select($this->tableName.'.id');
+                $queryUserNetwork->select($this->tableName . '.id');
                 $query->andWhere([
                     'or',
-                    ['or', [(empty($alias) ? CwhNodi::tableName() : "$alias").'.visibility' => 1], (empty($alias) ? CwhNodi::tableName()
-                                : "$alias").'.visibility IS NULL'],
+                    ['or', [(empty($alias) ? CwhNodi::tableName() : "$alias") . '.visibility' => 1], (empty($alias) ? CwhNodi::tableName()
+                            : "$alias") . '.visibility IS NULL'],
                     [
                         'and',
-                        [(empty($alias) ? CwhNodi::tableName() : "$alias").'.visibility' => 0],
-                        [$this->tableName.'.id' => $queryUserNetwork]
+                        [(empty($alias) ? CwhNodi::tableName() : "$alias") . '.visibility' => 0],
+                        [$this->tableName . '.id' => $queryUserNetwork]
                     ]
                 ]);
             }
         } else {
-            $query->leftJoin(CwhNodi::tableName().' vsbq',
+            $query->leftJoin(CwhNodi::tableName() . ' vsbq',
                 'cwh_pubblicazioni_cwh_nodi_editori_mm.cwh_config_id = vsbq.cwh_config_id AND cwh_pubblicazioni_cwh_nodi_editori_mm.cwh_network_id = vsbq.record_id');
             $query->andWhere(['or',
                 ['vsbq.visibility' => 1],
@@ -851,9 +851,9 @@ class CwhActiveQuery extends ActiveQuery
         }
 
         /** @var UserProfile $userProfileModel */
-        $userProfileModel           = AmosAdmin::instance()->createModel('UserProfile');
-        $userProfileTable           = $userProfileModel::tableName();
-        $userTable                  = User::tableName();
+        $userProfileModel = AmosAdmin::instance()->createModel('UserProfile');
+        $userProfileTable = $userProfileModel::tableName();
+        $userTable = User::tableName();
         $cwhTagOwnerInterestMmTable = CwhTagOwnerInterestMm::tableName();
 
         $cwhModule = \Yii::$app->getModule(AmosCwh::getModuleName());
@@ -863,33 +863,33 @@ class CwhActiveQuery extends ActiveQuery
         } else {
             $cahcehdQuery = (clone $query);
         }
-        $cahcehdQuery->innerJoin($userProfileTable, $userTable.'.id = '.$userProfileTable.'.user_id');
+        $cahcehdQuery->innerJoin($userProfileTable, $userTable . '.id = ' . $userProfileTable . '.user_id');
 
         if (!$cwhModule->tagsMatchEachTree) {
             $cahcehdQuery->innerJoin($cwhTagOwnerInterestMmTable,
-                    $cwhTagOwnerInterestMmTable.".record_id = ".$userProfileTable.".id AND ".$cwhTagOwnerInterestMmTable.".interest_classname = :class ",
-                    [':class' => 'simple-choice',])
-                ->andWhere(['in', $cwhTagOwnerInterestMmTable.'.tag_id', $tags])
-                ->andWhere([$cwhTagOwnerInterestMmTable.'.deleted_at' => null]);
+                $cwhTagOwnerInterestMmTable . ".record_id = " . $userProfileTable . ".id AND " . $cwhTagOwnerInterestMmTable . ".interest_classname = :class ",
+                [':class' => 'simple-choice',])
+                ->andWhere(['in', $cwhTagOwnerInterestMmTable . '.tag_id', $tags])
+                ->andWhere([$cwhTagOwnerInterestMmTable . '.deleted_at' => null]);
         } else {
             $rootIds = TagUtility::findAllRootTagIds();
             foreach ($rootIds as $rootId) {
-                $tableTagsMmAlias     = 'tag_mm_'.$rootId;
-                $tableUserTagsMmAlias = 'user_tag_mm_'.$rootId;
+                $tableTagsMmAlias = 'tag_mm_' . $rootId;
+                $tableUserTagsMmAlias = 'user_tag_mm_' . $rootId;
                 $cahcehdQuery
-                    ->innerJoin($cwhTagOwnerInterestMmTable.' '.$tableUserTagsMmAlias,
-                        $tableUserTagsMmAlias.'.root_id = '.$rootId.' AND '.
-                        $userProfileTable.'.user_id = '.$tableUserTagsMmAlias.'.record_id')
-                    ->innerJoin('entitys_tags_mm '.$tableTagsMmAlias,
-                        $tableTagsMmAlias.'.root_id = '.$rootId.' AND '.
-                        $tableTagsMmAlias.'.tag_id = '.$tableUserTagsMmAlias.'.tag_id')
-                    ->andWhere([$tableTagsMmAlias.'.classname' => $this->modelClass,])
-                    ->andWhere(['in', $tableUserTagsMmAlias.'.tag_id', $tags])
-                    ->andWhere([$tableUserTagsMmAlias.'.deleted_at' => null])
-                    ->andWhere([$tableTagsMmAlias.'.deleted_at' => null]);
+                    ->innerJoin($cwhTagOwnerInterestMmTable . ' ' . $tableUserTagsMmAlias,
+                        $tableUserTagsMmAlias . '.root_id = ' . $rootId . ' AND ' .
+                        $userProfileTable . '.user_id = ' . $tableUserTagsMmAlias . '.record_id')
+                    ->innerJoin('entitys_tags_mm ' . $tableTagsMmAlias,
+                        $tableTagsMmAlias . '.root_id = ' . $rootId . ' AND ' .
+                        $tableTagsMmAlias . '.tag_id = ' . $tableUserTagsMmAlias . '.tag_id')
+                    ->andWhere([$tableTagsMmAlias . '.classname' => $this->modelClass,])
+                    ->andWhere(['in', $tableUserTagsMmAlias . '.tag_id', $tags])
+                    ->andWhere([$tableUserTagsMmAlias . '.deleted_at' => null])
+                    ->andWhere([$tableTagsMmAlias . '.deleted_at' => null]);
             }
-            $cahcehdQuery->andWhere([$userProfileTable.'.deleted_at' => null]);
-            $cahcehdQuery->andWhere([$userTable.'.deleted_at' => null]);
+            $cahcehdQuery->andWhere([$userProfileTable . '.deleted_at' => null]);
+            $cahcehdQuery->andWhere([$userTable . '.deleted_at' => null]);
         }
 
         $cahcehdQuery->distinct();
@@ -905,7 +905,7 @@ class CwhActiveQuery extends ActiveQuery
     public function getRecipientsNetwork($query, $scopes)
     {
         $networkModels = CwhConfig::find()->andWhere(['<>', 'tablename', 'user'])->all();
-        $userIds       = [];
+        $userIds = [];
         //TODO fix with cwh config id when it will be used instead of cwh nodi id
         foreach ($networkModels as $networkModel) {
             $networkIds = [];
@@ -924,23 +924,23 @@ class CwhActiveQuery extends ActiveQuery
                     }
                 }
                 if (!empty($networkIds)) {
-                    $queryNetwork  = (clone $query);
+                    $queryNetwork = (clone $query);
                     $networkObject = Yii::createObject($networkModel->classname);
                     $queryNetwork->innerJoin($networkObject->getMmTableName(),
-                            $networkObject->getMmTableName().'.'.$networkObject->getMmUserIdFieldName().'=user.id')
-                        ->andWhere($networkObject->getMmTableName().'.deleted_at IS NULL')
+                        $networkObject->getMmTableName() . '.' . $networkObject->getMmUserIdFieldName() . '=user.id')
+                        ->andWhere($networkObject->getMmTableName() . '.deleted_at IS NULL')
                         ->andWhere([
                             'in',
-                            $networkObject->getMmTableName().'.'.$networkObject->getMmNetworkIdFieldName(),
+                            $networkObject->getMmTableName() . '.' . $networkObject->getMmNetworkIdFieldName(),
                             $networkIds
-                    ]);
-                    $mmTable       = Yii::$app->db->schema->getTableSchema($networkObject->getMmTableName());
+                        ]);
+                    $mmTable = Yii::$app->db->schema->getTableSchema($networkObject->getMmTableName());
                     if (isset($mmTable->columns['status'])) {
-                        $queryNetwork->andWhere("ISNULL(".$networkObject->getMmTableName().".status) OR ".$networkObject->getMmTableName().".status = 'ACTIVE'");
+                        $queryNetwork->andWhere("ISNULL(" . $networkObject->getMmTableName() . ".status) OR " . $networkObject->getMmTableName() . ".status = 'ACTIVE'");
                     }
                     $queryNetwork->andWhere('user.deleted_at IS NULL');
                     $networkUserIds = $queryNetwork->select('user.id')->groupBy('user.id')->asArray()->column();
-                    $userIds        = ArrayHelper::merge($userIds, $networkUserIds);
+                    $userIds = ArrayHelper::merge($userIds, $networkUserIds);
                 }
             }
         }
@@ -965,27 +965,65 @@ class CwhActiveQuery extends ActiveQuery
             self::$networkModels = CwhConfig::find()->andWhere(['<>', 'tablename', 'user'])->all();
         }
         $cwhNodiTable = CwhNodi::tableName();
-        $query        = CwhNodi::find()->andWhere(['not like', $cwhNodiTable.'.id', 'user']);
+        $query = CwhNodi::find()->andWhere(['not like', $cwhNodiTable . '.id', 'user']);
         foreach (self::$networkModels as $networkModel) {
             $networkConfigId = $networkModel->id;
-            $networkObject   = Yii::createObject($networkModel->classname);
+            $networkObject = Yii::createObject($networkModel->classname);
             $query->leftJoin($networkObject->getMmTableName(),
-                    $networkObject->getMmTableName().'.'.$networkObject->getMmUserIdFieldName().'='.$userId
-                    ." AND ".$networkObject->getMmTableName().'.'.$networkObject->getMmNetworkIdFieldName().' = '.$cwhNodiTable.'.record_id')
-                ->andWhere($networkObject->getMmTableName().'.deleted_at IS NULL');
-            $mmTable         = Yii::$app->db->schema->getTableSchema($networkObject->getMmTableName());
+                $networkObject->getMmTableName() . '.' . $networkObject->getMmUserIdFieldName() . '=' . $userId
+                . " AND " . $networkObject->getMmTableName() . '.' . $networkObject->getMmNetworkIdFieldName() . ' = ' . $cwhNodiTable . '.record_id')
+                ->andWhere($networkObject->getMmTableName() . '.deleted_at IS NULL');
+            $mmTable = Yii::$app->db->schema->getTableSchema($networkObject->getMmTableName());
+
             if (isset($mmTable->columns['status'])) {
-                $query->andWhere("ISNULL(".$networkObject->getMmTableName().".status) OR ".$networkObject->getMmTableName().".status = 'ACTIVE'");
+                $condition1 = [0 => 'OR',
+                    1 => [$networkObject->getMmTableName() . ".status" => null],
+                    2 => [$networkObject->getMmTableName() . ".status" => 'ACTIVE']
+                ];
+
+                $condition1 = self::addConditionShowContentsPublicNetwork($condition1, true, $query, $networkObject, $cwhNodiTable);
+                $query->andWhere($condition1);
             }
-            $query->andWhere(['or',
-                ['and',
-                    ['not', [$networkObject->getMmTableName().".".$networkObject->getMmNetworkIdFieldName() => null]],
-                    [$cwhNodiTable.'.cwh_config_id' => $networkConfigId]
+
+            $condition2 = [
+                0 => 'or',
+                1 => ['and',
+                    ['not', [$networkObject->getMmTableName() . "." . $networkObject->getMmNetworkIdFieldName() => null]],
+                    [$cwhNodiTable . '.cwh_config_id' => $networkConfigId]
                 ],
-                ['not', [$cwhNodiTable.'.cwh_config_id' => $networkConfigId]]
-            ]);
+                3 => ['not', [$cwhNodiTable . '.cwh_config_id' => $networkConfigId]]
+            ];
+
+            $condition2 = self::addConditionShowContentsPublicNetwork($condition2, false, $query, $networkObject, $cwhNodiTable);
+            $query->andWhere($condition2);
         }
+
         return $query;
+    }
+
+    /**
+     * @param $condition
+     * @param $query
+     * @param $networkObject
+     * @param $cwhNodiTable
+     * @return array|mixed
+     */
+    public static function addConditionShowContentsPublicNetwork($condition, $makeJoin, $query, $networkObject, $cwhNodiTable)
+    {
+        $module = AmosCwh::instance();
+        if($module) {
+            if ($module->showContensPublicNetwork && $networkObject::tableName() == 'community') {
+                if ($makeJoin) {
+                    $query->leftJoin($networkObject::tableName(), $networkObject::tableName() . '.id = ' . $cwhNodiTable . '.record_id');
+                }
+                $condition = ArrayHelper::merge($condition,
+                    [4 => ['and',
+                        ['not', [$networkObject::tableName() . ".id" => null]],
+                        [$networkObject::tableName() . '.community_type_id' => 1]
+                    ]]);
+            }
+        }
+        return $condition;
     }
 
     /**
@@ -1006,12 +1044,12 @@ class CwhActiveQuery extends ActiveQuery
                     "cwh_pubblicazioni_cwh_nodi_editori_mm.cwh_pubblicazioni_id = cwh_pubblicazioni.id")
                 ->andWhere([
                     'cwh_pubblicazioni_cwh_nodi_editori_mm.cwh_config_id' => $configId
-            ]);
+                ]);
             if (isset($networkId)) {
                 //search contents for specified nwtwork editor
                 $this->andWhere(['cwh_pubblicazioni_cwh_nodi_editori_mm.cwh_network_id' => $networkId]);
             }
-            $this->andWhere([$this->tableName.'.deleted_at' => null]);
+            $this->andWhere([$this->tableName . '.deleted_at' => null]);
         }
         return $this;
     }
