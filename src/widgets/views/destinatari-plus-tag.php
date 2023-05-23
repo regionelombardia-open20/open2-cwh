@@ -19,7 +19,9 @@ use open20\amos\cwh\widgets\Cwh3ColsWidget;
  */
 
 $scope = null;
+$enableTagsAjax = false;
 if (isset($moduleCwh) && !is_null($moduleCwh)) {
+    $enableTagsAjax = $moduleCwh->enableTagsAjax;
     $scope = $moduleCwh->getCwhScope();
 }
 
@@ -63,6 +65,7 @@ $this->registerJS(<<<JS
 
 if($("#cwh-regola_pubblicazione").val() == 1 || $("#cwh-regola_pubblicazione").val() == 3){
     $("#amos-tag").hide();
+    $(".cwh-tag-section").hide();
 }
 
 function setRegolaPubblicazione () {
@@ -88,13 +91,16 @@ $("#cwh-regola_pubblicazione").on('change', function(e) {
         
     if($("#cwh-regola_pubblicazione").val() == 1 || $("#cwh-regola_pubblicazione").val() == 3){
         $("#amos-tag").hide();
+        $(".cwh-tag-section").hide();
+
         $($("div[id^=\"preview_tag_tree\"] > div")).each(function(index, el) {
             $("input[id^=\"tree_obj_\"]").treeview("uncheckNode", $(el).attr("data-tagid"));
         });
     } else {
         $("#amos-tag").show();
+        $(".cwh-tag-section").show();
+
     }
-    
 });
 
 $("form").on('submit', function(e) {
@@ -126,7 +132,7 @@ JS
     ?>
 </div>
 
-<div class="tag-section">
+<div class="cwh-tag-section tag-section">
     <?php
     $moduleTag = \Yii::$app->getModule('tag');
     if (isset($moduleTag) && in_array(get_class($model), $moduleTag->modelsEnabled) && $moduleTag->behaviors) {
@@ -135,6 +141,7 @@ JS
             'attribute' => 'tagValues',
             'form' => \yii\base\Widget::$stack[0],
             'moduleCwh' => $moduleCwh,
+            'enableAjax' => $enableTagsAjax
         ];
         if (isset($singleFixedTreeId)) {
             $tagWidgetConf['singleFixedTreeId'] = $singleFixedTreeId;

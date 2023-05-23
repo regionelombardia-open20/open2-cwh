@@ -116,6 +116,8 @@ class AmosCwh extends AmosModule implements BootstrapInterface
     public $cwhConfWizardEnabled = false;
     public $enableDestinatariFatherChildren = false;
 
+    public $enableTagsAjax  = false;
+
     /**
      * @var bool
      */

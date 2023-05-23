@@ -27,6 +27,7 @@ class CardTagWidget extends InputWidget {
     public $baseIconsUrl = '/sprite/material-sprite.svg#';
     public $codiceRoot = [];
     public $showTagLabel;
+    public $selected = [];
 
     public function init() {
         parent::init();
@@ -72,7 +73,7 @@ class CardTagWidget extends InputWidget {
                 'choices' => $this->getTagsTopicArray($key),
                 'classContainer' => 'col-lg-4 col-sm-6 aria-themetag',
                 'baseIconsUrl' => $this->baseIconsUrl,
-                'selected' => $selected,
+                'selected' => $this->selected,
                 'rootId' => $key,
             ])->label($this->showTagLabel ? $tagName : '');
         }
