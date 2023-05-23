@@ -22,6 +22,7 @@ use yii\helpers\ArrayHelper;
  * @property integer $cwh_config_contents_id
  * @property integer $content_id
  * @property integer $cwh_regole_pubblicazione_id
+ * @property integer $ignore_notify_editorial_staff
  * @property string $created_at
  * @property string $updated_at
  * @property string $deleted_at
@@ -54,7 +55,7 @@ class CwhPubblicazioni extends \open20\amos\core\record\Record
     {
         return [
             [['cwh_config_contents_id', 'content_id', 'cwh_regole_pubblicazione_id'], 'required'],
-            [['cwh_config_contents_id', 'content_id', 'cwh_regole_pubblicazione_id', 'created_by', 'updated_by', 'deleted_by'], 'integer'],
+            [['ignore_notify_editorial_staff', 'cwh_config_contents_id', 'content_id', 'cwh_regole_pubblicazione_id', 'created_by', 'updated_by', 'deleted_by'], 'integer'],
             [['created_at', 'updated_at', 'deleted_at'], 'safe'],
         ];
     }

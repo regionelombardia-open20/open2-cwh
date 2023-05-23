@@ -183,7 +183,7 @@ class CwhActiveQuery extends ActiveQuery
      */
     public function getUserProfile()
     {
-        if (get_class(\Yii::$app) == 'open20\amos\core\applications\ConsoleApplication' && !empty(\Yii::$app->user)) {
+        if (get_class(\Yii::$app) == 'open20\amos\core\applications\ConsoleApplication' && !empty(\Yii::$app->user) && !empty(\Yii::$app->user->id)) {
             $this->setUserId(\Yii::$app->user->id);
             self::$userProfile = null;
         }

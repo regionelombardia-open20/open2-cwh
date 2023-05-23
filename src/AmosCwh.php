@@ -112,7 +112,15 @@ class AmosCwh extends AmosModule implements BootstrapInterface
      */
     public $cached = false;
 
+    /**
+     * @var int
+     */
     public $cacheDuration = 86400;
+
+    /**
+     * @var bool
+     */
+    public $enableIgnoreNotifyFromEditorialStaff = false;
 
     /**
      * @var bool $tagsMatchEachTree

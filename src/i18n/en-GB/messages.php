@@ -173,4 +173,7 @@ return [
     'without specifying both tags and publication scopes.' => 'without specifying both tags and publication scopes.',
     'without specifying publication scopes.' => 'without specifying publication scopes.',
     'without specifying tags.' => 'without specifying tags.',
+    'Abilita notifica a tutti gli utenti di {appname}' => 'Enable notification to all platform {appname} users',
+    'Selezionando questa opzione verrà ignorata la scelta utente sulla ricezione delle notizie di interesse generale' => 'If you select this option you will ignore the checkbox about receving news of general topic in user profile',
+
 ];

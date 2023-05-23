@@ -174,5 +174,7 @@ return [
     'without specifying publication scopes.' => 'senza specificare gli ambiti di pubblicazione.',
     'without specifying tags.' => 'senza specificare i tags.',
     'Example sign' => "Esempio di firma",
-    '#subtitle_section_form' => 'Modalità di pubblicazione in area riservata <em>(Scegli come pubblicare in area riservata)</em>'
+    '#subtitle_section_form' => 'Modalità di pubblicazione in area riservata <em>(Scegli come pubblicare in area riservata)</em>',
+    'Abilita notifica a tutti gli utenti di {appname}' => 'Abilita notifica a tutti gli utenti di {appname}',
+    'Selezionando questa opzione verrà ignorata la scelta utente sulla ricezione delle notizie di interesse generale' => 'Selezionando questa opzione verrà ignorata la scelta utente sulla ricezione delle notizie di interesse generale',
 ];

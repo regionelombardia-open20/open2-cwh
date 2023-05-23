@@ -11,6 +11,7 @@
 namespace open20\amos\cwh\utility;
 
 use open20\amos\admin\AmosAdmin;
+use open20\amos\core\record\CachedActiveQuery;
 use open20\amos\core\record\Record;
 use open20\amos\cwh\AmosCwh;
 use open20\amos\cwh\base\ModelNetworkInterface;
@@ -26,6 +27,8 @@ use open20\amos\cwh\models\CwhPubblicazioniCwhNodiValidatoriMm;
 use open20\amos\cwh\models\CwhRegolePubblicazione;
 use open20\amos\cwh\models\CwhTagOwnerInterestMm;
 use open20\amos\cwh\query\CwhActiveQuery;
+use open20\amos\tag\AmosTag;
+use open20\amos\tag\models\Tag;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\Query;
@@ -479,19 +482,44 @@ class CwhUtil
     /**
      * This method returns all tag ids selected by a user. The param is the user profile id, not the user id!!!
      * @param int $userProfileId
+     * @param string $interestClassname
      * @return array
      * @throws \yii\base\InvalidConfigException
      */
-    public static function findInterestTagIdsByUser($userProfileId)
+    public static function findInterestTagIdsByUser($userProfileId, $interestClassname = 'simple-choice')
     {
         $query  = new Query();
         $query->select(['tag_id'])->distinct();
         $query->from(CwhTagOwnerInterestMm::tableName());
         $query->andWhere(['deleted_at' => null]);
-        $query->andWhere(['classname' => AmosAdmin::instance()->createModel('UserProfile')->className()]);
+        $query->andWhere(['classname' => AmosAdmin::instance()->model('UserProfile')]);
         $query->andWhere(['record_id' => $userProfileId]);
+        $query->andWhere(['interest_classname' => $interestClassname]);
         $tagIds = $query->column();
         return $tagIds;
+    }
+
+    /**
+     * This method returns all tags selected by a user. The param is the user profile id, not the user id!!!
+     * @param int $userProfileId
+     * @param string $interestClassname
+     * @return array
+     * @throws \yii\base\InvalidConfigException
+     */
+    public static function findInterestTagsByUser($userProfileId, $interestClassname = 'simple-choice')
+    {
+        /** @var AmosTag $tagModule */
+        $tagModule = AmosTag::instance();
+        $tagModel = $tagModule->createModel('Tag');
+        $userInterestTagIds = CwhUtil::findInterestTagIdsByUser($userProfileId, $interestClassname);
+        if (empty($userInterestTagIds)) {
+            return [];
+        }
+        /** @var ActiveQuery $query */
+        $query = $tagModel::find();
+        $query->andWhere(['id' => $userInterestTagIds]);
+        $tags = $query->all();
+        return $tags;
     }
 
     /**
@@ -524,5 +552,35 @@ class CwhUtil
         $interest->root_id            = $organizationTag->root;
         $ok                           = $interest->save();
         return $ok;
+    }
+
+    /**
+     * @param $model
+     * @return array|null|\yii\db\ActiveRecord
+     * @throws \yii\base\InvalidConfigException
+     */
+    public static function getCwhPubblicazione($model)
+    {
+        $model->regola_pubblicazione = null;
+        $pubblicazione = null;
+
+        if ($model && !$model->isNewRecord) {
+            $cwhConfigContentsQuery = CwhConfigContents::find()->andWhere(['tablename' => $model->tableName()]);
+            $cwhConfigContentsQuery = CachedActiveQuery::instance($cwhConfigContentsQuery);
+            $cwhConfigContentsQuery->cache(60);
+            $cwhConfigContents = $cwhConfigContentsQuery->one();
+
+            /**
+             * @var CwhPubblicazioni $Pubblicazione ;
+             */
+            $pubblicazioneQuery = CwhPubblicazioni::find()
+                ->andWhere(['content_id' => $model->id])
+                ->andWhere(['cwh_config_contents_id' => $cwhConfigContents->id]);
+            $pubblicazioneQuery = CachedActiveQuery::instance($pubblicazioneQuery);
+            $pubblicazioneQuery->cache(60);
+            $pubblicazione = $pubblicazioneQuery->one();
+
+        }
+        return $pubblicazione;
     }
 }

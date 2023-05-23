@@ -12,6 +12,11 @@
 namespace open20\amos\cwh\widgets;
 
 use open20\amos\admin\models\UserProfile;
+use open20\amos\core\helpers\Html;
+use open20\amos\core\icons\AmosIcons;
+use open20\amos\cwh\AmosCwh;
+use open20\amos\cwh\models\CwhPubblicazioni;
+use open20\amos\cwh\utility\CwhUtil;
 use yii\base\Widget;
 use yii\helpers\ArrayHelper;
 
@@ -33,7 +38,8 @@ class Cwh3ColsWidget extends Widget
         $destinatari = [],
         $form = null,         // \yii\widgets\ActiveForm $form
         $model = null,         // @var \yii\db\ActiveRecord $model
-        $baseConfigRules = [];
+        $baseConfigRules = [],
+        $enableIgnoreNotifyFromEditorialStaff = false;
 
     /**
      * public $validatoriEnabled = true;
@@ -67,6 +73,10 @@ class Cwh3ColsWidget extends Widget
             $regolaPubblicazione = '';
             $recipientsCheck = '';
         }
+
+        if ($this->moduleCwh->enableIgnoreNotifyFromEditorialStaff) {
+            $this->enableIgnoreNotifyFromEditorialStaff = $this->moduleCwh->enableIgnoreNotifyFromEditorialStaff;
+        }
         // A QUI... INTANTO LO LASCIAMO TBD capire a cosa e se serve
 
         parent:: init();
@@ -80,7 +90,7 @@ class Cwh3ColsWidget extends Widget
         $layoutToRender = '';
 
         if ($this->renderCols) {
-            $layoutToRender = $this->render('layouts/3cols');
+            $layoutToRender = $this->render('layouts/3cols', ['enableIgnoreNotifyFromEditorialStaff' => $this->enableIgnoreNotifyFromEditorialStaff]);
         } else {
             $layoutToRender = $this->render('layouts/check-recipients');
         }
@@ -119,6 +129,10 @@ class Cwh3ColsWidget extends Widget
     }
 
     /**
+     * @param $name
+     * @return bool|string
+     * @throws \yii\base\InvalidConfigException
+     *
      * Renders a section of the specified name.
      * If the named section is not supported, false will be returned.
      * @param string $name the section name, e.g., `{summary}`, `{items}`.
@@ -137,9 +151,40 @@ class Cwh3ColsWidget extends Widget
                 return $this->renderRecipientsCheck();
             case '{previewSign}':
                 return $this->renderPreviewSign();
+            case '{ignore_notify_from_editorial_staff}':
+                return $this->renderIgnoreNotifyFromEditorialStaff();
             default:
                 return false;
         }
+    }
+
+    /**
+     * @return string
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function renderIgnoreNotifyFromEditorialStaff()
+    {
+        if (\Yii::$app->user->can('IGNORE_NOTIFY_EDITORIAL_STAFF')) {
+            /** @var  $pubblicazione CwhPubblicazioni */
+            $pubblicazione = CwhUtil::getCwhPubblicazione($this->model);
+            $value = false;
+            if ($pubblicazione) {
+                $value = $pubblicazione->ignore_notify_editorial_staff;
+            }
+            $hiddenInput = Html::hiddenInput('enabled_ignore_notify_editorial', true);
+            $checkBox = Html::checkbox('ignore_notify_from_editorial_staff', $value, ['label' => AmosCwh::t('amoscwh', 'Abilita notifica a tutti gli utenti di {appname}', [
+                'appname' => \Yii::$app->name
+            ])]);
+            if (\Yii::$app->user->can('ADMIN')) {
+                $checkBox .= ' ' . AmosIcons::show('info', [
+                        'title' => AmosCwh::t('amoscwh', 'Selezionando questa opzione verrà ignorata la scelta utente sulla ricezione delle notizie di interesse generale'),
+                        'data-toggle' => 'tooltip'
+                    ]);
+            }
+            return Html::tag('div', $hiddenInput . $checkBox , ['class' => '', 'id' => 'ignore-notify-editoria-staff-id']);
+        }
+        $this->enableIgnoreNotifyFromEditorialStaff = false;
+        return '';
     }
 
     /**

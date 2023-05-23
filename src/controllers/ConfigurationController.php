@@ -54,7 +54,7 @@ class ConfigurationController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['content', 'delete-content', 'wizard', 'network'],
+                        'actions' => ['content', 'delete-content', 'wizard', 'network', 'regenerate-view'],
                         'roles' => ['AMMINISTRATORE_CWH']
                     ]
                 ]
@@ -218,5 +218,15 @@ class ConfigurationController extends BaseController
             'lastProcessDateTime' => $lastProcessDateTime,
         ]);
     }
+
+    /**
+     *
+     */
+    public function actionRegenerateView(){
+        $this->regenerateView();
+        echo \Yii::t('amoscwh', "Regenerate view completata");
+        die;
+    }
+
 
 }
