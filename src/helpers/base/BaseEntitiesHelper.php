@@ -40,6 +40,7 @@ class BaseEntitiesHelper
             'file',
             'myactivities',
             'proposte_collaborazione',
+            'uikit'
         ];
 
         foreach (\Yii::$app->getModules() as $moduleName => $module) {

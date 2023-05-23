@@ -25,6 +25,8 @@ class CardTagWidget extends InputWidget {
     public $contentsTreesSimple = [];
     public $content;
     public $baseIconsUrl = '/sprite/material-sprite.svg#';
+    public $codiceRoot = [];
+    public $showTagLabel;
 
     public function init() {
         parent::init();
@@ -45,6 +47,17 @@ class CardTagWidget extends InputWidget {
                 
             ]);
 
+            if (!empty($this->codiceRoot)) {
+                $rootList = [];
+                foreach ($this->codiceRoot as $codice) {
+                    $tag = Tag::findOne(['codice' => $codice]);
+                    if (!empty($tag->root)) {
+                        $rootList[] = $tag->root;
+                    }
+                }
+                $query->andWhere(['in', Tag::tableName() . '.root', $rootList]);
+            }
+
             if ($query->count()) {
                 $this->contentsTreesSimple = $this->contentsTreesSimple + ArrayHelper::map($query->all(), 'id', 'nome');
             }
@@ -61,7 +74,7 @@ class CardTagWidget extends InputWidget {
                 'baseIconsUrl' => $this->baseIconsUrl,
                 'selected' => $selected,
                 'rootId' => $key,
-            ])->label('');
+            ])->label($this->showTagLabel ? $tagName : '');
         }
         return $html;
     }
