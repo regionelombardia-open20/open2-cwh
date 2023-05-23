@@ -43,24 +43,27 @@ use yii\web\Application;
  */
 class AmosCwh extends AmosModule implements BootstrapInterface
 {
+
     /**
      * @var string
      */
     public $controllerNamespace = 'open20\amos\cwh\controllers';
+
     /**
      * @var string
      */
     public $postKey = 'Cwh';
+
     /**
      * @var array
      */
     public $modelsEnabled = [
-
     ];
 
-
     /**
-     * @var array $validateOnStatus Configuration array: for each content type class type the attribute correspondent to status and the status list for validation
+     * @var array $validateOnStatus Configuration array: for each content
+     * type class type the attribute correspondent to status and the status
+     * list for validation
      *
      * how to fill :
      *  [
@@ -73,38 +76,44 @@ class AmosCwh extends AmosModule implements BootstrapInterface
      *  ]
      */
     public $validateOnStatus = [
-
     ];
-
+    
     public $permissionPrefix = 'CWH_PERMISSION';
+    
     public $userProfileClass = 'open20\admin\models\UserProfile';
-
+    
     public $behaviors = [
         'cwhBehavior' => 'open20\amos\cwh\behaviors\CwhNetworkBehaviors'
     ];
-
+    
     public $validatoriEnabled = true;
+    
     public $destinatariEnabled = true;
+    
     public $regolaPubblicazioneEnabled = true;
 
     /**
      * @var bool $regolaPubblicazioneFilter
-     * if true publication rule 'PUBLIC' (to all users) only if the user has the specified role $regolaPubblicazioneFilterRole
+     * if true publication rule 'PUBLIC' (to all users) only if the user
+     * has the specified role $regolaPubblicazioneFilterRole
      */
     public $regolaPubblicazioneFilter = false;
+
     /**
-     * @var string $regolaPubblicazioneFilterRole - default VALIDATOR_PLUS role
-     * if $regolaPubblicazioneFilter flag is setted only the specified role can view publication rule  1. PUBLIC - All users
+     * @var string $regolaPubblicazioneFilterRole - default VALIDATOR_PLUS
+     * role
+     * if $regolaPubblicazioneFilter flag is setted only the specified role
+     * can view publication rule  1. PUBLIC - All users
      */
     public $regolaPubblicazioneFilterRole = 'VALIDATOR_PLUS';
 
-    /** @var array  $scope The entities scope for which contents needs to be filtered */
+    /**
+     *  @var array  $scope The entities scope for which contents needs
+     * to be filtered
+    **/
     public $scope = [];
-
     public $userEntityRelationTable = [];
-
     public $cwhConfWizardEnabled = false;
-
     public $enableDestinatariFatherChildren = false;
 
     /**
@@ -128,7 +137,6 @@ class AmosCwh extends AmosModule implements BootstrapInterface
      * Default is false - at least one content tag matching user interest (any tree)
      */
     public $tagsMatchEachTree = false;
-
     private static $networkModels = null;
     private static $fullNetworkModels = null;
 
@@ -159,12 +167,12 @@ class AmosCwh extends AmosModule implements BootstrapInterface
         \Yii::configure($this, require(__DIR__ . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php'));
         try {
             $configContents = CwhConfigContents::find()->all();
-        }catch (\Exception $ex){
+        } catch (\Exception $ex) {
             Yii::getLogger()->log($ex->getTraceAsString(), Logger::LEVEL_ERROR);
         }
-        if(!is_null($configContents) && !empty($configContents)){
+        if (!is_null($configContents) && !empty($configContents)) {
             /** @var CwhConfigContents $content */
-            foreach($configContents as $content){
+            foreach ($configContents as $content) {
                 $this->modelsEnabled[] = $content->classname;
                 $this->validateOnStatus[$content->classname] = [
                     'attribute' => $content->status_attribute,
@@ -175,7 +183,6 @@ class AmosCwh extends AmosModule implements BootstrapInterface
             }
         }
         Record::$modulesChainBehavior[] = 'cwh';
-
     }
 
     /**
@@ -222,9 +229,11 @@ class AmosCwh extends AmosModule implements BootstrapInterface
         // It's a web application?
         if (isset(Yii::$app->session)) {
             $session = Yii::$app->session;
+            
             if (isset($session["cwh-scope"])) {
                 $this->scope = $session["cwh-scope"];
             }
+            
             if (isset($session["cwh-relation-table"])) {
                 $this->userEntityRelationTable = $session["cwh-relation-table"];
             }
@@ -237,23 +246,115 @@ class AmosCwh extends AmosModule implements BootstrapInterface
      * @param array $cwhRelation relation table between users and entity, specifing the entity data
      *
      * call example
-            $moduleCwh->setCwhScopeInSession([
-                'community' => $id, // simple cwh scope for contents filtering, required
-            ],
-            [
-            // cwhRelation array specifying name of relation table, name of entity field on relation table and entity id field ,
-            // optional for compatibility with previous versions
-                'mm_name' => 'community_user_mm',
-                'entity_id_field' => 'community_id',
-                'entity_id' => $id
-            ]);
+      $moduleCwh->setCwhScopeInSession([
+      'community' => $id, // simple cwh scope for contents filtering, required
+      ],
+      [
+      // cwhRelation array specifying name of relation table, name of entity field on relation table and entity id field ,
+      // optional for compatibility with previous versions
+      'mm_name' => 'community_user_mm',
+      'entity_id_field' => 'community_id',
+      'entity_id' => $id
+      ]);
      */
-    public function setCwhScopeInSession($cwhScope, $cwhRelation = null){
 
+    /**
+     * reset param cwh-scope in session to an empty array
+     */
+    public function setCwhScopeInSession($cwhScope, $cwhRelation = null)
+    {
+        $cwhScope = utility\CwhUtil::checkCwhScope($cwhScope);
+        
+        if (!empty($cwhScope['community'])) {
+            \Yii::$app->session->set("cwh-scope", $cwhScope);
+            \Yii::$app->session->set("cwh-relation-table", $cwhRelation);
+        }
+    }
+
+    /**
+     * 
+     * @return type
+     */
+    public function getCwhScope()
+    {
         $session = Yii::$app->session;
-        $session["cwh-scope"] = $cwhScope;
-        $session["cwh-relation-table"] = $cwhRelation;
+        if (isset($session['cwh-scope'])) {
+            return $session["cwh-scope"];
+        }
 
+        return null;
+    }
+
+    /**
+     * 
+     * @param Application $app
+     */
+    public function bootstrap($app)
+    {
+        if ($app instanceof Application) {
+            if ($this->cwhConfWizardEnabled) {
+                $app->on(Application::EVENT_BEFORE_ACTION, [
+                    (new CheckConfigComponent()),
+                    'checkConf'
+                ]);
+            }
+
+            Event::on(ActiveRecord::className(), ActiveRecord::EVENT_AFTER_DELETE, [$this, 'afterSaveModelDelCache']);
+            Event::on(ActiveRecord::className(), ActiveRecord::EVENT_AFTER_INSERT, [$this, 'afterSaveModelDelCache']);
+            Event::on(ActiveRecord::className(), ActiveRecord::EVENT_AFTER_UPDATE, [$this, 'afterSaveModelDelCache']);
+        }
+    }
+
+    /**
+     * returns Query for CwhNodi (networks) of which user is member.
+     * @param integer $userId - if null logged user id is considered
+     * @return mixed
+     *
+     */
+    public function getUserNetworks($userId = null)
+    {
+
+        $networks = [];
+        try {
+            $networks = CwhActiveQuery::getUserNetworksQuery($userId)->all();
+        } catch (Exception $ex) {
+            Yii::getLogger()->log($ex->getTraceAsString(), \yii\log\Logger::LEVEL_ERROR);
+        }
+        return $networks;
+    }
+
+    /**
+     * @return array
+     */
+    public function getNetworkModels()
+    {
+
+        try {
+            if (!self::$networkModels) {
+                self::$networkModels = self::$networkModels = CwhConfig::find()->andWhere(['<>', 'tablename', 'user'])->all();
+            }
+        } catch (Exception $ex) {
+            Yii::getLogger()->log($ex->getTraceAsString(), \yii\log\Logger::LEVEL_ERROR);
+        }
+
+        return self::$networkModels;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFullNetworkModels()
+    {
+
+        try {
+            if (!self::$fullNetworkModels) {
+                self::$fullNetworkModels = self::$networkModels = CwhConfig::find()->all();
+            }
+        } catch (Exception $ex) {
+            Yii::getLogger()->log($ex->getTraceAsString(), \yii\log\Logger::LEVEL_ERROR);
+        }
+
+        return self::$fullNetworkModels;
     }
 
     /**
@@ -270,102 +371,27 @@ class AmosCwh extends AmosModule implements BootstrapInterface
         }
     }
 
-    public function getCwhScope(){
-        $session = Yii::$app->session;
-        if (isset($session["cwh-scope"])) {
-            return $session["cwh-scope"];
-        }
-        return null;
-    }
-
-    public function bootstrap($app)
-    {
-        if ($app instanceof Application) {
-            if($this->cwhConfWizardEnabled) {
-                $app->on(Application::EVENT_BEFORE_ACTION, [
-                    (new CheckConfigComponent()),
-                    'checkConf'
-                ]);
-            }
-
-            Event::on(ActiveRecord::className(), ActiveRecord::EVENT_AFTER_DELETE, [$this, 'afterSaveModelDelCache']);
-            Event::on(ActiveRecord::className(), ActiveRecord::EVENT_AFTER_INSERT, [$this, 'afterSaveModelDelCache']);
-            Event::on(ActiveRecord::className(), ActiveRecord::EVENT_AFTER_UPDATE, [$this, 'afterSaveModelDelCache']);
-
-        }
-    }
-
-
-    /**
-     * returns Query for CwhNodi (networks) of which user is member.
-     * @param integer $userId - if null logged user id is considered
-     * @return mixed
-     *
-     */
-    public function getUserNetworks($userId = null){
-
-        $networks = [];
-        try {
-            $networks = CwhActiveQuery::getUserNetworksQuery($userId)->all();
-        }catch(Exception $ex){
-            Yii::getLogger()->log($ex->getTraceAsString(), \yii\log\Logger::LEVEL_ERROR);
-        }
-        return $networks;
-    }
-
-    /**
-     * @return array
-     */
-    public function getNetworkModels(){
-
-        try {
-            if(!self::$networkModels) {
-                self::$networkModels = self::$networkModels = CwhConfig::find()->andWhere(['<>', 'tablename', 'user'])->all();
-            }
-        }catch(Exception $ex){
-            Yii::getLogger()->log($ex->getTraceAsString(), \yii\log\Logger::LEVEL_ERROR);
-        }
-
-        return self::$networkModels;
-    }
-
-    /**
-     * @return array
-     */
-    public function getFullNetworkModels(){
-
-        try {
-            if(!self::$fullNetworkModels) {
-                self::$fullNetworkModels = self::$networkModels = CwhConfig::find()->all();
-            }
-        }catch(Exception $ex){
-            Yii::getLogger()->log($ex->getTraceAsString(), \yii\log\Logger::LEVEL_ERROR);
-        }
-
-        return self::$fullNetworkModels;
-    }
-
-
     /**
      * @param $event
      */
-    public function afterSaveModelDelCache($event){
+    public function afterSaveModelDelCache($event)
+    {
 
         try {
 
             $models = ArrayHelper::merge($this->modelsEnabled,
-                [
-                    CwhPubblicazioniCwhNodiValidatoriMm::className(),
-                    CwhPubblicazioniCwhNodiEditoriMm::className(),
-                    User::className()
-                ]);
+                    [
+                        CwhPubblicazioniCwhNodiValidatoriMm::className(),
+                        CwhPubblicazioniCwhNodiEditoriMm::className(),
+                        User::className()
+            ]);
 
             $moduleTag = Yii::$app->getModule('tag');
-            if(isset($moduleTag)){
+            if (isset($moduleTag)) {
                 $models = ArrayHelper::merge($models, [
-                    \open20\amos\tag\models\EntitysTagsMm::className(),
-                    CwhTagInterestMm::className(),
-                    CwhTagOwnerInterestMm::className(),
+                        \open20\amos\tag\models\EntitysTagsMm::className(),
+                        CwhTagInterestMm::className(),
+                        CwhTagOwnerInterestMm::className(),
                 ]);
             }
 
@@ -380,16 +406,16 @@ class AmosCwh extends AmosModule implements BootstrapInterface
             if (in_array(get_class($event->sender), $models)) {
                 $this->resetCwhMaterializatedView();
             }
-        }catch(Exception $ex){
+        } catch (Exception $ex) {
             Yii::getLogger()->log($ex->getTraceAsString(), \yii\log\Logger::LEVEL_ERROR);
         }
-
     }
-    
+
     /**
      * 
      */
-    public function resetCwhMaterializatedView(){
+    public function resetCwhMaterializatedView()
+    {
         CwhNodi::mustReset();
         \Yii::$app->cache->flush();
     }

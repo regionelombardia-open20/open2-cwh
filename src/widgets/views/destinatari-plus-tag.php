@@ -118,7 +118,7 @@ JS
             'form' => \yii\base\Widget::$stack[0],
             'model' => $model,
             'regolaPubblicazione' => [
-                'data' => \open20\amos\cwh\models\CwhPubblicazioni::find()->asArray()->all()
+                'data' => \open20\amos\cwh\models\CwhRegolePubblicazione::find()->asArray()->all()
             ],
             'renderCols' => true,
             'moduleCwh' => $moduleCwh

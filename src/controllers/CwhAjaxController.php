@@ -104,7 +104,11 @@ class CwhAjaxController extends Controller
             $className = $_POST['className'];
             $searchName = isset($_POST['searchName']) ? $_POST['searchName'] : '';
             $labelSuffix = $_POST['labelSuffix'];
-
+            
+            $scopes = CwhUtil::checkCwhScope($scopes);
+            $tagValues = CwhUtil::parseTags($tagValues);
+            
+            
             if (!empty($publicationRule)) {
                 if (!empty($tagValues) && empty($scopes)) {
                     $publicationRule = CwhRegolePubblicazione::ALL_USERS_WITH_TAGS;

@@ -44,7 +44,7 @@ class CwhNodi extends \open20\amos\cwh\models\base\CwhNodi
         if (!$this->text) {
             if (isset($this->record_id)) {
                 $NodeRecordClass = $this->classname;
-                $model = $NodeRecordClass:: findOne($this->record_id);
+                $model = $NodeRecordClass::findOne($this->record_id);
                 if (!(is_null($model))) {
                     $this->text = $model->__toString();
                 }

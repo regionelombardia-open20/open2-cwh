@@ -62,14 +62,14 @@ class DestinatariNEW extends Widget
      */
     public function run()
     {
-	$destinatariForScope = [];
+        $destinatariForScope             = [];
         $enableDestinatariFatherChildren = isset(AmosCwh::getInstance()->enableDestinatariFatherChildren) ? AmosCwh::getInstance()->enableDestinatariFatherChildren
                 : false;
 
         $networkModels = CwhConfig::find()
             ->andWhere(['<>', 'tablename', 'user'])
+            ->asArray()
             ->all();
-
 
         $this->scope = AmosCwh::getInstance()->getCwhScope();
         $scopeFilter = (empty($this->scope)) ? false : true;
@@ -78,11 +78,13 @@ class DestinatariNEW extends Widget
         if ($scopeFilter) {
             $networks = CwhNodi::find()
                 ->andWhere(['LIKE', 'id', 'community'])
+                ->asArray()
                 ->all();
         } else {
             $networks = CwhNodi::find()
                 ->andWhere(['NOT LIKE', 'id', 'user'])
                 ->andWhere(['NOT LIKE', 'id', 'community'])
+                ->asArray()
                 ->all();
         }
 
@@ -93,7 +95,7 @@ class DestinatariNEW extends Widget
 
         /** @var CwhConfig $networkModel */
         foreach ($networkModels as $networkModel) {
-            $networkObject = Yii::createObject($networkModel->classname);
+            $networkObject = Yii::createObject($networkModel['classname']);
 
             $children     = [];
             $destinatari  = [];
@@ -104,7 +106,7 @@ class DestinatariNEW extends Widget
                 /** @var ModelGrammarInterface $networkModelGrammar */
                 $networkModelGrammar = $networkObject->getGrammar();
                 if ($networkModelGrammar) {
-                    $categoryName = AmosCwh::t('amoscwh', '#only_users_of') . ' ' . $networkModelGrammar->getModelLabel();
+                    $categoryName = AmosCwh::t('messages', 'Solo gli utenti delle ').$networkModelGrammar->getModelLabel();
                 }
             }
 
@@ -113,30 +115,30 @@ class DestinatariNEW extends Widget
             $networkIds                         = [];
             $userIds                            = [];
 
-            if ($scopeFilter && $enableDestinatariFatherChildren && !empty($this->scope[$networkModel->tablename])) {
-                $children = $this->getNetworkChildren($this->scope[$networkModel->tablename], $networkModel);
+            if ($scopeFilter && $enableDestinatariFatherChildren && !empty($this->scope[$networkModel['tablename']])) {
+                $children = $this->getNetworkChildren($this->scope[$networkModel['tablename']], $networkModel);
             }
 
             /** @var CwhNodi $network */
             foreach ($networks as $network) {
                 if ($scopeFilter) {
-                    if (isset($this->scope[$networkModel->tablename]) && ($network->record_id == $this->scope[$networkModel->tablename])) {
+                    if (isset($this->scope[$networkModel['tablename']]) && ($network['record_id'] == $this->scope[$networkModel['tablename']])) {
                         $destinatariForScope[] = $network;
                     }
 
-                    if ($enableDestinatariFatherChildren && isset($this->scope[$networkModel->tablename]) && (
-                        $network->record_id == $this->scope[$networkModel->tablename] || $this->isNetworkChild($network->record_id,
-                            $children) || $this->isNetworkFather($network->record_id,
-                            $this->scope[$networkModel->tablename], $networkModel) || $this->isNetworkBrother($network->record_id,
-                            $this->scope[$networkModel->tablename], $networkModel))
+                    if ($enableDestinatariFatherChildren && isset($this->scope[$networkModel['tablename']]) && (
+                        $network['record_id'] == $this->scope[$networkModel['tablename']] || $this->isNetworkChild($network->record_id,
+                            $children) || $this->isNetworkFather($network['record_id'],
+                            $this->scope[$networkModel['tablename']], $networkModel) || $this->isNetworkBrother($network['record_id'],
+                            $this->scope[$networkModel['tablename']], $networkModel))
                     ) {
 
                         $destinatari[] = $network;
                     }
                 } else {
-                    if ($network->classname == $networkModel->classname) {
-                        $networkIds[$networkModel->classname][] = $network->record_id;
-                        $userIds[$networkModel->classname][]    = $uid;
+                    if ($network['classname'] == $networkModel['classname']) {
+                        $networkIds[$networkModel['classname']][] = $network['record_id'];
+                        $userIds[$networkModel['classname']][]    = $uid;
                     }
                 }
                 if (!$scopeFilter || ($scopeFilter && $enableDestinatariFatherChildren)) {
@@ -151,12 +153,13 @@ class DestinatariNEW extends Widget
                     }
                 }
             }
-            $networkIds[$networkModel->classname] = array_unique($networkIds[$networkModel->classname]);
-            $userIds[$networkModel->classname] = array_unique($userIds[$networkModel->classname]);
 
-            if (isset($networkIds[$networkModel->classname]) && $networkObject->hasMethod('getListOfRecipients')) {
+
+
+            $rows = [];
+            if (isset($networkIds[$networkModel['classname']]) && $networkObject->hasMethod('getListOfRecipients')) {
                 $rows = $networkObject->getListOfRecipients(
-                    $networkIds[$networkModel->classname], $userIds[$networkModel->classname]
+                    $networkIds[$networkModel['classname']], $userIds[$networkModel['classname']]
                 );
 
                 $destinatariForScope[$categoryName] = $destinatariData[$categoryName]     = ArrayHelper::map($rows,
@@ -252,7 +255,7 @@ class DestinatariNEW extends Widget
     public function isNetworkFather($currentId, $networkId, $networkModel)
     {
         if (!empty($networkId) && $networkModel) {
-            $classname     = $networkModel->classname;
+            $classname     = $networkModel['classname'];
             $networkFather = $classname::findOne($networkId);
             return $currentId == $networkFather->parent_id;
         }
@@ -269,7 +272,7 @@ class DestinatariNEW extends Widget
     {
         if (!empty($networkId) && $networkModel) {
             $brothersIds = [];
-            $classname   = $networkModel->classname;
+            $classname   = $networkModel['classname'];
             $network     = $classname::findOne($networkId);
 
             if ($network) {
@@ -311,7 +314,7 @@ class DestinatariNEW extends Widget
         /** INIZIALIZE THE MODEL */
         /** first step */
         if (!empty($networkId) && $networkModel) {
-            $classname       = $networkModel->classname;
+            $classname       = $networkModel['classname'];
             $networkchildren = $classname::find()->andWhere(['parent_id' => $networkId])->all();
         } /** other steps */ else {
             $children []     = $model->id;
@@ -339,8 +342,8 @@ class DestinatariNEW extends Widget
      */
     public function renderWithoutScope($destinatariData, $labelSuffix)
     {
-	$destinatariFromScope = false;
-        $destinatariHidden = '';
+        $destinatariFromScope = false;
+        $destinatariHidden    = '';
 
         $primo_piano_checkbox = Yii::$app->user->can('UROI_LANDING') ? (Yii::$app->getModule('news')->params['site_publish_enabled']
                 ? Html::checkbox(
@@ -348,18 +351,20 @@ class DestinatariNEW extends Widget
                 ['label' => AmosCwh::t('message', 'Proponi pubblicazione sul portale pubblico'), 'id' => 'landing-checkbox'])
                 : '') : '';
 
-	if (!$this->getModel()->isNewRecord) {
+        if (!$this->getModel()->isNewRecord) {
             $destinatariDataTmp = [];
             foreach ($this->getModel()->destinatari as $cwhNodiId) {
                 $cwhNodo = CwhNodi::findOne(['id' => $cwhNodiId, 'cwh_config_id' => 3]);
                 if (!is_null($cwhNodo)) {
                     $destinatariDataTmp[$cwhNodiId] = $cwhNodo->text;
-					$destinatariHidden .= Html::hiddenInput($this->getNameField().'[destinatari][]', $cwhNodiId);
+                    $destinatariHidden              .= Html::hiddenInput($this->getNameField().'[destinatari][]',
+                            $cwhNodiId);
                 }
             }
- 
+
+
             if (!empty($destinatariDataTmp)) {
-                $destinatariData = $destinatariDataTmp;
+                $destinatariData      = $destinatariDataTmp;
                 $destinatariFromScope = true;
             }
         }
@@ -367,20 +372,20 @@ class DestinatariNEW extends Widget
         return $this->getForm()->field($this->getModel(), 'destinatari')->widget(
                 \kartik\select2\Select2::className(),
                 [
-                'name' => $this->getNameField().'[destinatari]',
-                'data' => $destinatariData,
-                'options' => [
-                    'multiple' => true,
-                    'placeholder' => AmosCwh::t('amoscwh', 'Nella piattaforma'),
                     'name' => $this->getNameField().'[destinatari]',
-                    'id' => 'cwh-destinatari'
-                ],
-                'showToggleAll' => false,
-                'pluginOptions' => [
-                    'tags' => true,
-                    'maximumInputLength' => 10,
-                ],
-                'disabled' => !count($destinatariData) || $destinatariFromScope,
+                    'data' => $destinatariData,
+                    'options' => [
+                        'multiple' => true,
+                        'placeholder' => AmosCwh::t('amoscwh', 'Nella piattaforma'),
+                        'name' => $this->getNameField().'[destinatari]',
+                        'id' => 'cwh-destinatari'
+                    ],
+                    'showToggleAll' => false,
+                    'pluginOptions' => [
+                        'tags' => true,
+                        'maximumInputLength' => 10,
+                    ],
+                    'disabled' => !count($destinatariData) || $destinatariFromScope,
                 ]
             )->label(AmosCwh::t('amoscwh', 'Dove vuoi mostrare ').$labelSuffix).$destinatariHidden.$primo_piano_checkbox;
     }
@@ -394,6 +399,10 @@ class DestinatariNEW extends Widget
      */
     public function renderWithScope($destinatariForScope, $labelSuffix)
     {
+        $destinatario = null;
+        if (!empty($destinatariForScope[0]['id'])) {
+            $destinatario = CwhNodi::find()->andWhere(['id' => $destinatariForScope[0]['id']])->one();
+        }
         $destinatariField = $this
             ->getForm()
             ->field(
@@ -407,7 +416,7 @@ class DestinatariNEW extends Widget
             \n<div class=\"col-xs-12\">".\kartik\select2\Select2::widget([
                 'id' => 'placeholder-destinatari',
                 'name' => 'placeholder-destinatari',
-                'data' => [0 => isset($destinatariForScope[0]['text']) ? $destinatariForScope[0]['text'] : ''],
+                'data' => [0 => !empty($destinatario) ? $destinatario->text : ''],
                 'readonly' => true,
             ])."{input}</div>
             </div>";
@@ -430,6 +439,7 @@ class DestinatariNEW extends Widget
     public function renderWithScopeFatherChildren($destinatariForScope, $destinatariData, $labelSuffix)
     {
         $currentNewtworkScope = $destinatariForScope[0]['id'];
+
         if (empty($this->getModel()->destinatari)) {
             $this->getModel()->destinatari = $destinatariForScope[0]['id'];
         }
@@ -437,27 +447,27 @@ class DestinatariNEW extends Widget
         return $this->getForm()->field($this->getModel(), 'destinatari')->widget(
                 \kartik\select2\Select2::className(),
                 [
-                'name' => $this->getNameField().'[destinatari]',
-                'data' => $destinatariData,
-                'options' => [
-                    'multiple' => true,
-                    'placeholder' => AmosCwh::t('amoscwh', 'Nella piattaforma'),
                     'name' => $this->getNameField().'[destinatari]',
-                    'id' => 'cwh-destinatari',
-                ],
-                'showToggleAll' => false,
-                'pluginOptions' => [
-                    'tags' => true,
-                    'maximumInputLength' => 10,
-                ],
-                'pluginEvents' => [
-                    "select2:unselecting" => "function(event) {
+                    'data' => $destinatariData,
+                    'options' => [
+                        'multiple' => true,
+                        'placeholder' => AmosCwh::t('amoscwh', 'Nella piattaforma'),
+                        'name' => $this->getNameField().'[destinatari]',
+                        'id' => 'cwh-destinatari',
+                    ],
+                    'showToggleAll' => false,
+                    'pluginOptions' => [
+                        'tags' => true,
+                        'maximumInputLength' => 10,
+                    ],
+                    'pluginEvents' => [
+                        "select2:unselecting" => "function(event) {
                     if ('$currentNewtworkScope' == event.params.args.data.id) {
                         return false;
                     }
                 }",
-                ],
-                'disabled' => !(count($destinatariForScope) && (count($destinatariData))),
+                    ],
+                    'disabled' => !(count($destinatariForScope) && (count($destinatariData))),
                 ]
             )->label(AmosCwh::t('amoscwh', 'Dove vuoi mostrare ').$labelSuffix);
     }

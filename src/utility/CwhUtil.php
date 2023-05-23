@@ -28,7 +28,6 @@ use open20\amos\cwh\models\CwhRegolePubblicazione;
 use open20\amos\cwh\models\CwhTagOwnerInterestMm;
 use open20\amos\cwh\query\CwhActiveQuery;
 use open20\amos\tag\AmosTag;
-use open20\amos\tag\models\Tag;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\Query;
@@ -40,7 +39,61 @@ use yii\helpers\ArrayHelper;
  */
 class CwhUtil
 {
+    /**
+     * 
+     * @param type $cwhScope
+     * @return type
+     */
+    public static function checkCwhScope($cwhScope)
+    {
+        if (
+            isset($cwhScope['community']) && !empty($cwhScope['community'])
+        ) {
+            // only number after id
+            $re = '/(\d+)/is';
+            preg_match_all($re, $cwhScope['community'], $id, PREG_SET_ORDER, 0);
 
+            if (isset($id[0][0])) {
+                $id = is_numeric($id[0][0]) ? (int)$id[0][0] : 0;
+                $cwhScope['community'] = $id > 0
+                    ? $id
+                    : null;
+            }
+        }
+                
+        return $cwhScope;
+    }
+
+    /**
+     * passed via post by CwhAjaxController.php
+     * scopes format is community-id
+     * @param type $scopes 
+     */
+    public static function parseScopes($scopes)
+    {
+        list($scope, $id) = explode("-", $scopes);
+        $scope = self::checkCwhScope(['community' => $id]);
+        
+        return 'community-' . $id;
+    }
+    
+    /*
+     * only numbers
+     */
+    public static function parseTags($tags)
+    {
+        $tags = explode(",", $tags);
+        
+        $tmp = [];
+        foreach($tags as $tag) {
+            if (is_numeric($tag)) {
+                $tmp[] = (int)$tag;
+            }
+        }
+        
+        return implode(",", $tmp);
+    }
+    
     /**
      * Given the list of CwhNodes id (as array o string with comma separator), get the list as domains name separeted by comma
      *

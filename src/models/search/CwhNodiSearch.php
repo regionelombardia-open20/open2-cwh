@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Aria S.p.A.
  * OPEN 2.0
@@ -23,24 +22,34 @@ use yii\data\ActiveDataProvider;
  */
 class CwhNodiSearch extends CwhNodi
 {
-    public static function findByModel(Record $model)
-    {
-        $user_id = Yii::$app->getUser()->getId();
 
+    /**
+     *
+     * @param Record $model
+     * @param bool $return_query
+     * @return Record|Array
+     */
+    public static function findByModel(Record $model, $return_query = false)
+    {
+        $permissionPrefix = Yii::$app->getModule('cwh')->permissionPrefix;
 
         $permission = [
-            Yii::$app->getModule('cwh')->permissionPrefix . '_CREATE_' . get_class($model),
-            Yii::$app->getModule('cwh')->permissionPrefix . '_VALIDATE_' . get_class($model)
+            $permissionPrefix.'_CREATE_'.get_class($model),
+            $permissionPrefix.'_VALIDATE_'.get_class($model)
         ];
 
-
-        return CwhNodi::find()
-            ->leftJoin(CwhAuthAssignment::tableName(), CwhAuthAssignment::tableName() . '.cwh_nodi_id = ' . self::tableName() . '.id')
+        $query = CwhNodi::find()
+            ->leftJoin(CwhAuthAssignment::tableName(),
+                CwhAuthAssignment::tableName().'.cwh_nodi_id = '.self::tableName().'.id')
             ->andWhere([
-                CwhAuthAssignment::tableName() . '.item_name' => $permission,
-                CwhAuthAssignment::tableName() . '.user_id' => Yii::$app->getUser()->id
-            ])->all();
+            CwhAuthAssignment::tableName().'.item_name' => $permission,
+            CwhAuthAssignment::tableName().'.user_id' => Yii::$app->getUser()->id
+        ]);
 
+        if ($return_query) {
+            return $query;
+        }
+        return $query->all();
     }
 
     public function rules()
