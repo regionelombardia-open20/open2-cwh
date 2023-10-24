@@ -8,11 +8,9 @@
  * @package    open20\amos\cwh
  * @category   CategoryName
  */
-
 use yii\db\Migration;
 
-class m160908_141702_add_cwh_rules extends Migration
-{
+class m160908_141702_add_cwh_rules extends Migration {
 
     public $rules = [
         [
@@ -25,8 +23,7 @@ class m160908_141702_add_cwh_rules extends Migration
         ],
     ];
 
-    public function safeUp()
-    {
+    public function safeUp() {
         $cwhModule = Yii::$app->getModule('cwh');
 
         if (!$cwhModule || !count(Yii::$app->getModule('cwh')->modelsEnabled)) {
@@ -34,29 +31,28 @@ class m160908_141702_add_cwh_rules extends Migration
         }
 
         $auth = \Yii::$app->getAuthManager();
-        foreach ((array) $cwhModule->modelsEnabled as $model) {
-            foreach ($this->rules as $rule) {
-                $permissionName = $cwhModule->permissionPrefix . "_" . $rule['name'] . "_" . $model;
-                if (is_null($auth->getPermission($permissionName))) {
-                    echo "\nCreating cwh rule ".$permissionName;
-                    $permissionCwhModel = $auth->createPermission($permissionName);
-                    $permissionCwhModel->description = "{$rule['label']} {$model}";
+        if (!empty($cwhModule)) {
+            foreach ((array) $cwhModule->modelsEnabled as $model) {
+                foreach ($this->rules as $rule) {
+                    $permissionName = $cwhModule->permissionPrefix . "_" . $rule['name'] . "_" . $model;
+                    if (is_null($auth->getPermission($permissionName))) {
+                        echo "\nCreating cwh rule " . $permissionName;
+                        $permissionCwhModel = $auth->createPermission($permissionName);
+                        $permissionCwhModel->description = "{$rule['label']} {$model}";
 
-                    $auth->add($permissionCwhModel);
-                }else{
-                    echo "\nAlready exists cwh rule ".$permissionName;
+                        $auth->add($permissionCwhModel);
+                    } else {
+                        echo "\nAlready exists cwh rule " . $permissionName;
+                    }
                 }
             }
         }
         echo "\n";
         return true;
-
     }
 
-    public function safeDown()
-    {
+    public function safeDown() {
         return true;
     }
-
 
 }
