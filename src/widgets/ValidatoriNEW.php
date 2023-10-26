@@ -176,6 +176,10 @@ class ValidatoriNEW extends Validatori {
                 $user = UserProfile::findOne(['user_id' => $creator])->getNomeCognome();
                 $creatorName = $user;
                 $kVal = $this->getModel()->validatori;
+				if(is_string($kVal) && !empty($kVal)){
+					$tmp = $kVal;
+					$kVal = [$tmp => $tmp];
+				}
                 if (count($kVal) == 1) {
                     $keyN = key($kVal);
                     $commPos = strpos($keyN, 'community');

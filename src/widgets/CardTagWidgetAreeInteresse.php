@@ -26,6 +26,9 @@ class CardTagWidgetAreeInteresse extends InputWidget {
     public $contentsTreesSimple = [];
     public $content;
     public $baseIconsUrl = '/sprite/material-sprite.svg#';
+    public $showTagLabel = false;
+    public $customCategoriesLabel = [];
+    public $showTitle = false;
 
     public function init() {
         parent::init();
@@ -43,11 +46,11 @@ class CardTagWidgetAreeInteresse extends InputWidget {
             //query di recupero dei tags
             /** @var ActiveQuery $query */
             $query = Tag::find()
-                    ->joinWith('cwhTagInterestMm')
-                    ->andWhere([
-                CwhTagInterestMm::tableName() . '.classname' => $this->content,
-                CwhTagInterestMm::tableName() . '.auth_item' => array_keys(Yii::$app->authManager->getRolesByUser($id_user))
-            ]);
+                ->joinWith('cwhTagInterestMm')
+                ->andWhere([
+                    CwhTagInterestMm::tableName() . '.classname' => $this->content,
+                    CwhTagInterestMm::tableName() . '.auth_item' => array_keys(Yii::$app->authManager->getRolesByUser($id_user))
+                ]);
 
             if ($query->count()) {
                 $this->contentsTreesSimple = $this->contentsTreesSimple + ArrayHelper::map($query->all(), 'id', 'nome');
@@ -56,16 +59,24 @@ class CardTagWidgetAreeInteresse extends InputWidget {
     }
 
     public function run() {
-        $html = "";
+        $html = $this->showTitle ? "<h4>Scegli gli argomenti di tuo interesse:</h4>" : '';
         $selected = $this->getTagsSelected();
         foreach ($this->contentsTreesSimple as $key => $tagName) {
+            $label = '';
+            if($this->showTagLabel) {
+                if (isset($this->customCategoriesLabel[$tagName])) {
+                    $label = $this->customCategoriesLabel[$tagName];
+                } else {
+                    $label = $tagName;
+                }
+            }
             $html .= $this->form->field($this->model, $this->attribute)->widget(CheckBoxListTopicsIcon::className(), [
                 'choices' => $this->getTagsTopicArray($key),
                 'classContainer' => 'col-lg-4 col-sm-6 aria-themetag',
                 'baseIconsUrl' => $this->baseIconsUrl,
                 'selected' => $selected,
                 'rootId' => $key,
-            ])->label('');
+            ])->label($label);
         }
         return $html;
     }
@@ -98,7 +109,7 @@ class CardTagWidgetAreeInteresse extends InputWidget {
     }
 
     /**
-     * 
+     *
      * @param type $idRoot
      * @return ActiveQuery
      */
@@ -121,8 +132,8 @@ class CardTagWidgetAreeInteresse extends InputWidget {
         //data la tabella delle mm tra record e oggetti, recupera le row
         //dell'oggetto per il model in esame
         $listaTagId = \open20\amos\cwh\models\CwhTagOwnerInterestMm::findAll([
-                    'classname' => $this->content,
-                    'record_id' => $this->model->id
+            'classname' => $this->content,
+            'record_id' => $this->model->id
         ]);
 
         $ret = [];

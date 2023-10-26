@@ -68,14 +68,18 @@ class CardTagWidget extends InputWidget {
     public function run() {
         $html = "";
         $selected = [];
+
         foreach ($this->contentsTreesSimple as $key => $tagName) {
-            $html .= $this->form->field($this->model, $this->attribute)->widget(CheckBoxListTopicsIcon::className(), [
-                'choices' => $this->getTagsTopicArray($key),
-                'classContainer' => 'col-lg-4 col-sm-6 aria-themetag',
-                'baseIconsUrl' => $this->baseIconsUrl,
-                'selected' => $this->selected,
-                'rootId' => $key,
-            ])->label($this->showTagLabel ? $tagName : '');
+            $tags = $this->getTagsTopicArray($key);
+            if(!empty($tags)) {
+                $html .= $this->form->field($this->model, $this->attribute)->widget(CheckBoxListTopicsIcon::className(), [
+                    'choices' => $tags,
+                    'classContainer' => 'col-lg-4 col-sm-6 aria-themetag',
+                    'baseIconsUrl' => $this->baseIconsUrl,
+                    'selected' => $this->selected,
+                    'rootId' => $key,
+                ])->label($this->showTagLabel ? $tagName : '');
+            }
         }
         return $html;
     }
@@ -93,7 +97,7 @@ class CardTagWidget extends InputWidget {
      */
     public function getTagsTopicArray($idRoot) {
         $toret = [];
-        $tags = $this->getTagQuery($idRoot)->all();
+        $tags = $this->getTagQuery($idRoot)->orderBy('nome')->all();
         foreach ($tags as $tag) {
             if (!empty($tag)) {
                 $topic = new Topic();
